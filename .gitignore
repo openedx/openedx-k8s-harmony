@@ -1,0 +1,8 @@
+.DS_Store
+infra-*/kubeconfig
+infra-*/terraform.tfstate
+infra-*/terraform.tfstate*
+infra-*/.terraform*
+infra-*/secrets.auto.tfvars
+my-notes
+values.yaml

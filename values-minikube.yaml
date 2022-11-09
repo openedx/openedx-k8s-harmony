@@ -1,0 +1,7 @@
+# Disable HTTPS cert provisioning for testing with minikube
+traefik:
+   web:
+      redirectTo: ""
+   websecure:
+      tls:
+         certResolver: ""

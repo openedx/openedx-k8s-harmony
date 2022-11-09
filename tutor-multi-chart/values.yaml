@@ -1,0 +1,65 @@
+# Default values for tutor-multi-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+
+# In the future, configuration for tutor-multi-chart will go here:
+
+# replicaCount: 1
+
+# image:
+#   repository: nginx
+#   pullPolicy: IfNotPresent
+#   # Overrides the image tag whose default is the chart appVersion.
+#   tag: ""
+
+# imagePullSecrets: []
+# nameOverride: ""
+# fullnameOverride: ""
+
+
+# Configuration for the Traefik load balancer:
+traefik:
+   # See https://github.com/traefik/traefik-helm-chart/blob/master/traefik/values.yaml
+   # for all available options
+   certResolvers:
+      letsencrypt:
+         # email: email@example.com
+         httpChallenge:
+            entryPoint: "web"
+         storage: /data/acme.json # match the path to persistence (below)
+   persistence:
+      # Enable persistence at /data to store letsencrypt status
+      enabled: true
+      path: /data
+      # DigitalOcean minimum size for a persistent volume claim is currently 1GB
+      size: 1Gi
+   ports:
+      web:
+         redirectTo: websecure
+      websecure:
+         tls:
+            enabled: true
+            certResolver: "letsencrypt"
+   deployment:
+      replicas: 1 # Only 1 replica is supported if using Lets Encrypt
+      # The "volume-permissions" init container is required to avoid permission issues.
+      # Related issue: https://github.com/containous/traefik/issues/6972
+      initContainers:
+         - name: volume-permissions
+           image: busybox:1.31.1
+           command: ["sh", "-c", "chmod -Rv 600 /data/*"]
+           volumeMounts:
+             - name: data
+               mountPath: /data
+   # When deploying a new version of this pod, it must be deployed to the same node, because of the ReadWriteOnce
+   # volume, which can only be mounted on one node at a time.
+   # Eventually this should be fixed upstream in the k8s scheduler: https://github.com/kubernetes/kubernetes/issues/103305
+   affinity:
+      podAffinity:
+         requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+               matchLabels:
+                  app.kubernetes.io/name: '{{ template "traefik.name" . }}'
+                  app.kubernetes.io/instance: '{{ .Release.Name }}-{{ .Release.Namespace }}'
+              topologyKey: kubernetes.io/hostname

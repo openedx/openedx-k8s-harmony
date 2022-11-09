@@ -1,0 +1,22 @@
+apiVersion: v2
+name: tutor-multi-chart
+description: A Helm chart for deploying multiple Open edX instances onto Kubernetes using Tutor
+type: application
+# This is the chart version. This version number should be incremented each time you make changes to the chart and its
+# templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+# This is the version number of the application being deployed. This version number should be incremented each time you
+# make changes to the application. Versions are not expected to follow Semantic Versioning. They should reflect the
+# version the application is using. It is recommended to use it with quotes.
+#
+# In our case, this represents the version of Tutor that this chart is compatible with.
+appVersion: "14.1.1"
+
+dependencies:
+# This is just info for the "helm dependency update" command, which will update the ./charts/ directory when run, using
+# this information.
+# We use Traefik as an HTTP(S) server, reverse proxy, and load balancer for all of 
+- name: traefik
+  version: "20.3.0"
+  repository: https://traefik.github.io/charts

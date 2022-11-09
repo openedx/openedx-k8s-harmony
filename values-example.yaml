@@ -1,0 +1,5 @@
+# Set your email address here so auto-generated HTTPS certs will work:
+traefik:
+  certResolvers:
+    letsencrypt:
+      email: (put your email here or HTTPS won't work)
