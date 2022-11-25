@@ -1,8 +1,8 @@
 # Tutor Multi Chart
 
-This repository contains a Helm Chart that you can use to install the necessary components onto a Kubernetes cluster so
-that it can be used to host multiple instances of Open edX, where each instance is provisioned and managed by
-[Tutor](https://docs.tutor.overhang.io/).
+This repository contains a Helm Chart and [Tutor](https://docs.tutor.overhang.io/) plugin that you can use to install
+the necessary components onto a Kubernetes cluster so that the cluster can be used to host multiple instances of Open
+edX, where each instance is provisioned and managed by Tutor.
 
 ## Central Load Balancing
 
@@ -14,17 +14,21 @@ Instead, we want to use this Helm chart to deploy a single load balancer onto th
 resources. The load balancer should **auto-detect** any Open edX instances that get deployed onto the cluster, without
 a central configuration file.
 
-Currently, this is a proof of concept, so it uses Traefik as a load balancer (Traefik is the one that the author is
-most experienced with). Traefik is excellent but does not support a high availability setup when it's also managing
-HTTPS certs, so a future version of this chart could offload cert management onto a separate service or use another
-ingress controller like nginx+cert-manager. Note that the author tried using the Caddy Ingress Controller but it was too
-immature and buggy.
+Currently, this is a proof of concept, so it uses [Traefik](https://traefik.io/traefik/) as a load balancer (Traefik is
+the one that the author is most experienced with). Traefik is excellent _but_ does not support a high availability setup
+when it's also managing HTTPS certs, so a future version of this chart could offload cert management onto a separate
+service or use another ingress controller like nginx+cert-manager. (Note that the author tried using the Caddy Ingress
+Controller but it was too immature and buggy.)
 
 ## Central Database/Monitoring/etc
 
-In the future, this chart can also be made to install monitoring, databases, ElasticSearch, or other shared resources
-that can be used by all the instances in the cluster, following all the best practices. For now it's just a proof of
+In the future, this chart couuld also be made to install monitoring, databases, ElasticSearch, or other shared resources
+that can be shared by all the instances in the cluster, following all the best practices. For now it's just a proof of
 concept that focuses on load balancing and integration with the existing Tutor plugins/ecosystem.
+
+Alternately, many of those shared databases can be provisioned outside of the cluster using Terraform, and configured to
+work with the instances that Tutor deploys. That approach is outside the scope of this Helm chart but see
+[Grove](https://grove.opencraft.com/) for an open source implementation.
 
 
 <br><br><br>
@@ -37,7 +41,7 @@ How to use:
 ### Option 1a: Setting up Tutor Multi Chart on a cloud-hosted Kubernetes Cluster (recommended)
 
 For this recommended approach, you need to have a Kubernetes cluster in the cloud **with at least 12GB of usable
-memory**.
+memory** (that's enough to test 2 Open edX instances).
 
 1. Make sure you can access the cluster from your machine: run `kubectl cluster-info` and make sure it displays some
    information about the cluster (e.g. two URLs).
@@ -86,7 +90,7 @@ kubectl get svc -n tutor-multi tutor-multi-traefik
 ```
 
 To test that your load balancer is working, go to `http://<the external ip>/cluster-echo-test` .
-You should see a response with some basic JSON output.
+You may need to ignore the HTTPS warnings, but then you should see a response with some basic JSON output.
 
 ## Step 3: Deploying an Open edX instance using Tutor
 
