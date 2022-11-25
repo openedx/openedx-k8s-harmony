@@ -1,0 +1,2 @@
+recursive-include tutor_multi_k8s_plugin/patches *
+recursive-include tutor_multi_k8s_plugin/templates *

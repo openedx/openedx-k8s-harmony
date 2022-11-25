@@ -4,18 +4,40 @@ This repository contains a Helm Chart that you can use to install the necessary 
 that it can be used to host multiple instances of Open edX, where each instance is provisioned and managed by
 [Tutor](https://docs.tutor.overhang.io/).
 
-The problem: Tutor uses Caddy which requires a central configuration file listing all the hostnames to route HTTP(S)
+## Central Load Balancing
+
+The problem: Tutor uses Caddy, which requires a central configuration file listing all the hostnames to route HTTP(S)
 traffic to. Deploying a separate Caddy load balancer per Open edX instance also deploys a corresponding network load
 balancers at the Cloud Provider, which can become expensive and are an inefficient use of resources.
 
 Instead, we want to use this Helm chart to deploy a single load balancer onto the cluster along with other shared
-resources. 
+resources. The load balancer should **auto-detect** any Open edX instances that get deployed onto the cluster, without
+a central configuration file.
+
+Currently, this is a proof of concept, so it uses Traefik as a load balancer (Traefik is the one that the author is
+most experienced with). Traefik is excellent but does not support a high availability setup when it's also managing
+HTTPS certs, so a future version of this chart could offload cert management onto a separate service or use another
+ingress controller like nginx+cert-manager. Note that the author tried using the Caddy Ingress Controller but it was too
+immature and buggy.
+
+## Central Database/Monitoring/etc
+
+In the future, this chart can also be made to install monitoring, databases, ElasticSearch, or other shared resources
+that can be used by all the instances in the cluster, following all the best practices. For now it's just a proof of
+concept that focuses on load balancing and integration with the existing Tutor plugins/ecosystem.
+
+
+<br><br><br>
+
+
+How to use:
 
 ## Step 1: Use Helm to provision a kubernetes cluster using this chart
 
 ### Option 1a: Setting up Tutor Multi Chart on a cloud-hosted Kubernetes Cluster (recommended)
 
-For this recommended approach, you need to have a Kubernetes cluster in the cloud.
+For this recommended approach, you need to have a Kubernetes cluster in the cloud **with at least 12GB of usable
+memory**.
 
 1. Make sure you can access the cluster from your machine: run `kubectl cluster-info` and make sure it displays some
    information about the cluster (e.g. two URLs).
@@ -72,13 +94,19 @@ Important: First, get the load balancer's IP (see "external IP" above), and set 
 want to create to be pointing to the load balancer (Usually if you want the LMS at `lms.example.com`, you'll need to set
 two A records for `lms.example.com` and `*.lms.example.com`, pointing to the external IP from the load balancer).
 
+You also will need to have the tutor-contrib-multi-plugin installed into Tutor:
+
+```
+pip install -e 'git+https://github.com/open-craft/tutor-contrib-multi.git#egg=tutor-contrib-multi-plugin&subdirectory=tutor-contrib-multi-plugin'
+```
+
 Next, create a Tutor config directory unique to this instance, and configure it:
 
 ```
 export INSTANCE_ID=openedx-01
 export TUTOR_ROOT=~/deployments/tutor-k8s/$INSTANCE_ID
-tutor config save -i
-tutor config save --set K8S_NAMESPACE=$INSTANCE_ID --set ENABLE_WEB_PROXY=false --set ENABLE_HTTPS=true --set ENABLE_TRAEFIK_INGRESS=true
+tutor plugins enable multi_k8s
+tutor config save -i --set K8S_NAMESPACE=$INSTANCE_ID
 ```
 
 Then deploy it:
@@ -89,7 +117,9 @@ tutor k8s init
 ```
 
 Note that the `init` command may take quite a long time to complete. Use the commands that Tutor says ("To view the logs
-from this job, run:") in a separate terminal in order to monitor the status.
+from this job, run:") in a separate terminal in order to monitor the status. Also note that if you want to use the MFEs,
+[you'll need a custom image](https://github.com/overhangio/tutor-mfe/#running-mfes-on-kubernetes) and it won't work out
+of the box.
 
 **You can repeat step 3 many times to install multiple instances onto the cluster.**
 

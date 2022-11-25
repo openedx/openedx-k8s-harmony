@@ -1,0 +1,53 @@
+---
+# For multi-instance clusters. Allow one central load balancer on the cluster to
+# handle HTTPS certs and forward traffic to each Open edX instance's Caddy
+# instance.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: central-lb-to-caddy-ingress
+spec:
+  ingressClassName: {{ MULTI_K8S_INGRESS_CLASS_NAME }}
+  rules:
+  - host: "{{ LMS_HOST }}"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: caddy
+            port:
+              number: {{ CADDY_HTTP_PORT }}
+  - host: "{{ PREVIEW_LMS_HOST }}"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: caddy
+            port:
+              number: {{ CADDY_HTTP_PORT }}
+  - host: "{{ CMS_HOST }}"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: caddy
+            port:
+              number: {{ CADDY_HTTP_PORT }}
+  {% if MFE_HOST %}
+  - host: "{{ MFE_HOST }}"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: caddy
+            port:
+              number: {{ CADDY_HTTP_PORT }}
+  {% endif %}
