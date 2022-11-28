@@ -24,11 +24,8 @@ hooks.Filters.CONFIG_OVERRIDES.add_items([
     # compatibility with existing Tutor k8s plugins that configure Caddy via
     # patches.
     ("ENABLE_WEB_PROXY", False),
-    # We still absolutely want HTTPS though! Traefik will handle it for us.
-    # The Traefik Kubernetes Ingress Controller does Let's Encrypt automatically
-    # and is much more stable than the Caddy Ingress Controller which is super
-    # limited.
-    ("ENABLE_HTTPS", False),
+    # We are using HTTPS
+    ("ENABLE_HTTPS", True),
 ])
 
 # Load all patches from the "patches" folder
