@@ -22,7 +22,7 @@ Controller but it was too immature and buggy.)
 
 ## Central Database/Monitoring/etc
 
-In the future, this chart couuld also be made to install monitoring, databases, ElasticSearch, or other shared resources
+In the future, this chart could also be made to install monitoring, databases, ElasticSearch, or other shared resources
 that can be shared by all the instances in the cluster, following all the best practices. For now it's just a proof of
 concept that focuses on load balancing and integration with the existing Tutor plugins/ecosystem.
 
