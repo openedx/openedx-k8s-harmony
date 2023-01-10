@@ -2,5 +2,11 @@ dependencies:
 - name: traefik
   repository: https://traefik.github.io/charts
   version: 20.3.0
-digest: sha256:66cf1057f9a139a13dffd8c67ea7798bc54fe5c9291741ba4dc8f791a8ec7d76
-generated: "2022-11-18T12:05:59.675806-08:00"
+- name: ingress-nginx
+  repository: https://kubernetes.github.io/ingress-nginx
+  version: 4.4.2
+- name: cert-manager
+  repository: https://charts.jetstack.io
+  version: v1.10.1
+digest: sha256:fbb7b39ce1e3c81d7b742c2a3cbcc5e8c6a3f20765df11cfb4ce895cdf904acd
+generated: "2023-01-10T12:30:36.293166991-04:00"

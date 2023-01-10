@@ -45,7 +45,7 @@ kind: Ingress
 metadata:
   name: cluster-echo-test
 spec:
-  ingressClassName: tutor-multi-traefik
+  ingressClassName: {{ ternary (index .Values "ingress-nginx" "controller" "ingressClass")  "tutor-multi-traefik" (index .Values "ingress-nginx" "enabled") }}
   rules:
   - http:
       paths:
