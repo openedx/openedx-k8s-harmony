@@ -26,12 +26,9 @@ spec:
             port:
               number: {{ CADDY_HTTP_PORT }}
     {%- endfor %}
-  # The tls field is needed when using ingress-nginx+certmanager
-  {%- if 'nginx' in MULTI_K8S_INGRESS_CLASS_NAME %}
   tls:
   - hosts:
     {%- for host in HOSTS if host is defined %}
     - {{ host -}}
     {% endfor %}
     secretName: central-lb-ingress-tls
-  {%- endif %}

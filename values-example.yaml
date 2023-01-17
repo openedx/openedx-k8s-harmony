@@ -1,5 +1,7 @@
 # Set your email address here so auto-generated HTTPS certs will work:
-traefik:
-  certResolvers:
-    letsencrypt:
-      email: (put your email here or HTTPS won't work)
+ingress-nginx:
+  controller:
+    config:
+      proxy-body-size: 100m
+cert-manager:
+  email: "email@example.com"

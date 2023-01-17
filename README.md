@@ -14,11 +14,11 @@ Instead, we want to use this Helm chart to deploy a single load balancer onto th
 resources. The load balancer should **auto-detect** any Open edX instances that get deployed onto the cluster, without
 a central configuration file.
 
-Currently, this is a proof of concept, so it uses [Traefik](https://traefik.io/traefik/) as a load balancer (Traefik is
-the one that the author is most experienced with). Traefik is excellent _but_ does not support a high availability setup
-when it's also managing HTTPS certs, so a future version of this chart could offload cert management onto a separate
-service or use another ingress controller like nginx+cert-manager. (Note that the author tried using the Caddy Ingress
-Controller but it was too immature and buggy.)
+Currently, this initial version uses [ingress-nginx](https://kubernetes.github.io/ingress-nginx/) as a load balancer
+alongside [cert-manager](cert-manager.io/) to provide automatic SSL certificates. Given that this chart serves as an
+umbrella chart for additional dependencies cert-manager will be installed on the same namespace as the parent chart,
+you should take special care not to install cert-manager twice due to it installing several non-namespaced resources.
+If you already installed cert-manager by different means, make sure set `cert-manager.enabled: false` for this chart.
 
 ## Central Database/Monitoring/etc
 
@@ -71,7 +71,7 @@ HTTPS and is more complicated due to the need to use tunnelling.*
    `helm install --namespace tutor-multi --create-namespace -f values-minikube.yaml tutor-multi ./tutor-multi-chart`
 4. Run `minikube tunnel` (you may need to enter a password), and then you should be able to access the cluster (see
    "External IP" below). If this approach is not working, an alternative is to run\
-   `minikube service tutor-multi-traefik -n tutor-multi`\
+   `minikube service tutor-multi-ingress-nginx-controller -n tutor-multi`\
    and then go to the URL it says, e.g. `http://127.0.0.1:52806` plus `/cluster-echo-test`
    (e.g. `http://127.0.0.1:52806/cluster-echo-test`)
 5. In this case, skip step 2 ("Get the external IP") and use `127.0.0.1` as the external IP. You will need to remember
@@ -80,13 +80,12 @@ HTTPS and is more complicated due to the need to use tunnelling.*
 
 ## Step 2: Get the external IP
 
-A [Traefik](https://doc.traefik.io/traefik/)
-[Ingress Controller](https://doc.traefik.io/traefik/providers/kubernetes-ingress/) is used to automatically set up an
-HTTPS reverse proxy for each Open edX instance as it gets deployed onto the cluster. There is just one load balancer
-with a single external IP for all the instances on the cluster. To get its IP, use:
+The [ingress NGINX Controller](https://kubernetes.github.io/ingress-nginx/) is used to automatically set up an HTTPS
+reverse proxy for each Open edX instance as it gets deployed onto the cluster. There is just one load balancer with a
+single external IP for all the instances on the cluster. To get its IP, use:
 
 ```
-kubectl get svc -n tutor-multi tutor-multi-traefik
+kubectl get svc -n tutor-multi tutor-multi-ingress-nginx-controller
 ```
 
 To test that your load balancer is working, go to `http://<the external ip>/cluster-echo-test` .
