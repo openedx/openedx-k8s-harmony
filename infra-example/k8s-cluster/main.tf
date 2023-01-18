@@ -26,10 +26,10 @@ resource "digitalocean_kubernetes_cluster" "cluster" {
 
   node_pool {
     name       = "${var.cluster_name}-nodes"
-    size       = "s-2vcpu-4gb"
-    # At this size, at least 4 nodes are recommended to run 2 Open edX instances using the default Tutor images, because
+    size       = "s-4vcpu-8gb"
+    # At this size, at least 3 nodes are recommended to run 2 Open edX instances using the default Tutor images, because
     # resources like MySQL/MongoDB are not shared.
-    min_nodes  = 4
+    min_nodes  = 3
     max_nodes  = 4
     auto_scale = true
   }

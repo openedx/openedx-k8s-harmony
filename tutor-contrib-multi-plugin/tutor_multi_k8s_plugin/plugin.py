@@ -3,6 +3,7 @@ import os
 import pkg_resources
 
 from tutor import hooks
+from . import commands
 
 from .__about__ import __version__
 
@@ -19,7 +20,8 @@ config = {
         # when installing additional plugins such as tutor-ecommerce or tutor-minio.
         # The workaround is to manually add a list of hosts to be routed to the caddy
         # instance.
-        "INGRESS_HOST_LIST": [ ]
+        "INGRESS_HOST_LIST": [],
+        "ENABLE_SHARED_ELASTICSEARCH": False,
     },
     "overrides": {
         # Don't use Caddy as a per-instance external web proxy, but do still use it
@@ -28,16 +30,19 @@ config = {
         # We are using HTTPS
         "ENABLE_HTTPS": True,
     },
+    "unique": {
+        "ELASTICSEARCH_HTTP_AUTH": "{{K8S_NAMESPACE}}:{{ 24|random_string }}",
+        "ELASTICSEARCH_INDEX_PREFIX": "{{K8S_NAMESPACE}}-{{ 4|random_string|lower }}-",
+    },
 }
 
+# Load all configuration entries
 hooks.Filters.CONFIG_DEFAULTS.add_items(
-    [
-        (f"MULTI_K8S_{key}", value)
-        for key, value in config.get("defaults", {}).items()
-    ]
+    [(f"K8S_HARMONY_{key}", value) for key, value in config["defaults"].items()]
 )
 
-hooks.Filters.CONFIG_OVERRIDES.add_items(list(config.get("overrides", {}).items()))
+hooks.Filters.CONFIG_OVERRIDES.add_items(list(config["overrides"].items()))
+hooks.Filters.CONFIG_UNIQUE.add_items(list(config["unique"].items()))
 
 # Load all patches from the "patches" folder
 for path in glob(
@@ -48,3 +53,5 @@ for path in glob(
 ):
     with open(path, encoding="utf-8") as patch_file:
         hooks.Filters.ENV_PATCHES.add_item((os.path.basename(path), patch_file.read()))
+
+hooks.Filters.CLI_COMMANDS.add_item(commands.harmony)
