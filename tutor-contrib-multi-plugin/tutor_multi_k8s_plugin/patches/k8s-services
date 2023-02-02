@@ -10,7 +10,7 @@ metadata:
   labels:
     app.kubernetes.io/component: ingress
   annotations:
-    cert-manager.io/cluster-issuer: tutor-multi-global
+    cert-manager.io/cluster-issuer: tutor-multi-letsencrypt-global
 spec:
   ingressClassName: {{ MULTI_K8S_INGRESS_CLASS_NAME }}
   rules:
