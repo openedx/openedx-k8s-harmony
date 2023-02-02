@@ -9,7 +9,7 @@ ingress-nginx:
 cert-manager:
   # Use cert-manager as a default certificate controller.
   enabled: true
-  installCRDs: true
+  installCRDs: false
     # Email address associated with the ACME account. Used to notify about expiring
     # certificates.
   email: ""

@@ -18,6 +18,10 @@ Currently, this initial version uses [ingress-nginx](https://kubernetes.github.i
 alongside [cert-manager](cert-manager.io/) to provide automatic SSL certificates. Given that this chart serves as an
 umbrella chart for additional dependencies cert-manager will be installed on the same namespace as the parent chart,
 you should take special care not to install cert-manager twice due to it installing several non-namespaced resources.
+In addition, you would be in charge of
+[managing the CRDs used by cert-manager](https://cert-manager.io/docs/installation/upgrading/#crds-managed-separately)
+always upgrading to the corresponding version before updating the chart. This is due to the some limitations
+in the management of CRDs by Helm.
 If you already installed cert-manager by different means, make sure set `cert-manager.enabled: false` for this chart.
 
 ## Central Database/Monitoring/etc
@@ -48,7 +52,13 @@ memory** (that's enough to test 2 Open edX instances).
 2. Copy `values-example.yaml` to `values.yaml` and edit it to put in your email address and customize other settings.
    The email address is required for Lets Encrypt to issue HTTPS certificates. It is not shared with anyone else.
 3. Install [Helm](https://helm.sh/) if you don't have it already.
-4. Run:
+4. Install the cert-manager CRDs if using cert-manager:
+   ```
+   kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.1/cert-manager.crds.yaml --namespace=tutor-multi
+   ```
+   You can check the version of cert-manager that is going to be installed by the chart by running
+   `helm dependency list` or by checking the corresponding line in the `tutor-multi-chart/Chart.yaml` file.
+5. Run:
    ```
    helm install --namespace tutor-multi --create-namespace -f values.yaml tutor-multi ./tutor-multi-chart
    ```
