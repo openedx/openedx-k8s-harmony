@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: 'tutor-contrib-multi'
+  description: "A Prototype Helm Chart for deploying multiple Open edX instances (via Tutor) onto a cluster."
+  links:
+    - url: "https://github.com/openedx/tutor-contrib-multi"
+      title: "Source Code"
+      icon: "Code"
+spec:
+  owner: group:tutor-contrib-multi
+  type: 'source-code'
+  lifecycle: 'experimental'
