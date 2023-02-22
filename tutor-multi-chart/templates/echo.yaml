@@ -1,4 +1,4 @@
-# This service, which is always enabled, allows you to do basic health checks of your cluster and the Traefik Ingress
+# This service, which is always enabled, allows you to do basic health checks of your cluster and the Ingress Controller
 # Service by accessing /cluster-echo-test via HTTP on any hostname associated with your cluster.
 apiVersion: v1
 kind: Service
@@ -45,7 +45,7 @@ kind: Ingress
 metadata:
   name: cluster-echo-test
 spec:
-  ingressClassName: tutor-multi-traefik
+  ingressClassName: {{ (index .Values "ingress-nginx" "controller" "ingressClass") }}
   rules:
   - http:
       paths:
@@ -56,17 +56,3 @@ spec:
             name: cluster-echo-service
             port:
               number: 8080
-# --- # Note there is an alternative way to specify the ingress, which is Traefik-specific instead of the standard approach seen above:
-# apiVersion: traefik.containo.us/v1alpha1
-# kind: IngressRoute
-# metadata:
-#   name: cluster-echo-test-ingress-crd
-# spec:
-#   entryPoints:
-#     - web
-#   routes:
-#   - match: PathPrefix(`/cluster-echo-test`)
-#     kind: Rule
-#     services:
-#     - name: cluster-echo-service
-#       port: 8080
