@@ -1,13 +1,13 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: 'tutor-contrib-multi'
+  name: 'openedx-k8s-harmony'
   description: "A Prototype Helm Chart for deploying multiple Open edX instances (via Tutor) onto a cluster."
   links:
-    - url: "https://github.com/openedx/tutor-contrib-multi"
+    - url: "https://github.com/openedx/openedx-k8s-harmony"
       title: "Source Code"
       icon: "Code"
 spec:
-  owner: group:tutor-contrib-multi
+  owner: group:openedx-k8s-harmony-maintainers
   type: 'source-code'
   lifecycle: 'experimental'
