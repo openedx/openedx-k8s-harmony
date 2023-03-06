@@ -17,15 +17,10 @@ variable "shared_resource_identifier" {
   default     = ""
 }
 
-variable "root_domain" {
-  description = "example.com"
+variable "name" {
+  description = "a valid Kubernetes name definition"
   type        = string
-}
-
-variable "namespace" {
-  description = "a valid Kubernetes namespace definition"
-  type        = string
-  default     = "infra-example-aws"
+  default     = "openedx-k8s-harmony"
 }
 
 variable "aws_region" {
@@ -34,28 +29,6 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "vpc_id" {
-  description = "the Amazon Resource Name (ARN) of the Virtual Private Cloud containing this Kubernetes instances."
-  type        = string
-}
-
-# sample data:
-# -----------------------------------------------------------------------------
-# private_subnet_ids = [
-#   "subnet-027bdb9c8ab1d3ee5",
-#   "subnet-04e53ed939ab7a237",
-#   "subnet-0f66a8cdb5eca12f6"
-# ]
-variable "private_subnet_ids" {
-  description = "a list of private subnets contained by vpc_id to be made available to this Kubernetes cluster"
-  type        = list(string)
-}
-
-variable "tags" {
-  description = "A map of tags to add to all resources associated with this Kubernetes cluster. Tags added to launch configuration or templates override these values for ASG Tags only."
-  type        = map(string)
-  default     = {}
-}
 
 variable "enable_irsa" {
   description = "true to create an OpenID Connect Provider for EKS to enable IRSA (IAM Roles for Service Accounts)."

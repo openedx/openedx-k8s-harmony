@@ -6,22 +6,21 @@
 #
 # usage: create a VPC to contain all Open edX backend resources.
 #------------------------------------------------------------------------------
+variable "account_id" {
+  description = "a 12-digit AWS account id, all integers. example: 012345678999"
+  type        = string
+}
+
 variable "aws_region" {
   description = "The region in which the origin S3 bucket was created."
   type        = string
   default     = "us-east-1"
 }
 
-variable "azs" {
-  description = "A list of availability zones names or ids in the region"
-  type        = list(string)
-  default     = ["us-east-1a", "us-east-1b", "us-east-1c"]
-}
-
 variable "cidr" {
   description = "The CIDR block for the VPC. Default value is a valid CIDR, but not acceptable by AWS and should be overridden"
   type        = string
-  default     = "0.0.0.0/0"
+  default     = "192.168.0.0/20"
 }
 
 variable "database_subnets" {
@@ -72,22 +71,10 @@ variable "private_subnets" {
   default     = ["192.168.4.0/24", "192.168.5.0/24", "192.168.6.0/24"]
 }
 
-variable "private_subnet_tags" {
-  description = "Additional tags for the private subnets"
-  type        = map(string)
-  default     = {}
-}
-
 variable "public_subnets" {
   description = "A list of public subnets inside the VPC"
   type        = list(string)
   default     = ["192.168.1.0/24", "192.168.2.0/24", "192.168.3.0/24"]
-}
-
-variable "public_subnet_tags" {
-  description = "Additional tags for the public subnets"
-  type        = map(string)
-  default     = {}
 }
 
 variable "single_nat_gateway" {
@@ -96,20 +83,8 @@ variable "single_nat_gateway" {
   default     = false
 }
 
-variable "root_domain" {
-  description = "example.com"
-  type        = string
-}
-
 variable "tags" {
   description = "A map of tags to add to all resources"
   type        = map(string)
   default     = {}
 }
-
-variable "services_subdomain" {
-  description = "service.example.com - subdomain for creation of a service stack Hosted Zone"
-  type        = string
-  default     = "service"
-}
-

@@ -4,5 +4,11 @@ infra-*/terraform.tfstate
 infra-*/terraform.tfstate*
 infra-*/.terraform*
 infra-*/secrets.auto.tfvars
+*kubeconfig
+*terraform.tfstate*
+*terraform.lock.*
+.terraform
+*secrets.auto.tfvars
 my-notes
+my-notes.txt
 values.yaml

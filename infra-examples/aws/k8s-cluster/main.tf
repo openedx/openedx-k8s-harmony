@@ -16,17 +16,25 @@
 locals {
   # Used by Karpenter config to determine correct partition (i.e. - `aws`, `aws-gov`, `aws-cn`, etc.)
   partition = data.aws_partition.current.partition
+
+  tags = {
+    "Name"                          = var.name
+    "openedx-k8s-harmony/name"      = var.name
+    "openedx-k8s-harmony/region"    = var.aws_region
+    "openedx-k8s-harmony/terraform" = "true"
+  }
+
 }
 
 module "eks" {
   source                          = "terraform-aws-modules/eks/aws"
   version                         = "~> 19.4"
-  cluster_name                    = var.namespace
+  cluster_name                    = var.name
   cluster_version                 = var.kubernetes_cluster_version
   cluster_endpoint_private_access = true
   cluster_endpoint_public_access  = true
-  vpc_id                          = var.vpc_id
-  subnet_ids                      = var.private_subnet_ids
+  vpc_id                          = data.aws_vpc.reference.id
+  subnet_ids                      = data.aws_subnets.private.ids
   create_cloudwatch_log_group     = false
   enable_irsa                     = true
 
@@ -48,11 +56,11 @@ module "eks" {
   aws_auth_users            = var.map_users
 
   tags = merge(
-    var.tags,
+    local.tags,
     # Tag node group resources for Karpenter auto-discovery
     # NOTE - if creating multiple security groups with this module, only tag the
     # security group that Karpenter should utilize with the following tag
-    { "karpenter.sh/discovery" = var.namespace }
+    { "karpenter.sh/discovery" = var.name }
   )
 
   # AWS EKS add-ons that are required in order to support persistent volume 
@@ -146,7 +154,7 @@ module "eks" {
 
       instance_types = ["${var.eks_service_group_instance_type}"]
       tags = merge(
-        var.tags,
+        local.tags,
         { Name = "eks-${var.shared_resource_identifier}" }
       )
     }
@@ -168,18 +176,11 @@ resource "kubectl_manifest" "eks-console-full-access" {
   yaml_body = data.template_file.eks-console-full-access.rendered
 }
 
-resource "kubernetes_namespace" "namespace-shared" {
-  metadata {
-    name = var.namespace
-  }
-  depends_on = [module.eks]
-}
-
 # to enable shell access to nodes from kubectl
 resource "aws_security_group" "worker_group_mgmt" {
-  name_prefix = "${var.namespace}-eks_hosting_group_mgmt"
+  name_prefix = "${var.name}-eks_hosting_group_mgmt"
   description = "openedx-k8s-harmony: Ingress CLB worker group management"
-  vpc_id      = var.vpc_id
+  vpc_id      = data.aws_vpc.reference.id
 
   ingress {
     description = "openedx-k8s-harmony: Ingress CLB"
@@ -192,14 +193,14 @@ resource "aws_security_group" "worker_group_mgmt" {
     ]
   }
 
-  tags = var.tags
+  tags = local.tags
 
 }
 
 resource "aws_security_group" "all_worker_mgmt" {
-  name_prefix = "${var.namespace}-eks_all_worker_management"
+  name_prefix = "${var.name}-eks_all_worker_management"
   description = "openedx-k8s-harmony: Ingress CLB worker management"
-  vpc_id      = var.vpc_id
+  vpc_id      = data.aws_vpc.reference.id
 
   ingress {
     description = "openedx-k8s-harmony: Ingress CLB"
@@ -214,6 +215,6 @@ resource "aws_security_group" "all_worker_mgmt" {
     ]
   }
 
-  tags = var.tags
+  tags = local.tags
 
 }
