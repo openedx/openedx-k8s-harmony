@@ -275,6 +275,9 @@ Then run:
    cd ../k8s-cluster
    terraform init
    terraform apply               # run time is approximately 30 minutes
+
+   # to configure kubectl
+   aws eks --region us-east-1 update-kubeconfig --name tutor-multi-test --alias tutor-multi-test
    ```
 
 Then follow steps 1-4 above. When you're done, run `terraform destroy` in both the `aws` and `k8s-cluster` modules to clean up everything.
