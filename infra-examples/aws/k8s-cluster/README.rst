@@ -37,13 +37,6 @@ Second, related, is scaling. Fargate can absorb whatever workload you send to it
 - **Optimize Costs**. With AWS Fargate there are no upfront expenses, pay for only the resources used. Further optimize with `Compute Savings Plans <https://aws.amazon.com/savingsplans/compute-pricing/>`_ and `Fargate Spot <https://aws.amazon.com/blogs/aws/aws-fargate-spot-now-generally-available/>`_, then use `Graviton2 <https://aws.amazon.com/ec2/graviton/>`_ powered Fargate for up to 40% price performance improvements.
 - Only pay for what you use. Fargate scales the compute to closely match your specified resource requirements. With Fargate, there is no over-provisioning and paying for additional servers.
 
-How it works
-~~~~~~~~~~~~
-
-.. image:: doc/diagram-fargate.png
-  :width: 100%
-  :alt: Fargate Diagram
-
 How to Manually Add More Kubernetes Admins
 ------------------------------------------
 
