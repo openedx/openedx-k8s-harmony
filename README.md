@@ -238,18 +238,43 @@ Just run `helm uninstall --namespace harmony harmony` to uninstall this.
 ### How to create a cluster for testing on DigitalOcean
 
 If you use DigitalOcean, you can use Terraform to quickly spin up a cluster, try this out, then shut it down again.
-Here's how. First, put the following into `infra-tests/secrets.auto.tfvars` including a valid DigitalOcean access token:
+Here's how. First, put the following into `infra-examples/secrets.auto.tfvars` including a valid DigitalOcean access token:
 ```
 cluster_name = "harmony-test"
 do_token = "digital-ocean-token"
 ```
 Then run:
 ```
-cd infra-example
+cd infra-examples/do
 terraform init
 terraform apply
 cd ..
-export KUBECONFIG=`pwd`/infra-example/kubeconfig
+export KUBECONFIG=`pwd`/infra-examples/kubeconfig
 ```
 Then follow steps 1-4 above. When you're done, run `terraform destroy` to clean
 up everything.
+
+## Appendix C: how to create a cluster for testing on AWS
+
+Similarly, if you use AWS, you can use Terraform to spin up a cluster, try this out, then shut it down again.
+Here's how. First, put the following into `infra-examples/aws/vpc/secrets.auto.tfvars` and `infra-examples/aws/k8s-cluster/secrets.auto.tfvars`:
+
+   ```terraform
+   account_id  = "012345678912"
+   aws_region  = "us-east-1"
+   name        = "tutor-multi-test"
+   ```
+
+Then run:
+
+   ```bash
+   aws sts get-caller-identity   # to verify that awscli is properly configured
+   cd infra-examples/aws/vpc
+   terraform init
+   terraform apply               # run time is approximately 1 minute
+   cd ../k8s-cluster
+   terraform init
+   terraform apply               # run time is approximately 30 minutes
+   ```
+
+Then follow steps 1-4 above. When you're done, run `terraform destroy` in both the `aws` and `k8s-cluster` modules to clean up everything.
