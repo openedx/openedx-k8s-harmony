@@ -47,7 +47,7 @@ hooks.Filters.CONFIG_UNIQUE.add_items(list(config["unique"].items()))
 # Load all patches from the "patches" folder
 for path in glob(
     os.path.join(
-        pkg_resources.resource_filename("tutor_multi_k8s_plugin", "patches"),
+        pkg_resources.resource_filename("tutor_k8s_harmony_plugin", "patches"),
         "*",
     )
 ):
