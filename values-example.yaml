@@ -8,3 +8,8 @@ cert-manager:
 
 elasticsearch:
   enabled: false
+
+metricsserver:
+  enabled: false
+vpa:
+  enabled: false
