@@ -1,4 +1,4 @@
-# Tutor Multi Chart
+# Harmony Chart
 
 This repository contains a Helm Chart and [Tutor](https://docs.tutor.overhang.io/) plugin that you can use to install
 the necessary components onto a Kubernetes cluster so that the cluster can be used to host multiple instances of Open
@@ -42,7 +42,7 @@ How to use:
 
 ## Step 1: Use Helm to provision a kubernetes cluster using this chart
 
-### Option 1a: Setting up Tutor Multi Chart on a cloud-hosted Kubernetes Cluster (recommended)
+### Option 1a: Setting up Harmony Chart on a cloud-hosted Kubernetes Cluster (recommended)
 
 For this recommended approach, you need to have a Kubernetes cluster in the cloud **with at least 12GB of usable
 memory** (that's enough to test 2 Open edX instances).
@@ -54,22 +54,22 @@ memory** (that's enough to test 2 Open edX instances).
 3. Install [Helm](https://helm.sh/) if you don't have it already.
 4. Install the cert-manager CRDs if using cert-manager:
    ```
-   kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.1/cert-manager.crds.yaml --namespace=tutor-multi
+   kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.1/cert-manager.crds.yaml --namespace=harmony
    ```
    You can check the version of cert-manager that is going to be installed by the chart by running
-   `helm dependency list` or by checking the corresponding line in the `tutor-multi-chart/Chart.yaml` file.
+   `helm dependency list` or by checking the corresponding line in the `harmony-chart/Chart.yaml` file.
 5. Run:
    ```
-   helm install --namespace tutor-multi --create-namespace -f values.yaml tutor-multi ./tutor-multi-chart
+   helm install --namespace harmony --create-namespace -f values.yaml harmony ./harmony-chart
    ```
 
 Note: in the future, if you make any changes to `values.yaml`, then run this command to update the deployment:
 
 ```
-helm upgrade --namespace tutor-multi -f values.yaml tutor-multi ./tutor-multi-chart
+helm upgrade --namespace harmony -f values.yaml harmony ./harmony-chart
 ```
 
-### Option 1b: Setting up Tutor Multi Chart locally on Minikube
+### Option 1b: Setting up Harmony Chart locally on Minikube
 
 *Note: if possible, it's preferred to use a cloud-hosted cluster instead (see previous section). But if you don't have a
 cluster available in the cloud, you can use minikube to try this out locally. The minikube version does not support
@@ -78,10 +78,10 @@ HTTPS and is more complicated due to the need to use tunnelling.*
 1. First, [install `minikube`](https://minikube.sigs.k8s.io/docs/start/) if you don't have it already.
 2. Run `minikube start` (you can also use `minikube dashboard` to access the Kubernetes dashboard).
 3. Run\
-   `helm install --namespace tutor-multi --create-namespace -f values-minikube.yaml tutor-multi ./tutor-multi-chart`
+   `helm install --namespace harmony --create-namespace -f values-minikube.yaml harmony ./harmony-chart`
 4. Run `minikube tunnel` (you may need to enter a password), and then you should be able to access the cluster (see
    "External IP" below). If this approach is not working, an alternative is to run\
-   `minikube service tutor-multi-ingress-nginx-controller -n tutor-multi`\
+   `minikube service harmony-ingress-nginx-controller -n harmony`\
    and then go to the URL it says, e.g. `http://127.0.0.1:52806` plus `/cluster-echo-test`
    (e.g. `http://127.0.0.1:52806/cluster-echo-test`)
 5. In this case, skip step 2 ("Get the external IP") and use `127.0.0.1` as the external IP. You will need to remember
@@ -95,7 +95,7 @@ reverse proxy for each Open edX instance as it gets deployed onto the cluster. T
 single external IP for all the instances on the cluster. To get its IP, use:
 
 ```
-kubectl get svc -n tutor-multi tutor-multi-ingress-nginx-controller
+kubectl get svc -n harmony harmony-ingress-nginx-controller
 ```
 
 To test that your load balancer is working, go to `http://<the external ip>/cluster-echo-test` .
@@ -107,10 +107,10 @@ Important: First, get the load balancer's IP (see "external IP" above), and set 
 want to create to be pointing to the load balancer (Usually if you want the LMS at `lms.example.com`, you'll need to set
 two A records for `lms.example.com` and `*.lms.example.com`, pointing to the external IP from the load balancer).
 
-You also will need to have the tutor-contrib-multi-plugin installed into Tutor:
+You also will need to have the tutor-contrib-harmony-plugin installed into Tutor:
 
 ```
-pip install -e 'git+https://github.com/open-craft/tutor-contrib-multi.git#egg=tutor-contrib-multi-plugin&subdirectory=tutor-contrib-multi-plugin'
+pip install -e 'git+https://github.com/open-craft/tutor-contrib-harmony.git#egg=tutor-contrib-harmony-plugin&subdirectory=tutor-contrib-harmony-plugin'
 ```
 
 Next, create a Tutor config directory unique to this instance, and configure it:
@@ -118,7 +118,7 @@ Next, create a Tutor config directory unique to this instance, and configure it:
 ```
 export INSTANCE_ID=openedx-01
 export TUTOR_ROOT=~/deployments/tutor-k8s/$INSTANCE_ID
-tutor plugins enable multi_k8s
+tutor plugins enable k8s_harmony
 tutor config save -i --set K8S_NAMESPACE=$INSTANCE_ID
 ```
 
@@ -167,14 +167,14 @@ In order for SSL to work without warnings the CA certificate needs to be mounted
 
 ## Appendix : how to uninstall this chart
 
-Just run `helm uninstall --namespace tutor-multi tutor-multi` to uninstall this.
+Just run `helm uninstall --namespace harmony harmony` to uninstall this.
 
 ## Appendix B: how to create a cluster for testing on DigitalOcean
 
 If you use DigitalOcean, you can use Terraform to quickly spin up a cluster, try this out, then shut it down again.
 Here's how. First, put the following into `infra-tests/secrets.auto.tfvars` including a valid DigitalOcean access token:
 ```
-cluster_name = "tutor-multi-test"
+cluster_name = "harmony-test"
 do_token = "digital-ocean-token"
 ```
 Then run:

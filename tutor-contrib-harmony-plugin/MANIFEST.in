@@ -1,0 +1,2 @@
+recursive-include tutor_k8s_harmony_plugin/patches *
+recursive-include tutor_k8s_harmony_plugin/templates *
