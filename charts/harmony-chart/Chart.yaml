@@ -42,3 +42,8 @@ dependencies:
   repository: https://cowboysysop.github.io/charts/
   alias: vpa
   condition: vpa.enabled
+
+- name: opensearch
+  version: "2.11.4"
+  condition: opensearch.enabled
+  repository: https://opensearch-project.github.io/helm-charts

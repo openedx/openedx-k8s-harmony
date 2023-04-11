@@ -13,3 +13,6 @@ metricsserver:
   enabled: false
 vpa:
   enabled: false
+
+opensearch:
+  enabled: false

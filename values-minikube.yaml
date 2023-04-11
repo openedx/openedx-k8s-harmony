@@ -1,3 +1,24 @@
 # Disable HTTPS cert provisioning for testing with minikube
 cert-manager:
    enabled: false
+
+elasticsearch:
+   enabled: false
+
+   # TODO: move this to a separate PR
+   # Permit co-located instances for solitary minikube virtual machines.
+   antiAffinity: "soft"
+
+   volumeClaimTemplate:
+     resources:
+       requests:
+         storage: 8Gi
+
+opensearch:
+   enabled: false
+
+   # Permit co-located instances for solitary minikube virtual machines.
+   antiAffinity: "soft"
+
+   persistence:
+     size: 8Gi

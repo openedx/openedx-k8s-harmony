@@ -77,3 +77,80 @@ vpa:
    # for all available options
    admissionController:
       replicaCount: 1
+
+
+# Multi-tenant OpenSearch
+opensearch:
+  enabled: false
+
+  # Operators will need to add/update the following setting in each
+  # of their instances by running the commands:
+  # ```
+  # tutor config save --set K8S_HARMONY_ENABLE_SHARED_OPENSEARCH=true --set RUN_ELASTICSEARCH=false
+  # tutor harmony create-opensearch-user
+  # ```
+  # RUN_ELASTICSEARCH: false
+  # ELASTICSEARCH_PREFIX_INDEX: "username-"
+  # K8S_HARMONY_USE_SHARED_OPENSEARCH: true
+  # ELASTICSEARCH_AUTH: "username:actual_password"
+
+# Allows you to add any config files in {{ .Values.opensearchHome }}/config
+opensearchHome: /usr/share/opensearch
+# such as opensearch.yml and log4j2.properties
+config:
+  opensearch.yml: |
+    cluster.name: opensearch-cluster
+    network.host: 0.0.0.0
+    plugins:
+      security:
+        ssl:
+          transport:
+            pemcert_filepath: certs/tls.crt
+            pemkey_filepath: certs/tls.key
+            pemtrustedcas_filepath: certs/ca.crt
+            enforce_hostname_verification: false
+          http:
+            enabled: true
+            pemcert_filepath: certs/tls.crt
+            pemkey_filepath: certs/tls.key
+            pemtrustedcas_filepath: certs/ca.crt
+        allow_unsafe_democertificates: false
+        allow_default_init_securityindex: true
+        audit.type: internal_opensearch
+        enable_snapshot_restore_privilege: true
+        check_snapshot_restore_write_privileges: true
+        restapi:
+          roles_enabled: ["all_access", "security_rest_api_access"]
+        system_indices:
+          enabled: true
+          indices:
+            [
+              ".opendistro-alerting-config",
+              ".opendistro-alerting-alert*",
+              ".opendistro-anomaly-results*",
+              ".opendistro-anomaly-detector*",
+              ".opendistro-anomaly-checkpoints",
+              ".opendistro-anomaly-detection-state",
+              ".opendistro-reports-*",
+              ".opendistro-notifications-*",
+              ".opendistro-notebooks",
+              ".opendistro-asynchronous-search-response*",
+            ]
+
+  # # This secret will contain the ssl certificates.
+  secretMounts:
+    - name: openseach-certificates
+      secretName: openseach-certificates
+      path: /usr/share/opensearch/config/certs
+      defaultMode: 0777
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "700Mi"
+
+  persistence:
+    size: 30Gi

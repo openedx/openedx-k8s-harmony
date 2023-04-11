@@ -1,4 +1,4 @@
-{% if K8S_HARMONY_ENABLE_SHARED_ELASTICSEARCH %}
+{% if K8S_HARMONY_ENABLE_SHARED_ELASTICSEARCH or K8S_HARMONY_ENABLE_SHARED_OPENSEARCH %}
 # This is needed otherwise the previously installed edx-search
 # package doesn't get replaced. Once the below branch is merged
 # upstream it will no longer be needed.

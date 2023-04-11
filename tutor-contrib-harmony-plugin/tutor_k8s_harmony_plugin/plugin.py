@@ -22,6 +22,7 @@ config = {
         # instance.
         "INGRESS_HOST_LIST": [],
         "ENABLE_SHARED_ELASTICSEARCH": False,
+        "ENABLE_SHARED_OPENSEARCH": False,
     },
     "overrides": {
         # Don't use Caddy as a per-instance external web proxy, but do still use it
@@ -33,6 +34,8 @@ config = {
     "unique": {
         "ELASTICSEARCH_HTTP_AUTH": "{{K8S_NAMESPACE}}:{{ 24|random_string }}",
         "ELASTICSEARCH_INDEX_PREFIX": "{{K8S_NAMESPACE}}-{{ 4|random_string|lower }}-",
+        "OPENSEARCH_HTTP_AUTH": "{{K8S_NAMESPACE}}:{{ 24|random_string }}",
+        "OPENSEARCH_INDEX_PREFIX": "{{K8S_NAMESPACE}}-{{ 4|random_string|lower }}-",
     },
 }
 
