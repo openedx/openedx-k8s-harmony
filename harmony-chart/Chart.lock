@@ -8,5 +8,11 @@ dependencies:
 - name: elasticsearch
   repository: https://helm.elastic.co
   version: 7.17.3
-digest: sha256:833041ca860a77cc220bdc97f7b6af8ff8b6da0c0a021615dc2858138a29bbbd
-generated: "2023-02-26T12:17:23.507774503+02:00"
+- name: metrics-server
+  repository: https://kubernetes-sigs.github.io/metrics-server/
+  version: 3.8.4
+- name: vertical-pod-autoscaler
+  repository: https://cowboysysop.github.io/charts/
+  version: 6.0.3
+digest: sha256:4915c21724a8c4693f749aab2c311336990b48e16e90884d7b9ceca42eef69f8
+generated: "2023-04-13T23:07:43.616994532-05:00"

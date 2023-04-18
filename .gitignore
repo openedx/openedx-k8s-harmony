@@ -6,4 +6,3 @@ infra-*/.terraform*
 infra-*/secrets.auto.tfvars
 my-notes
 values.yaml
-tutor-multi-chart/charts/*.tgz
