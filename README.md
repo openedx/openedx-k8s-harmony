@@ -56,6 +56,39 @@ This helm chart uses [ingress-nginx](https://kubernetes.github.io/ingress-nginx/
 
 In addition, [the cert-manager Helm charts do not install the required CRDs used by cert-manager](https://cert-manager.io/docs/installation/upgrading/#crds-managed-separately), so you will need to manually install and upgrade them to the correct version as described in the instructions below. This is due to the some limitations in the management of CRDs by Helm. 
 
+### How the autoscaling capabilities are implemented in this project?
+
+Tutor does not offer an autoscaling mechanism by default. This is a critical feature when your application starts to
+receive more and more traffic. Kubernetes offers two main autoscaling methods:
+
+- **Pod-based scaling**: This mechanism consists of the creation and adjustment of new pods to cover growing workloads.
+Here we can mention tools like
+[**Horizontal Pod autoscaler (HPA)**](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
+and [**Vertical pod autoscaler (VPA)**](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler).
+The first consist of automatically increasing or decreasing the number of pods in response to a workload's metric
+consumption (generally CPU and memory), and the second one aims to stabilize the consumption and resources of every pod
+by providing suggestions on the best configuration for a workload based on historical resource usage measurements. Both
+of them are meant to be applied over Kubernetes Deployment instances.
+
+- **Node-based scaling:** This mechanism allows the addition of new NODES to the Kubernetes cluster so compute resources
+are guaranteed to schedule new incoming workloads. Tools worth mentioning in this category are
+[**cluster-autoscaler (CA)**](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler) and
+[Karpenter](https://karpenter.sh/).
+
+For the scope of this project, the focus will be in the **pod-based scaling** mechanisms since Node-based scaling tools
+require configuration which is external to the cluster, which is out of the scope for this Helm chart for now.
+
+The approach will be to use pod autoscaling on each environment separately (assuming there are installations on different
+namespaces) following the steps below:
+
+1. **Install the global dependencies**: this Helm chart offers the option of installing the dependencies required to
+get HPA and VPA working (they are included as subcharts). These are the Helm charts for **metrics-server** and **VPA**.
+By default these dependencies are not installed, however you can enable them via the Helm chart values if they aren't
+still present in your cluster.
+2. **Enable the pod-autoscaling plugin per environment**: the
+[pod-autoscaling plugin](https://github.com/eduNEXT/tutor-contrib-pod-autoscaling) enables the implementation of HPA and
+VPA to start scaling an installation workloads. Variables for the plugin configuration are documented there.
+
 
 
 <br><br><br>

@@ -106,3 +106,19 @@ elasticsearch:
       xpack.security.transport.ssl.certificate: /usr/share/elasticsearch/config/certs/tls.crt
       xpack.security.transport.ssl.certificate_authorities: /usr/share/elasticsearch/config/certs/ca.crt
       xpack.security.transport.ssl.verification_mode: certificate
+
+# Configuration for the metrics server chart
+metricsserver:
+   # Control the chart inclusion
+   enabled: false
+   # See https://github.com/kubernetes-sigs/metrics-server/blob/master/charts/metrics-server/values.yaml
+   # for all available options
+   replicas: 1
+# Configuration for the Vertical Pod Autoscaler chart
+vpa:
+   # Control the chart inclusion
+   enabled: false
+   # See https://github.com/cowboysysop/charts/blob/master/charts/vertical-pod-autoscaler/values.yaml
+   # for all available options
+   admissionController:
+      replicaCount: 1
