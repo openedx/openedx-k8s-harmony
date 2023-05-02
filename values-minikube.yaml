@@ -1,3 +1,0 @@
-# Disable HTTPS cert provisioning for testing with minikube
-cert-manager:
-   enabled: false
