@@ -217,7 +217,7 @@ To enable set `elasticsearch.enabled=true` in your `values.yaml` and deploy the 
 For each instance you would like to enable this on, set the configuration values in the respective `config.yml`:
 
 ```yaml
-K8S_HARMONY_ENABLE_SHARED_ELASTICSEARCH: true
+K8S_HARMONY_ENABLE_SHARED_HARMONY_SEARCH: true
 RUN_ELASTICSEARCH: false
 ```
 

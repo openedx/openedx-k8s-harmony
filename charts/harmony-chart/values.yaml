@@ -18,16 +18,19 @@ cert-manager:
 elasticsearch:
   enabled: false
 
+  clusterName: "harmony-search-cluster"
+  masterService: "harmony-search-cluster"
+
   # Operators will need to add/update the following setting in each
   # of their instances by running the commands:
   # ```
-  # tutor config save --set K8S_HARMONY_ENABLE_SHARED_ELASTICSEARCH=true --set RUN_ELASTICSEARCH=false
+  # tutor config save --set K8S_HARMONY_ENABLE_SHARED_HARMONY_SEARCH=true --set RUN_ELASTICSEARCH=false
   # tutor harmony create-elasticsearch-user
   # ```
   # RUN_ELASTICSEARCH: false
-  # ELASTICSEARCH_PREFIX_INDEX: "username-"
-  # K8S_HARMONY_USE_SHARED_ELASTICSEARCH: true
-  # ELASTICSEARCH_AUTH: "username:actual_password"
+  # HARMONY_SEARCH_INDEX_PREFIX: "username-"
+  # K8S_HARMONY_ENABLE_SHARED_HARMONY_SEARCH: true
+  # HARMONY_SEARCH_HTTP_AUTH: "username:actual_password"
 
   # We will create the relevant certs, because they need to shared
   # with pods in other namespaces.
@@ -52,6 +55,7 @@ elasticsearch:
 
   esConfig:
     "elasticsearch.yml": |
+      cluster.name: harmony-search-cluster
       xpack.security.enabled: true
       xpack.security.http.ssl.enabled: true
       xpack.security.http.ssl.key: /usr/share/elasticsearch/config/certs/tls.key
@@ -82,75 +86,100 @@ vpa:
 # Multi-tenant OpenSearch
 opensearch:
   enabled: false
+  clusterName: "harmony-search-cluster"
+  masterService: "harmony-search-cluster"
 
   # Operators will need to add/update the following setting in each
   # of their instances by running the commands:
   # ```
-  # tutor config save --set K8S_HARMONY_ENABLE_SHARED_OPENSEARCH=true --set RUN_ELASTICSEARCH=false
+  # tutor config save --set K8S_HARMONY_ENABLE_SHARED_HARMONY_SEARCH=true --set RUN_ELASTICSEARCH=false
   # tutor harmony create-opensearch-user
   # ```
   # RUN_ELASTICSEARCH: false
-  # ELASTICSEARCH_PREFIX_INDEX: "username-"
+  # HARMONY_SEARCH_INDEX_PREFIX: "username-"
   # K8S_HARMONY_USE_SHARED_OPENSEARCH: true
-  # ELASTICSEARCH_AUTH: "username:actual_password"
+  # HARMONY_SEARCH_HTTP_AUTH: "username:actual_password"
 
-# Allows you to add any config files in {{ .Values.opensearchHome }}/config
-opensearchHome: /usr/share/opensearch
-# such as opensearch.yml and log4j2.properties
-config:
-  opensearch.yml: |
-    cluster.name: opensearch-cluster
-    network.host: 0.0.0.0
-    plugins:
-      security:
-        ssl:
-          transport:
-            pemcert_filepath: certs/tls.crt
-            pemkey_filepath: certs/tls.key
-            pemtrustedcas_filepath: certs/ca.crt
-            enforce_hostname_verification: false
-          http:
-            enabled: true
-            pemcert_filepath: certs/tls.crt
-            pemkey_filepath: certs/tls.key
-            pemtrustedcas_filepath: certs/ca.crt
-        allow_unsafe_democertificates: false
-        allow_default_init_securityindex: true
-        audit.type: internal_opensearch
-        enable_snapshot_restore_privilege: true
-        check_snapshot_restore_write_privileges: true
-        restapi:
-          roles_enabled: ["all_access", "security_rest_api_access"]
-        system_indices:
-          enabled: true
-          indices:
-            [
-              ".opendistro-alerting-config",
-              ".opendistro-alerting-alert*",
-              ".opendistro-anomaly-results*",
-              ".opendistro-anomaly-detector*",
-              ".opendistro-anomaly-checkpoints",
-              ".opendistro-anomaly-detection-state",
-              ".opendistro-reports-*",
-              ".opendistro-notifications-*",
-              ".opendistro-notebooks",
-              ".opendistro-asynchronous-search-response*",
-            ]
 
   # # This secret will contain the ssl certificates.
   secretMounts:
-    - name: openseach-certificates
-      secretName: openseach-certificates
+    - name: opensearch-certificates
+      secretName: opensearch-certificates
       path: /usr/share/opensearch/config/certs
       defaultMode: 0777
 
   resources:
     requests:
-      cpu: "100m"
-      memory: "512Mi"
-    limits:
-      cpu: "500m"
-      memory: "700Mi"
+      cpu: "1000m"
+      memory: "100Mi"
 
   persistence:
     size: 30Gi
+
+  # Set vm.max_map_count
+  # Default value is 262144
+  sysctlInit:
+    enabled: true
+
+  extraEnvs:
+    - name: DISABLE_INSTALL_DEMO_CONFIG
+      value: "true"
+    - name: HARMONY_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: opensearch-credentials
+          key: harmony_password
+
+  # Allows you to add any config files in {{ .Values.opensearchHome }}/config
+  opensearchHome: /usr/share/opensearch
+  # such as opensearch.yml and log4j2.properties
+
+  securityConfig:
+    enabled: true
+    internalUsersSecret: opensearch-credentials
+
+  config:
+    opensearch.yml: |
+      cluster.name: harmony-search-cluster
+      network.host: 0.0.0.0
+      plugins:
+        security:
+          ssl:
+            transport:
+              enabled: true
+              pemcert_filepath: certs/tls.crt
+              pemkey_filepath: certs/tls.key
+              pemtrustedcas_filepath: certs/ca.crt
+              enforce_hostname_verification: false
+            http:
+              enabled: true
+              pemcert_filepath: certs/tls.crt
+              pemkey_filepath: certs/tls.key
+              pemtrustedcas_filepath: certs/ca.crt
+          authcz:
+            admin_dn:
+              - CN=opensearch-master.*.local
+          nodes_dn:
+            - CN=opensearch-master.*.local
+          allow_unsafe_democertificates: false
+          allow_default_init_securityindex: true
+          audit.type: internal_opensearch
+          enable_snapshot_restore_privilege: true
+          check_snapshot_restore_write_privileges: true
+          restapi:
+            roles_enabled: ["all_access", "security_rest_api_access"]
+          system_indices:
+            enabled: true
+            indices:
+              [
+                ".opendistro-alerting-config",
+                ".opendistro-alerting-alert*",
+                ".opendistro-anomaly-results*",
+                ".opendistro-anomaly-detector*",
+                ".opendistro-anomaly-checkpoints",
+                ".opendistro-anomaly-detection-state",
+                ".opendistro-reports-*",
+                ".opendistro-notifications-*",
+                ".opendistro-notebooks",
+                ".opendistro-asynchronous-search-response*",
+              ]
