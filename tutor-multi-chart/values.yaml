@@ -1,11 +1,9 @@
 # Default values for tutor-multi-chart.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-
 ingress-nginx:
   # Use ingress-nginx as a default controller.
   enabled: true
-
 cert-manager:
   # Use cert-manager as a default certificate controller.
   enabled: true
@@ -13,3 +11,50 @@ cert-manager:
     # Email address associated with the ACME account. Used to notify about expiring
     # certificates.
   email: ""
+prometheus:
+  # add prometheus to the chart by default. Cluster operators who have already
+  # installed prometheus should change this to 'false'.
+  enabled: true
+  grafana:
+    # FIX NOTE: HOW ARE PASSWORDS HANDLED?
+    admin-password: ""
+karpenter:
+  # add Karpenter node management for AWS EKS clusters. See: https://karpenter.sh/
+  enabled: true
+  # FIX NOTE: CANY ANY OF THESE BE PRESET???
+  {{- if not .Values.karpenter.clusterName }}
+  {{- fail ".Values.karpenter.clusterName is required" }}
+  {{- end }}  
+  {{- if not .Values.karpenter.clusterEndpoint }}
+  {{- fail ".Values.karpenter.clusterEndpoint is required" }}
+  {{- end }}  
+  {{- if not .Values.karpenter.clusterEndpoint }}
+  {{- fail ".Values.karpenter.serviceAccount.annotations.eks.amazonaws.com/role-arn is required" }}
+  {{- end }}  
+  {{- if not .Values.karpenter.aws.defaultInstanceProfile }}
+  {{- fail ".Values.karpenter.aws.defaultInstanceProfile is required" }}
+  {{- end }}  
+  cluster-name: ""
+  cluster-endpoint: ""
+  service-account:
+    annotations:
+      "eks.amazonaws.com/role-arn": ""
+  aws:
+    default-instance-profile: ""
+  # ---------------------------------------------------------------------------
+  # Provide sensible defaults for resource provisioning and lifecycle
+  # ---------------------------------------------------------------------------
+  provisioner:
+    # ttl in seconds. If nil, the feature is disabled, nodes will never terminate
+    ttl-seconds-until-expired: 600
+    # ttl in seconds. If nil, the feature is disabled, nodes will never scale down 
+    # due to low utilization.
+    ttl-seconds-after-empty: 600
+  limits:
+    resources:
+      cpu: "400"          # 100 * 4 cpu
+      memory: "1600Gi"    # 100 * 16Gi
+  requirements:
+    "karpenter.sh/capacity-type": ["spot", "on-demand"]
+    "node.kubernetes.io/instance-type": ["t3.large", "t3.xlarge", "t3.2xlarge", "t2.xlarge", "t2.2xlarge"]
+    "kubernetes.io/arch": ["amd64"]
