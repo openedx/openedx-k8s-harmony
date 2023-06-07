@@ -1,5 +1,5 @@
 apiVersion: v2
-name: tutor-multi-chart
+name: harmony-chart
 description: A Helm chart for deploying multiple Open edX instances onto Kubernetes using Tutor
 type: application
 # This is the chart version. This version number should be incremented each time you make changes to the chart and its
@@ -52,4 +52,5 @@ dependencies:
   condition: karpenter.enabled
 - name: elasticsearch
   version: "7.17.3"
+  condition: elasticsearch.enabled
   repository: https://helm.elastic.co

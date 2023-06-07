@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "tutor-multi-chart.name" -}}
+{{- define "harmony-chart.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "tutor-multi-chart.fullname" -}}
+{{- define "harmony-chart.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "tutor-multi-chart.chart" -}}
+{{- define "harmony-chart.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "tutor-multi-chart.labels" -}}
-helm.sh/chart: {{ include "tutor-multi-chart.chart" . }}
-{{ include "tutor-multi-chart.selectorLabels" . }}
+{{- define "harmony-chart.labels" -}}
+helm.sh/chart: {{ include "harmony-chart.chart" . }}
+{{ include "harmony-chart.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "tutor-multi-chart.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "tutor-multi-chart.name" . }}
+{{- define "harmony-chart.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "harmony-chart.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "tutor-multi-chart.serviceAccountName" -}}
+{{- define "harmony-chart.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "tutor-multi-chart.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "harmony-chart.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

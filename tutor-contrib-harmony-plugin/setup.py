@@ -13,7 +13,7 @@ def load_readme():
 def load_about():
     about = {}
     with io.open(
-        os.path.join(HERE, "tutor_multi_k8s_plugin", "__about__.py"),
+        os.path.join(HERE, "tutor_k8s_harmony_plugin", "__about__.py"),
         "rt",
         encoding="utf-8",
     ) as f:
@@ -25,12 +25,12 @@ ABOUT = load_about()
 
 
 setup(
-    name="tutor-contrib-multi-plugin",
+    name="tutor-contrib-harmony-plugin",
     version=ABOUT["__version__"],
-    url="https://github.com/open-craft/tutor-contrib-multi",
+    url="https://github.com/openedx/openedx-k8s-harmony",
     project_urls={
-        "Code": "https://github.com/open-craft/tutor-contrib-multi",
-        "Issue tracker": "https://github.com/open-craft/tutor-contrib-multi/issues",
+        "Code": "https://github.com/openedx/openedx-k8s-harmony",
+        "Issue tracker": "https://github.com/openedx/openedx-k8s-harmony/issues",
     },
     license="AGPLv3",
     author="Braden MacDonald",
@@ -42,7 +42,7 @@ setup(
     install_requires=["tutor"],
     entry_points={
         "tutor.plugin.v1": [
-            "multi_k8s = tutor_multi_k8s_plugin.plugin"
+            "k8s_harmony = tutor_k8s_harmony_plugin.plugin"
         ]
     },
     classifiers=[
