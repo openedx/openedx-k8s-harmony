@@ -39,7 +39,7 @@ variable "enable_irsa" {
 variable "kubernetes_cluster_version" {
   description = "the Kubernetes release for this cluster"
   type        = string
-  default     = "1.25"
+  default     = "1.27"
 }
 
 variable "eks_create_kms_key" {
