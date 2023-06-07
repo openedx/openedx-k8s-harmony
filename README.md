@@ -141,7 +141,31 @@ of the box.
 
 ----------------
 
-## Appendix A: how to uninstall this chart
+## Configuration
+
+### Multi-tenant Elasticsearch
+
+Tutor creates an Elasticsearch pod as part of the Kubernetes deployment. Depending on the number of instances
+Memory and CPU use can be lowered by running a central ES cluster instead of an ES pod for every instance.
+
+To enable set `elasticsearch.enabled=true` in your `values.yaml` and deploy the chart.
+
+For each instance you would like to enable this on, set the configuration values in the respective `config.yml`:
+
+```yaml
+K8S_HARMONY_ENABLE_SHARED_ELASTICSEARCH: true
+RUN_ELASTICSEARCH: false
+```
+
+- And create the user on the cluster with `tutor k8s harmony create-elasticsearch-user`.
+- Rebuild your Open edX image `tutor images build openedx`.
+- Finally, redeploy your changes: `tutor k8s start && tutor k8s init`.
+
+#### Caveats
+
+In order for SSL to work without warnings the CA certificate needs to be mounted in the relevant pods. This is not yet implemented as due to an [outstanding issue in tutor](https://github.com/overhangio/tutor/issues/791) that had not yet been completed at the time of writing.
+
+## Appendix : how to uninstall this chart
 
 Just run `helm uninstall --namespace tutor-multi tutor-multi` to uninstall this.
 

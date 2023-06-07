@@ -58,3 +58,51 @@ karpenter:
     "karpenter.sh/capacity-type": ["spot", "on-demand"]
     "node.kubernetes.io/instance-type": ["t3.large", "t3.xlarge", "t3.2xlarge", "t2.xlarge", "t2.2xlarge"]
     "kubernetes.io/arch": ["amd64"]
+
+# Multi-tenant ElasticSearch
+elasticsearch:
+  enabled: false
+
+  # Operators will need to add/update the following setting in each
+  # of their instances by running the commands:
+  # ```
+  # tutor config save --set K8S_HARMONY_ENABLE_SHARED_ELASTICSEARCH=true --set RUN_ELASTICSEARCH=false
+  # tutor harmony create-elasticsearch-user
+  # ```
+  # RUN_ELASTICSEARCH: false
+  # ELASTICSEARCH_PREFIX_INDEX: "username-"
+  # K8S_HARMONY_USE_SHARED_ELASTICSEARCH: true
+  # ELASTICSEARCH_AUTH: "username:actual_password"
+
+  # We will create the relevant certs, because they need to shared
+  # with pods in other namespaces.
+  createCert: false
+  # Authentication is only available in https
+  protocol: https
+
+  # This secret will contain the http certificates.
+  secretMounts:
+    - name: elasticsearch-certificates
+      secretName: elasticsearch-certificates
+      path: /usr/share/elasticsearch/config/certs
+      defaultMode: 0777
+
+  # The password for the elastic user is stored in this secret
+  extraEnvs:
+    - name: ELASTIC_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: elasticsearch-credentials
+          key: password
+
+  esConfig:
+    "elasticsearch.yml": |
+      xpack.security.enabled: true
+      xpack.security.http.ssl.enabled: true
+      xpack.security.http.ssl.key: /usr/share/elasticsearch/config/certs/tls.key
+      xpack.security.http.ssl.certificate: /usr/share/elasticsearch/config/certs/tls.crt
+      xpack.security.transport.ssl.enabled: true
+      xpack.security.transport.ssl.key: /usr/share/elasticsearch/config/certs/tls.key
+      xpack.security.transport.ssl.certificate: /usr/share/elasticsearch/config/certs/tls.crt
+      xpack.security.transport.ssl.certificate_authorities: /usr/share/elasticsearch/config/certs/ca.crt
+      xpack.security.transport.ssl.verification_mode: certificate

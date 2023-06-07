@@ -12,3 +12,4 @@ infra-*/secrets.auto.tfvars
 my-notes
 my-notes.txt
 values.yaml
+tutor-multi-chart/charts/*.tgz

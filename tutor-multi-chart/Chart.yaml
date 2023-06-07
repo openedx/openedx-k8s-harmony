@@ -50,3 +50,6 @@ dependencies:
   version: "0.16.3"
   repository: https://charts.karpenter.sh
   condition: karpenter.enabled
+- name: elasticsearch
+  version: "7.17.3"
+  repository: https://helm.elastic.co
