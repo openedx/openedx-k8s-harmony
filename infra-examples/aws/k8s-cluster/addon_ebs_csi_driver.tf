@@ -13,6 +13,10 @@
 #        As a workaround, i'm also adding the AmazonEBSCSIDriverPolicy policy to the
 #        karpenter node group, which is assigned inside the eks module in main.tf.
 #------------------------------------------------------------------------------
+resource "random_integer" "role_suffix" {
+  min = 10000
+  max = 99999
+}
 
 data "aws_iam_policy" "AmazonEBSCSIDriverPolicy" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
@@ -20,7 +24,7 @@ data "aws_iam_policy" "AmazonEBSCSIDriverPolicy" {
 
 # 2. Create the IAM role.
 resource "aws_iam_role" "AmazonEKS_EBS_CSI_DriverRole" {
-  name = "AmazonEKS_EBS_CSI_DriverRole"
+  name = "AmazonEKS_EBS_CSI_DriverRole-${random_integer.role_suffix.result}"
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
