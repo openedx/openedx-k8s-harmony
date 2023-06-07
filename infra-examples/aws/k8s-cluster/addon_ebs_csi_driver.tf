@@ -55,7 +55,6 @@ resource "aws_iam_role_policy_attachment" "aws_ebs_csi_driver" {
 # 5. Annotate the ebs-csi-controller-sa Kubernetes service account with the ARN of the IAM role
 # 6. Restart the ebs-csi-controller deployment for the annotation to take effect
 resource "null_resource" "annotate-ebs-csi-controller" {
-
   provisioner "local-exec" {
     command = <<-EOT
       # 1. conifugre kubeconfig locally with the credentials data of the just-created
