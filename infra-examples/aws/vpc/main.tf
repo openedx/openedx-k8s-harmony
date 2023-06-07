@@ -45,11 +45,14 @@ locals {
 
 }
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
 module "vpc" {
   source                 = "terraform-aws-modules/vpc/aws"
   version                = "~> 3.18"
   create_vpc             = true
-  azs                    = local.azs
+  azs                    = data.aws_availability_zones.available.names
   public_subnet_tags     = local.public_subnet_tags
   private_subnet_tags    = local.private_subnet_tags
   tags                   = local.tags
