@@ -194,7 +194,6 @@ resource "aws_security_group" "worker_group_mgmt" {
   }
 
   tags = local.tags
-
 }
 
 resource "aws_security_group" "all_worker_mgmt" {
