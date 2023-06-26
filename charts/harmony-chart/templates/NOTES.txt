@@ -5,7 +5,7 @@ An NGINX load balancer routes all HTTP/HTTPS traffic into the cluster to each
 Open edX instance. Even before you deploy any Open edX instances, you can test
 that the load balancer is working. First, get its external IP using
 
-    kubectl get svc -n harmony harmony-ingress-nginx-controller
+    kubectl get svc -n {{ .Release.Namespace }} harmony-ingress-nginx-controller
 
 Next, go to http://the.external.ip.shown/cluster-echo-test and make sure you get
 a JSON response.

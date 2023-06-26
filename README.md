@@ -54,7 +54,7 @@ Supporting one really large instance is not a core design goal, but it should wo
 
 This helm chart uses [ingress-nginx](https://kubernetes.github.io/ingress-nginx/) as a load balancer alongside [cert-manager](https://cert-manager.io/) to provide automatic SSL certificates. Because of how Helm works, the cert-manager sub-chart will be installed into the same namespace as the parent harmony chart. But if you already have cert-manager on your cluster, this will create a conflict. You should take special care not to install cert-manager twice due to it installing several non-namespaced resources. If you already installed cert-manager by different means, make sure set `cert-manager.enabled: false` for this chart.
 
-In addition, [the cert-manager Helm charts do not install the required CRDs used by cert-manager](https://cert-manager.io/docs/installation/upgrading/#crds-managed-separately), so you will need to manually install and upgrade them to the correct version as described in the instructions below. This is due to the some limitations in the management of CRDs by Helm. 
+In addition, [the cert-manager Helm charts do not install the required CRDs used by cert-manager](https://cert-manager.io/docs/installation/upgrading/#crds-managed-separately), so you will need to manually install and upgrade them to the correct version as described in the instructions below. This is due to the some limitations in the management of CRDs by Helm.
 
 ### How the autoscaling capabilities are implemented in this project?
 
@@ -76,7 +76,7 @@ are guaranteed to schedule new incoming workloads. Tools worth mentioning in thi
 [Karpenter](https://karpenter.sh/).
 
 For the scope of this project, the focus will be in the **pod-based scaling** mechanisms since Node-based scaling tools
-require configuration which is external to the cluster, which is out of the scope for this Helm chart for now.
+require configuration which is external to the cluster and this is out of the scope for this Helm chart for now.
 
 The approach will be to use pod autoscaling on each environment separately (assuming there are installations on different
 namespaces) following the steps below:
@@ -104,24 +104,30 @@ memory** (that's enough to test 2 Open edX instances).
 
 1. Make sure you can access the cluster from your machine: run `kubectl cluster-info` and make sure it displays some
    information about the cluster (e.g. two URLs).
-2. Copy `values-example.yaml` to `values.yaml` and edit it to put in your email address and customize other settings.
-   The email address is required for Lets Encrypt to issue HTTPS certificates. It is not shared with anyone else.
+2. Copy `values-example.yaml` to a new `values.yaml` file and edit it to put in your email address and customize
+   other settings. The email address is required for Lets Encrypt to issue HTTPS certificates. It is not shared
+   with anyone else. For a full configuration reference, see the `charts/harmony-chart/values.yaml` file.
 3. Install [Helm](https://helm.sh/) if you don't have it already.
-4. Install the cert-manager CRDs if using cert-manager:
+4. Add the Harmony Helm repository:
+   ```
+   helm repo add openedx-harmony https://openedx.github.io/openedx-k8s-harmony
+   helm repo update
+   ```
+5. Install the cert-manager CRDs if using cert-manager:
    ```
    kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.1/cert-manager.crds.yaml --namespace=harmony
    ```
-   You can check the version of cert-manager that is going to be installed by the chart by running
-   `helm dependency list` or by checking the corresponding line in the `harmony-chart/Chart.yaml` file.
-5. Run:
+   You can check the version of cert-manager that is going to be installed by the chart by checking the corresponding
+   line in the `charts/harmony-chart/Chart.yaml` file.
+6. Install the Harmony chart by running:
    ```
-   helm install --namespace harmony --create-namespace -f values.yaml harmony ./harmony-chart
+   helm install harmony --namespace harmony --create-namespace -f values.yaml openedx-harmony/harmony-chart
    ```
 
-Note: in the future, if you make any changes to `values.yaml`, then run this command to update the deployment:
+Note: in the future, if you apply changes to `values.yaml`, please run this command to update the deployment of the chart:
 
 ```
-helm upgrade --namespace harmony -f values.yaml harmony ./harmony-chart
+helm upgrade harmony --namespace harmony -f values.yaml openedx-harmony/harmony-chart
 ```
 
 #### Option 1b: Setting up Harmony Chart locally on Minikube
@@ -132,8 +138,12 @@ HTTPS and is more complicated due to the need to use tunnelling.*
 
 1. First, [install `minikube`](https://minikube.sigs.k8s.io/docs/start/) if you don't have it already.
 2. Run `minikube start` (you can also use `minikube dashboard` to access the Kubernetes dashboard).
-3. Run\
-   `helm install --namespace harmony --create-namespace -f values-minikube.yaml harmony ./harmony-chart`
+3. Add the Helm repository and install the Harmony chart using the `values-minikube.yaml` file as configuration:
+   ```
+   helm repo add openedx-harmony https://openedx.github.io/openedx-k8s-harmony
+   helm repo update
+   helm install harmony --namespace harmony --create-namespace -f values-minikube.yaml openedx-harmony/harmony-chart
+   ```
 4. Run `minikube tunnel` (you may need to enter a password), and then you should be able to access the cluster (see
    "External IP" below). If this approach is not working, an alternative is to run\
    `minikube service harmony-ingress-nginx-controller -n harmony`\
