@@ -47,3 +47,13 @@ dependencies:
   version: "2.13.3"
   condition: opensearch.enabled
   repository: https://opensearch-project.github.io/helm-charts
+
+- name: prometheus
+  version: "19.7.2"
+  repository: https://prometheus-community.github.io/helm-charts
+  condition: prometheus.enabled
+
+- name: karpenter
+  version: "0.16.3"
+  repository: https://charts.karpenter.sh
+  condition: karpenter.enabled

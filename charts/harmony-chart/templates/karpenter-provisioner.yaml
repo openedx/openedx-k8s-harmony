@@ -1,0 +1,35 @@
+{{- if .Values.karpenter.enabled }}
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  requirements:
+    - key: karpenter.sh/capacity-type
+      operator: In
+      values: {{- toYaml .Values.karpenter.requirements.karpenter.sh/capacity-type | nindent 4 }}
+    - key: node.kubernetes.io/instance-type
+      operator: In
+      values: {{- toYaml .Values.karpenter.requirements.node.kubernetes.io/instance-type | nindent 4 }}
+    - key: kubernetes.io/arch
+      operator: In
+      values:  {{- toYaml .Values.karpenter.requirements.node.kubernetes.io/arch | nindent 4 }}
+  limits:
+    resources:
+      cpu: {{ .Values.karpenter.limits.resources.cpu . | quote }}
+      memory: {{ Values.karpenter.limits.resources.memory . | quote }}
+  provider:
+    subnetSelector:
+      karpenter.sh/discovery: {{ .name }}
+    securityGroupSelector:
+      karpenter.sh/discovery: {{ .name }}
+    tags:
+      karpenter.sh/discovery: {{ .name }}
+  # If nil, the feature is disabled, nodes will never terminate
+  # FIX NOTE: confirm that this addressing scheme is correct
+  ttlSecondsUntilExpired: {{ Values.karpenter.provisioner.ttl-seconds-until-expired }}
+  # If nil, the feature is disabled, nodes will never scale down due to low utilization
+  # FIX NOTE: confirm that this addressing scheme is correct
+  ttlSecondsAfterEmpty: {{ Values.karpenter.provisioner.ttl-seconds-after-empty }}
+{{ end }}
