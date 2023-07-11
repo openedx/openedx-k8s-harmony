@@ -25,7 +25,7 @@ In particular, this project aims to provide the following benefits to Open edX o
 ## Technology stack and architecture
 
 1. At the base is a Kubernetes cluster, which you must provide (e.g. using Terraform to provision Amazon EKS).
-   * Any cloud provider such as AWS or Digital Ocean should work. There is an example Terraform setup in `infra-example` but it is just a starting point and not recommended for production use.
+   * Any cloud provider such as AWS or Digital Ocean should work. There are Terraform examples in the `infra-examples` folder but it is just a starting point and not recommended for production use.
 2. On top of that, this project's helm chart will install the shared resources you need - an ingress controller, monitoring, database clusters, etc. The following are included but can be disabled/replaced if you prefer an alternative:
    * Ingress controller: [ingress-nginx](https://kubernetes.github.io/ingress-nginx/)
    * Automatic HTTPS cert provisioning: [cert-manager](https://cert-manager.io/)
@@ -245,7 +245,7 @@ do_token = "digital-ocean-token"
 ```
 Then run:
 ```
-cd infra-examples/do
+cd infra-examples/digitalocean
 terraform init
 terraform apply
 cd ..
