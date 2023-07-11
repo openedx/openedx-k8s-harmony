@@ -1,24 +1,20 @@
-{{- if .Values.karpenter.enabled }}
+{{- if .Values.karpenter.enabled -}}
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
-  name: {{ .name }}
+  name: {{ .Values.karpenter.provisioner.name }}
   namespace: {{ .Release.Namespace | quote }}
 spec:
-  requirements:
-    - key: karpenter.sh/capacity-type
-      operator: In
-      values: {{- toYaml .Values.karpenter.requirements.karpenter.sh/capacity-type | nindent 4 }}
-    - key: node.kubernetes.io/instance-type
-      operator: In
-      values: {{- toYaml .Values.karpenter.requirements.node.kubernetes.io/instance-type | nindent 4 }}
-    - key: kubernetes.io/arch
-      operator: In
-      values:  {{- toYaml .Values.karpenter.requirements.node.kubernetes.io/arch | nindent 4 }}
+  {{- if .Values.karpenter.provisioner.spec.requirements }}
+  requirements: {{ toYaml .Values.karpenter.provisioner.spec.requirements | nindent 4 }}
+  {{- end }}
+  {{- if .Values.karpenter.provisioner.spec.limits.resources }}
   limits:
     resources:
-      cpu: {{ .Values.karpenter.limits.resources.cpu . | quote }}
-      memory: {{ Values.karpenter.limits.resources.memory . | quote }}
+    {{- range $key, $value := .Values.karpenter.provisioner.spec.limits.resources }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
   provider:
     subnetSelector:
       karpenter.sh/discovery: {{ .name }}
@@ -26,10 +22,9 @@ spec:
       karpenter.sh/discovery: {{ .name }}
     tags:
       karpenter.sh/discovery: {{ .name }}
-  # If nil, the feature is disabled, nodes will never terminate
-  # FIX NOTE: confirm that this addressing scheme is correct
-  ttlSecondsUntilExpired: {{ Values.karpenter.provisioner.ttl-seconds-until-expired }}
-  # If nil, the feature is disabled, nodes will never scale down due to low utilization
-  # FIX NOTE: confirm that this addressing scheme is correct
-  ttlSecondsAfterEmpty: {{ Values.karpenter.provisioner.ttl-seconds-after-empty }}
-{{ end }}
+  {{- if .Values.karpenter.provisioner.spec.provider }}
+  provider: {{ toYaml .Values.karpenter.provisioner.spec.provider | nindent 4 }}
+  {{- end }}
+  ttlSecondsUntilExpired: {{ Values.karpenter.provisioner.spec.ttlSecondsUntilExpired }}
+  ttlSecondsAfterEmpty: {{ Values.karpenter.provisioner.spec.ttlSecondsAfterEmpty }}
+{{- end }}

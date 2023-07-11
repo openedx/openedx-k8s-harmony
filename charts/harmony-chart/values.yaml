@@ -187,13 +187,10 @@ opensearch:
 prometheus:
   # add prometheus to the chart by default. Cluster operators who have already
   # installed prometheus should change this to 'false'.
-  enabled: true
-  grafana:
-    # FIX NOTE: HOW ARE PASSWORDS HANDLED?
-    admin-password: ""
+  enabled: false
 karpenter:
   # add Karpenter node management for AWS EKS clusters. See: https://karpenter.sh/
-  enabled: true
+  enabled: false
   # FIX NOTE: CANY ANY OF THESE BE PRESET???
   {{- if not .Values.karpenter.clusterName }}
   {{- fail ".Values.karpenter.clusterName is required" }}
@@ -218,16 +215,40 @@ karpenter:
   # Provide sensible defaults for resource provisioning and lifecycle
   # ---------------------------------------------------------------------------
   provisioner:
-    # ttl in seconds. If nil, the feature is disabled, nodes will never terminate
-    ttl-seconds-until-expired: 600
-    # ttl in seconds. If nil, the feature is disabled, nodes will never scale down
-    # due to low utilization.
-    ttl-seconds-after-empty: 600
-  limits:
-    resources:
-      cpu: "400"          # 100 * 4 cpu
-      memory: "1600Gi"    # 100 * 16Gi
-  requirements:
-    "karpenter.sh/capacity-type": ["spot", "on-demand"]
-    "node.kubernetes.io/instance-type": ["t3.large", "t3.xlarge", "t3.2xlarge", "t2.xlarge", "t2.2xlarge"]
-    "kubernetes.io/arch": ["amd64"]
+    name: "default"
+    # Node template reference. using the default one
+    spec:
+      # Requirements for the provisioner API.
+      # More details in https://karpenter.sh/preview/concepts/provisioners/#specrequirements
+      requirements: []
+      # - key: karpenter.sh/capacity-type
+      #   operator: In
+      #   values: ["spot", "on-demand"]
+      # - key: node.kubernetes.io/instance-type
+      #   operator: In
+      #   values: ["t3.large", "t3.xlarge", "t3.2xlarge", "t2.xlarge", "t2.2xlarge"]
+      # - key: kubernetes.io/arch
+      #   operator: In
+      #   values: ["amd64"]
+      # The limits section controls the maximum amount of resources that the provisioner will manage.
+      # More details in https://karpenter.sh/preview/concepts/provisioners/#speclimitsresources
+      limits:
+        resources:
+          cpu: "400"          # 100 * 4 cpu
+          memory: "1600Gi"    # 100 * 16Gi
+      # This variable covers parameters of the AWS Cloud Provider.
+      # More details in https://github.com/aws/karpenter/blob/v0.19.3/website/content/en/v0.11.1/AWS/provisioning.md#specprovider
+      # NOTE: this parameter is no longer supported in newer version of Karpenter. A migration to the new CRD "AWSNodeTemplate" is
+      # required. Refer to https://github.com/aws/karpenter/blob/v0.19.3/website/content/en/v0.19.1/upgrade-guide/_index.md#upgrading-to-v0130
+      # to get further details
+      aws: {}
+      provider: {}
+      #  subnetSelector:
+      #    karpenter.sh/discovery: ${CLUSTER_NAME}
+      #  securityGroupSelector:
+      #    karpenter.sh/discovery: ${CLUSTER_NAME}
+      # TTL in seconds. If nil, the feature is disabled, nodes will never terminate
+      ttlSecondsUntilExpired: 600
+      # TTL in seconds. If nil, the feature is disabled, nodes will never scale down
+      # due to low utilization.
+      ttlSecondsAfterEmpty: 600
