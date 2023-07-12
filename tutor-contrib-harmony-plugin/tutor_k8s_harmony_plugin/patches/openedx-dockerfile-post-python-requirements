@@ -1,7 +1,0 @@
-{% if K8S_HARMONY_ENABLE_SHARED_ELASTICSEARCH %}
-# This is needed otherwise the previously installed edx-search
-# package doesn't get replaced. Once the below branch is merged
-# upstream it will no longer be needed.
-RUN pip uninstall -y edx-search
-RUN pip install --upgrade git+https://github.com/open-craft/edx-search.git@keith/prefixed-index-names
-{% endif %}

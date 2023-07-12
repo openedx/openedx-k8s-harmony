@@ -11,7 +11,7 @@ version: 0.1.0
 # version the application is using. It is recommended to use it with quotes.
 #
 # In our case, this represents the version of Tutor that this chart is compatible with.
-appVersion: "14.1.1"
+appVersion: "16.0.2"
 
 dependencies:
 # This is just info for the "helm dependency update" command, which will update the ./charts/ directory when run, using
@@ -42,3 +42,8 @@ dependencies:
   repository: https://cowboysysop.github.io/charts/
   alias: vpa
   condition: vpa.enabled
+
+- name: opensearch
+  version: "2.13.3"
+  condition: opensearch.enabled
+  repository: https://opensearch-project.github.io/helm-charts

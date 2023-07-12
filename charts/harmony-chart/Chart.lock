@@ -14,5 +14,8 @@ dependencies:
 - name: vertical-pod-autoscaler
   repository: https://cowboysysop.github.io/charts/
   version: 6.0.3
-digest: sha256:4915c21724a8c4693f749aab2c311336990b48e16e90884d7b9ceca42eef69f8
-generated: "2023-04-13T23:07:43.616994532-05:00"
+- name: opensearch
+  repository: https://opensearch-project.github.io/helm-charts
+  version: 2.13.3
+digest: sha256:11b69b1ea771337b1e7cf8497ee342a25b095b86899b8cee716be8cc9f955559
+generated: "2023-07-01T19:23:29.18815+03:00"
