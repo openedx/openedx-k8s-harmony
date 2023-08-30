@@ -13,13 +13,11 @@ terraform {
     local = {
       source  = "hashicorp/local"
       version = "~> 2.4"
-     }
-
+    }
     random = {
       source  = "hashicorp/random"
       version = "~> 3.5"
     }
-
     aws = {
       source  = "hashicorp/aws"
       version = "~> 4.65"
@@ -35,6 +33,10 @@ terraform {
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "~> 2.20"
+    }
+    template = {
+      source  = "hashicorp/template"
+      version = "~> 2.2"
     }
   }
 }

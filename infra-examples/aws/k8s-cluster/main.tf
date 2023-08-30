@@ -50,8 +50,8 @@ module "eks" {
 
   # Add your IAM user ARN to aws_auth_users in order to gain access to the cluster itself.
   # Note that alternatively, the cluster creator (presumably, you) can edit the manifest
-  # for kube-system/aws-auth configMap, adding additional users and roles as needed. 
-  # see: 
+  # for kube-system/aws-auth configMap, adding additional users and roles as needed.
+  # see:
   manage_aws_auth_configmap = true
   aws_auth_users            = var.map_users
 
@@ -63,10 +63,10 @@ module "eks" {
     { "karpenter.sh/discovery" = var.name }
   )
 
-  # AWS EKS add-ons that are required in order to support persistent volume 
+  # AWS EKS add-ons that are required in order to support persistent volume
   # claims for ElasticSearch and Caddy (if you opt for this rather than nginx).
   # Other addons are required by Karpenter and other optional supporting services.
-  # 
+  #
   # see: https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html
   cluster_addons = {
     # required to support internal networking between containers
@@ -170,7 +170,7 @@ data "template_file" "eks-console-full-access" {
   vars     = {}
 }
 
-# add an AWS IAM Role definition providing AWS console access to 
+# add an AWS IAM Role definition providing AWS console access to
 # AWS EKS cluster instances.
 resource "kubectl_manifest" "eks-console-full-access" {
   yaml_body = data.template_file.eks-console-full-access.rendered

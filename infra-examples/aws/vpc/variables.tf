@@ -6,11 +6,6 @@
 #
 # usage: create a VPC to contain all Open edX backend resources.
 #------------------------------------------------------------------------------
-variable "account_id" {
-  description = "a 12-digit AWS account id, all integers. example: 012345678999"
-  type        = string
-}
-
 variable "aws_region" {
   description = "The region in which the origin S3 bucket was created."
   type        = string
