@@ -184,10 +184,6 @@ opensearch:
                 ".opendistro-asynchronous-search-response*",
               ]
 
-prometheus:
-  # add prometheus to the chart by default. Cluster operators who have already
-  # installed prometheus should change this to 'false'.
-  enabled: false
 karpenter:
   # add Karpenter node management for AWS EKS clusters. See: https://karpenter.sh/
   enabled: false

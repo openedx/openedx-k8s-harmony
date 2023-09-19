@@ -24,7 +24,7 @@ AWS EKS has grown more complex over time. This reference implementation is preco
 - Key Management Service (KMS) is enabled, encrypting all Kubernetes Secrets
 - cluster access via aws-auth/configMap is enabled
 - a karpenter.sh/discovery resource tag is added to the EKS instance
-- various AWS EKS add-ons that are required by Open edX and/or Karpenter and/or its supporting systems (metrics-server, vpa, prometheus) are included
+- various AWS EKS add-ons that are required by Open edX and/or Karpenter and/or its supporting systems (metrics-server, vpa) are included
 - additional cluster node security configuration is added to allow node-to-node and pod-to-pod communication using internal DNS resolution
 - a managed node group is added containing custom labels, IAM roles, and resource tags; all of which are required by Karpenter
 - adds additional resources required by AWS EBS CSI Driver add-on, itself required by EKS since 1.22
