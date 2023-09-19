@@ -71,22 +71,22 @@ module "eks" {
   cluster_addons = {
     # required to support internal networking between containers
     vpc-cni = {
-      addon_version = "v1.12.6-eksbuild.2"
+      name = "vpc-cni"
     }
     # required to support internal DNS name resolution within the cluster
     coredns = {
-      addon_version = "v1.10.1-eksbuild.1"
+      name = "coredns"
     }
     # required to maintain network rules on  nodes and to enable internal
     # network communication between pods.
     kube-proxy = {
-      addon_version = "v1.27.1-eksbuild.1"
+      name = "kube-proxy"
     }
     # Required for release 1.22 and newer in order to support persistent volume
     # claims for ElasticSearch and Caddy (if you opt for this rather than nginx).
     aws-ebs-csi-driver = {
+      name                     = "aws-ebs-csi-driver"
       service_account_role_arn = aws_iam_role.AmazonEKS_EBS_CSI_DriverRole.arn
-      addon_version            = "v1.19.0-eksbuild.1"
     }
   }
 
