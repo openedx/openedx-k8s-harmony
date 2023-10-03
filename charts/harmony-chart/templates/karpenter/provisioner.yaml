@@ -4,7 +4,7 @@ kind: Provisioner
 metadata:
   name: {{ .Values.karpenter.provisioner.name }}
   annotations:
-    "helm.sh/hook": post-install
+    "helm.sh/hook": post-install,post-upgrade
 spec:
   {{- if .Values.karpenter.provisioner.spec.requirements }}
   requirements: {{ toYaml .Values.karpenter.provisioner.spec.requirements | nindent 4 }}

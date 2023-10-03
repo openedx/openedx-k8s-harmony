@@ -4,7 +4,7 @@ kind: AWSNodeTemplate
 metadata:
   name: {{ .Values.karpenter.nodeTemplate.name }}
   annotations:
-    "helm.sh/hook": post-install
+    "helm.sh/hook": post-install,post-upgrade
 spec:
   subnetSelector:
     karpenter.sh/discovery: {{ .Values.karpenter.settings.aws.clusterName }}
