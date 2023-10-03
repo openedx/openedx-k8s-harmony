@@ -187,39 +187,35 @@ opensearch:
 karpenter:
   # add Karpenter node management for AWS EKS clusters. See: https://karpenter.sh/
   enabled: false
-  # FIX NOTE: CANY ANY OF THESE BE PRESET???
-  {{- if not .Values.karpenter.clusterName }}
-  {{- fail ".Values.karpenter.clusterName is required" }}
-  {{- end }}
-  {{- if not .Values.karpenter.clusterEndpoint }}
-  {{- fail ".Values.karpenter.clusterEndpoint is required" }}
-  {{- end }}
-  {{- if not .Values.karpenter.clusterEndpoint }}
-  {{- fail ".Values.karpenter.serviceAccount.annotations.eks.amazonaws.com/role-arn is required" }}
-  {{- end }}
-  {{- if not .Values.karpenter.aws.defaultInstanceProfile }}
-  {{- fail ".Values.karpenter.aws.defaultInstanceProfile is required" }}
-  {{- end }}
-  cluster-name: ""
-  cluster-endpoint: ""
-  service-account:
+  serviceAccount:
+    name: "karpenter"
     annotations:
-      "eks.amazonaws.com/role-arn": ""
-  aws:
-    default-instance-profile: ""
+      eks.amazonaws.com/role-arn: ""
+  settings:
+    aws:
+      # -- Cluster name.
+      clusterName: ""
+      # -- Cluster endpoint. If not set, will be discovered during startup (EKS only)
+      # From version 0.25.0, Karpenter helm chart allows the discovery of the cluster endpoint. More details in
+      # https://github.com/aws/karpenter/blob/main/website/content/en/docs/upgrade-guide.md#upgrading-to-v0250
+      # clusterEndpoint: ""
+      # -- The default instance profile name to use when launching nodes
+      defaultInstanceProfile: ""
+      # -- interruptionQueueName is disabled if not specified. Enabling interruption handling may
+      # require additional permissions on the controller service account.
+      interruptionQueueName: ""
   # ---------------------------------------------------------------------------
   # Provide sensible defaults for resource provisioning and lifecycle
   # ---------------------------------------------------------------------------
+  # Requirements for the provisioner API.
+  # More details in https://karpenter.sh/docs/concepts/provisioners/
   provisioner:
     name: "default"
-    # Node template reference. using the default one
     spec:
-      # Requirements for the provisioner API.
-      # More details in https://karpenter.sh/preview/concepts/provisioners/#specrequirements
-      requirements: []
-      # - key: karpenter.sh/capacity-type
-      #   operator: In
-      #   values: ["spot", "on-demand"]
+      requirements:
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot"]
       # - key: node.kubernetes.io/instance-type
       #   operator: In
       #   values: ["t3.large", "t3.xlarge", "t3.2xlarge", "t2.xlarge", "t2.2xlarge"]
@@ -227,11 +223,11 @@ karpenter:
       #   operator: In
       #   values: ["amd64"]
       # The limits section controls the maximum amount of resources that the provisioner will manage.
-      # More details in https://karpenter.sh/preview/concepts/provisioners/#speclimitsresources
+      # More details in https://karpenter.sh/docs/concepts/provisioners/#speclimitsresources
       limits:
         resources:
-          cpu: "400"          # 100 * 4 cpu
-          memory: "1600Gi"    # 100 * 16Gi
+          cpu: "200"       # 50 nodes * 4 cpu
+          memory: "800Gi"  # 50 nodes * 16Gi
       # This variable covers parameters of the AWS Cloud Provider.
       # More details in https://github.com/aws/karpenter/blob/v0.19.3/website/content/en/v0.11.1/AWS/provisioning.md#specprovider
       # NOTE: this parameter is no longer supported in newer version of Karpenter. A migration to the new CRD "AWSNodeTemplate" is
@@ -244,7 +240,10 @@ karpenter:
       #  securityGroupSelector:
       #    karpenter.sh/discovery: ${CLUSTER_NAME}
       # TTL in seconds. If nil, the feature is disabled, nodes will never terminate
-      ttlSecondsUntilExpired: 600
+      ttlSecondsUntilExpired: 2592000
       # TTL in seconds. If nil, the feature is disabled, nodes will never scale down
       # due to low utilization.
-      ttlSecondsAfterEmpty: 600
+      ttlSecondsAfterEmpty: 30
+  nodeTemplate:
+    name: "default"
+    # Node template reference. using the default one
