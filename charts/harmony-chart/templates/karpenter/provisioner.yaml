@@ -3,7 +3,8 @@ apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
   name: {{ .Values.karpenter.provisioner.name }}
-  namespace: {{ .Release.Namespace | quote }}
+  annotations:
+    "helm.sh/hook": post-install
 spec:
   {{- if .Values.karpenter.provisioner.spec.requirements }}
   requirements: {{ toYaml .Values.karpenter.provisioner.spec.requirements | nindent 4 }}
@@ -15,16 +16,8 @@ spec:
       {{ $key }}: {{ $value | quote }}
     {{- end }}
   {{- end }}
-  provider:
-    subnetSelector:
-      karpenter.sh/discovery: {{ .name }}
-    securityGroupSelector:
-      karpenter.sh/discovery: {{ .name }}
-    tags:
-      karpenter.sh/discovery: {{ .name }}
-  {{- if .Values.karpenter.provisioner.spec.provider }}
-  provider: {{ toYaml .Values.karpenter.provisioner.spec.provider | nindent 4 }}
-  {{- end }}
-  ttlSecondsUntilExpired: {{ Values.karpenter.provisioner.spec.ttlSecondsUntilExpired }}
-  ttlSecondsAfterEmpty: {{ Values.karpenter.provisioner.spec.ttlSecondsAfterEmpty }}
+  providerRef:
+    name: default
+  ttlSecondsUntilExpired: {{ .Values.karpenter.provisioner.spec.ttlSecondsUntilExpired }}
+  ttlSecondsAfterEmpty: {{ .Values.karpenter.provisioner.spec.ttlSecondsAfterEmpty }}
 {{- end }}
