@@ -52,6 +52,20 @@ output "cluster_primary_security_group_id" {
 }
 
 ################################################################################
+# Karpenter
+################################################################################
+
+output "karpenter_irsa_role_arn" {
+  description = "IRSA role created by the Karpenter module"
+  value       = module.karpenter.irsa_arn
+}
+
+output "karpenter_instance_profile_name" {
+  description = "Instance profile created by the Karpenter module"
+  value       = module.karpenter.instance_profile_name
+}
+
+################################################################################
 # Security Group
 ################################################################################
 
