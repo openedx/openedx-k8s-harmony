@@ -133,7 +133,7 @@ module "eks" {
     # bursts of user activity such as at the start of a scheduled lecture or
     # exam on a large mooc.
     service = {
-      capacity_type     = "SPOT"
+      capacity_type     = "ON_DEMAND"
       enable_monitoring = false
       desired_size      = var.eks_service_group_desired_size
       min_size          = var.eks_service_group_min_size
@@ -160,6 +160,31 @@ module "eks" {
     }
 
   }
+}
+
+#------------------------------------------------------------------------------
+#                           KARPENTER RESOURCES
+#------------------------------------------------------------------------------
+# See more details in
+# https://github.com/terraform-aws-modules/terraform-aws-eks/blob/v19.16.0/modules/karpenter/README.md#external-node-iam-role-default
+module "karpenter" {
+  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
+  version = "~> 19.16"
+
+  cluster_name = module.eks.cluster_name
+
+  irsa_oidc_provider_arn          = module.eks.oidc_provider_arn
+  irsa_namespace_service_accounts = ["karpenter:karpenter", "harmony:karpenter"]
+
+  # Since Karpenter is running on an EKS Managed Node group,
+  # we can re-use the role that was created for the node group
+  create_iam_role = false
+  iam_role_arn    = module.eks.eks_managed_node_groups["service"].iam_role_arn
+
+  # Disable Spot termination
+  enable_spot_termination = false
+
+  tags = local.tags
 }
 
 #------------------------------------------------------------------------------
@@ -215,5 +240,4 @@ resource "aws_security_group" "all_worker_mgmt" {
   }
 
   tags = local.tags
-
 }
