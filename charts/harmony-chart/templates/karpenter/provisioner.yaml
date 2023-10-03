@@ -17,7 +17,7 @@ spec:
     {{- end }}
   {{- end }}
   providerRef:
-    name: default
+    name: {{ .Values.karpenter.nodeTemplate.name }}
   ttlSecondsUntilExpired: {{ .Values.karpenter.provisioner.spec.ttlSecondsUntilExpired }}
   ttlSecondsAfterEmpty: {{ .Values.karpenter.provisioner.spec.ttlSecondsAfterEmpty }}
 {{- end }}
