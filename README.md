@@ -89,6 +89,75 @@ still present in your cluster.
 [pod-autoscaling plugin](https://github.com/eduNEXT/tutor-contrib-pod-autoscaling) enables the implementation of HPA and
 VPA to start scaling an installation workloads. Variables for the plugin configuration are documented there.
 
+#### Node-autoscaling with Karpenter in EKS Clusters.
+
+This section provides a guide on how to install and configure [Karpenter](https://karpenter.sh/) in a EKS cluster. We'll use
+infrastructure examples included in this repo for such purposes.
+
+> Prerequisites:
+   - An aws accound id
+   - Kubectl 1.27
+   - Terraform 1.5.x or higher
+   - Helm
+
+1. Clone this repository and navigate to `./infra-examples/aws`. You'll find Terraform modules for `vpc` and `k8s-cluster`
+resources. Proceed creating the `vpc` resources first, followed by the `k8s-cluster` resources. Make sure to have the target
+AWS account ID available, and then execute the following commands on every folder:
+
+   ```
+   terraform init
+   terraform plan
+   terrafrom apply -auto-approve
+   ```
+
+   It will create an EKS cluster in the new VPC. Required Karpenter resources will also be created.
+
+2. Once the `k8s-cluster` is created, run the `terraform output` command on that module and copy the following output variables:
+
+   - cluster_name
+   - karpenter_irsa_role_arn
+   - karpenter_instance_profile_name
+
+   These variables will be required in the next steps.
+
+3. Karpenter is a dependency of the harmony chart that can be enabled or disabled. To include Karpenter in the Harmony Chart,
+**it is crucial** to configure these variables in your `values.yaml` file:
+
+   - `karpenter.enabled`: true
+   - `karpenter.serviceAccount.annotations.eks\.amazonaws\.com/role-arn`: "<`karpenter_irsa_role_arn` value from module>"
+   - `karpenter.settings.aws.defaultInstanceProfile`: "<`karpenter_instance_profile_name` value from module>"
+   - `karpenter.settings.aws.clusterName`:  "<`cluster_name` value from module>"
+
+   Find below an example of the Karpenter section in the `values.yaml` file:
+
+   ```
+   karpenter:
+      enabled: true
+      serviceAccount:
+         annotations:
+            eks.amazonaws.com/role-arn: "<karpenter_irsa_role_arn>"
+      settings:
+         aws:
+            # -- Cluster name.
+            clusterName: "<cluster_name"
+            # -- Cluster endpoint. If not set, will be discovered during startup (EKS only)
+            # From version 0.25.0, Karpenter helm chart allows the discovery of the cluster endpoint. More details in
+            # https://github.com/aws/karpenter/blob/main/website/content/en/docs/upgrade-guide.md#upgrading-to-v0250
+            # clusterEndpoint: "https://XYZ.eks.amazonaws.com"
+            # -- The default instance profile name to use when launching nodes
+            defaultInstanceProfile: "<karpenter_instance_profile_name>"
+   ```
+
+4. Now, install the Harmony Chart in the new EKS cluster using [these instructions](#usage-instructions). This will provide a
+very basic Karpenter configuration with one [provisioner](https://karpenter.sh/docs/concepts/provisioners/) and one
+[node template](https://karpenter.sh/docs/concepts/node-templates/). Please refer to the official documentation to
+get further details.
+
+> **NOTE:**
+> This Karpenter installation does not support multiple provisioners or node templates for now.
+
+5. To test Karpenter, you can proceed with the instructions included in the
+[official documentation](https://karpenter.sh/docs/getting-started/getting-started-with-karpenter/#first-use).
 
 
 <br><br><br>
