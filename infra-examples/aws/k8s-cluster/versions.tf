@@ -34,9 +34,5 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "~> 2.20"
     }
-    template = {
-      source  = "hashicorp/template"
-      version = "~> 2.2"
-    }
   }
 }

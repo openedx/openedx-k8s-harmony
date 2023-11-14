@@ -190,15 +190,11 @@ module "karpenter" {
 #------------------------------------------------------------------------------
 #                           SUPPORTING RESOURCES
 #------------------------------------------------------------------------------
-data "template_file" "eks-console-full-access" {
-  template = file("${path.module}/yml/eks-console-full-access.yaml")
-  vars     = {}
-}
 
 # add an AWS IAM Role definition providing AWS console access to
 # AWS EKS cluster instances.
 resource "kubectl_manifest" "eks-console-full-access" {
-  yaml_body = data.template_file.eks-console-full-access.rendered
+  yaml_body = templatefile("${path.module}/yml/eks-console-full-access.yaml", {})
 }
 
 # to enable shell access to nodes from kubectl
