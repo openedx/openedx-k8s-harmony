@@ -272,9 +272,7 @@ tutor k8s init
 ```
 
 Note that the `init` command may take quite a long time to complete. Use the commands that Tutor says ("To view the logs
-from this job, run:") in a separate terminal in order to monitor the status. Also note that if you want to use the MFEs,
-[you'll need a custom image](https://github.com/overhangio/tutor-mfe/#running-mfes-on-kubernetes) and it won't work out
-of the box.
+from this job, run:") in a separate terminal in order to monitor the status.
 
 **You can repeat step 3 many times to install multiple instances onto the cluster.**
 
