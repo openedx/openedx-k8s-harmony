@@ -10,6 +10,7 @@ from .__about__ import __version__
 config = {
     "defaults": {
         "VERSION": __version__,
+        "ELASTIC_HOST": "harmony-search-cluster.{{ K8S_HARMONY_NAMESPACE }}.svc.cluster.local",
         # This plugin assumes you are using ingress-nginx as an ingress controller to provide
         # you with a central load balancer. The standard Ingress object uses annotations to
         # trigger the generation of certificates using cert-manager.
