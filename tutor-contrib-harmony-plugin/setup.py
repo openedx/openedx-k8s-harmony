@@ -1,6 +1,7 @@
 import io
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 
@@ -42,7 +43,7 @@ setup(
     install_requires=["tutor"],
     entry_points={
         "tutor.plugin.v1": [
-            "k8s_harmony = tutor_k8s_harmony_plugin.plugin"
+            "k8s_harmony = tutor_k8s_harmony_plugin.plugin",
         ]
     },
     classifiers=[

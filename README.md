@@ -3,6 +3,7 @@
 This project is focused on making it easy to set up a standardized, scalable, secure Kubernetes environment that can host **multiple instances** of [Open edX](https://www.openedx.org). See [Motivation](#motivation) below.
 
 Specifically, this repository contains:
+
 * A Helm Chart that can install necessary shared resources into your cluster (a load balancer / ingress controller, autoscaling infrastructure, monitoring tools, databases, etc.)
 * A [Tutor](https://docs.tutor.overhang.io/) plugin that configures Tutor to build images that will use the shared resources deployed by the Helm chart.
 
@@ -15,10 +16,11 @@ See [technology stack and architecture](#technology-stack-and-architecture) belo
 Many Open edX providers and users have a need to deploy multiple instances of Open edX onto Kubernetes, but there is currently no standardized way to do so and each provider must build their own tooling to manage that. This project aims to provide an easy and standardized approach that incorporates industry best practices and lessons learned.
 
 In particular, this project aims to provide the following benefits to Open edX operators:
+
 * **Ease of use** and **rapid deployment**: This project aims to provide an Open edX hosting environment that just works out of the box, that can be easily upgraded, and that follows best practices for monitoring, security, etc.
 * **Lower costs** by sharing resources where it makes sense. For example, by default Tutor's k8s feature will deploy a separate load balancer and ingress controller for each Open edX instance, instead of a shared ingress controller for all the instances in the cluster. Likewise for MySQL, MongoDB, ElasticSearch, and other resources. By using shared resources by default, costs can be dramatically reduced and operational monitoring and maintenance is greatly simplified.
-  - For setups with many small instances, this shared approach provides a huge cost savings with virtually no decrease in performance.
-  - For larger instances on the cluster that need dedicated resources, they can easily be configured to do so.
+  * For setups with many small instances, this shared approach provides a huge cost savings with virtually no decrease in performance.
+  * For larger instances on the cluster that need dedicated resources, they can easily be configured to do so.
 * **Scalable hosting** for instances of any size. This means for example that the default configuration includes autoscaling of LMS pods to handle increased traffic.
 * **Flexibility**: this project aims to be "batteries included" and to support setting up all the resources that you need, with useful default configurations, but it is carefully designed so that operators can configure, replace, or disable any components as needed.
 
@@ -61,7 +63,7 @@ In addition, [the cert-manager Helm charts do not install the required CRDs used
 Tutor does not offer an autoscaling mechanism by default. This is a critical feature when your application starts to
 receive more and more traffic. Kubernetes offers two main autoscaling methods:
 
-- **Pod-based scaling**: This mechanism consists of the creation and adjustment of new pods to cover growing workloads.
+* **Pod-based scaling**: This mechanism consists of the creation and adjustment of new pods to cover growing workloads.
 Here we can mention tools like
 [**Horizontal Pod autoscaler (HPA)**](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
 and [**Vertical pod autoscaler (VPA)**](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler).
@@ -70,7 +72,7 @@ consumption (generally CPU and memory), and the second one aims to stabilize the
 by providing suggestions on the best configuration for a workload based on historical resource usage measurements. Both
 of them are meant to be applied over Kubernetes Deployment instances.
 
-- **Node-based scaling:** This mechanism allows the addition of new NODES to the Kubernetes cluster so compute resources
+* **Node-based scaling:** This mechanism allows the addition of new NODES to the Kubernetes cluster so compute resources
 are guaranteed to schedule new incoming workloads. Tools worth mentioning in this category are
 [**cluster-autoscaler (CA)**](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler) and
 [Karpenter](https://karpenter.sh/).
@@ -89,22 +91,23 @@ still present in your cluster.
 [pod-autoscaling plugin](https://github.com/eduNEXT/tutor-contrib-pod-autoscaling) enables the implementation of HPA and
 VPA to start scaling an installation workloads. Variables for the plugin configuration are documented there.
 
-#### Node-autoscaling with Karpenter in EKS Clusters.
+#### Node-autoscaling with Karpenter in EKS Clusters
 
 This section provides a guide on how to install and configure [Karpenter](https://karpenter.sh/) in a EKS cluster. We'll use
 infrastructure examples included in this repo for such purposes.
 
 > Prerequisites:
-   - An aws accound id
-   - Kubectl 1.27
-   - Terraform 1.5.x or higher
-   - Helm
+
+* An aws account id
+* Kubectl 1.27
+* Terraform 1.5.x or higher
+* Helm
 
 1. Clone this repository and navigate to `./infra-examples/aws`. You'll find Terraform modules for `vpc` and `k8s-cluster`
 resources. Proceed creating the `vpc` resources first, followed by the `k8s-cluster` resources. Make sure to have the target
 AWS account ID available, and then execute the following commands on every folder:
 
-   ```
+   ```sh
    terraform init
    terraform plan
    terraform apply -auto-approve
@@ -114,23 +117,23 @@ AWS account ID available, and then execute the following commands on every folde
 
 2. Once the `k8s-cluster` is created, run the `terraform output` command on that module and copy the following output variables:
 
-   - cluster_name
-   - karpenter_irsa_role_arn
-   - karpenter_instance_profile_name
+   * cluster_name
+   * karpenter_irsa_role_arn
+   * karpenter_instance_profile_name
 
    These variables will be required in the next steps.
 
 3. Karpenter is a dependency of the harmony chart that can be enabled or disabled. To include Karpenter in the Harmony Chart,
 **it is crucial** to configure these variables in your `values.yaml` file:
 
-   - `karpenter.enabled`: true
-   - `karpenter.serviceAccount.annotations.eks\.amazonaws\.com/role-arn`: "<`karpenter_irsa_role_arn` value from module>"
-   - `karpenter.settings.aws.defaultInstanceProfile`: "<`karpenter_instance_profile_name` value from module>"
-   - `karpenter.settings.aws.clusterName`:  "<`cluster_name` value from module>"
+   * `karpenter.enabled`: true
+   * `karpenter.serviceAccount.annotations.eks\.amazonaws\.com/role-arn`: "<`karpenter_irsa_role_arn` value from module>"
+   * `karpenter.settings.aws.defaultInstanceProfile`: "<`karpenter_instance_profile_name` value from module>"
+   * `karpenter.settings.aws.clusterName`:  "<`cluster_name` value from module>"
 
    Find below an example of the Karpenter section in the `values.yaml` file:
 
-   ```
+   ```yaml
    karpenter:
       enabled: true
       serviceAccount:
@@ -159,7 +162,6 @@ get further details.
 5. To test Karpenter, you can proceed with the instructions included in the
 [official documentation](https://karpenter.sh/docs/getting-started/getting-started-with-karpenter/#first-use).
 
-
 <br><br><br>
 
 ## Usage Instructions
@@ -178,24 +180,29 @@ memory** (that's enough to test 2 Open edX instances).
    with anyone else. For a full configuration reference, see the `charts/harmony-chart/values.yaml` file.
 3. Install [Helm](https://helm.sh/) if you don't have it already.
 4. Add the Harmony Helm repository:
-   ```
+
+   ```shell
    helm repo add openedx-harmony https://openedx.github.io/openedx-k8s-harmony
    helm repo update
    ```
+
 5. Install the cert-manager CRDs if using cert-manager:
-   ```
+
+   ```shell
    kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.1/cert-manager.crds.yaml --namespace=harmony
    ```
+
    You can check the version of cert-manager that is going to be installed by the chart by checking the corresponding
    line in the `charts/harmony-chart/Chart.yaml` file.
 6. Install the Harmony chart by running:
-   ```
+
+   ```shell
    helm install harmony --namespace harmony --create-namespace -f values.yaml openedx-harmony/harmony-chart
    ```
 
 Note: in the future, if you apply changes to `values.yaml`, please run this command to update the deployment of the chart:
 
-```
+```shell
 helm upgrade harmony --namespace harmony -f values.yaml openedx-harmony/harmony-chart
 ```
 
@@ -208,11 +215,13 @@ HTTPS and is more complicated due to the need to use tunnelling.*
 1. First, [install `minikube`](https://minikube.sigs.k8s.io/docs/start/) if you don't have it already.
 2. Run `minikube start` (you can also use `minikube dashboard` to access the Kubernetes dashboard).
 3. Add the Helm repository and install the Harmony chart using the `values-minikube.yaml` file as configuration:
-   ```
+
+   ```shell
    helm repo add openedx-harmony https://openedx.github.io/openedx-k8s-harmony
    helm repo update
    helm install harmony --namespace harmony --create-namespace -f values-minikube.yaml openedx-harmony/harmony-chart
    ```
+
 4. Run `minikube tunnel` (you may need to enter a password), and then you should be able to access the cluster (see
    "External IP" below). If this approach is not working, an alternative is to run\
    `minikube service harmony-ingress-nginx-controller -n harmony`\
@@ -221,14 +230,13 @@ HTTPS and is more complicated due to the need to use tunnelling.*
 5. In this case, skip step 2 ("Get the external IP") and use `127.0.0.1` as the external IP. You will need to remember
    to include the port numbers shown above when accessing the instances.
 
-
 ### Step 2: Get the external IP
 
 The [ingress NGINX Controller](https://kubernetes.github.io/ingress-nginx/) is used to automatically set up an HTTPS
 reverse proxy for each Open edX instance as it gets deployed onto the cluster. There is just one load balancer with a
 single external IP for all the instances on the cluster. To get its IP, use:
 
-```
+```shell
 kubectl get svc -n harmony harmony-ingress-nginx-controller
 ```
 
@@ -243,13 +251,13 @@ two A records for `lms.example.com` and `*.lms.example.com`, pointing to the ext
 
 You also will need to have the tutor-contrib-harmony-plugin installed into Tutor:
 
-```
+```shell
 pip install -e 'git+https://github.com/openedx/openedx-k8s-harmony.git#egg=tutor-contrib-harmony-plugin&subdirectory=tutor-contrib-harmony-plugin'
 ```
 
 Next, create a Tutor config directory unique to this instance, and configure it:
 
-```
+```shell
 export INSTANCE_ID=openedx-01
 export TUTOR_ROOT=~/deployments/tutor-k8s/$INSTANCE_ID
 tutor plugins enable k8s_harmony
@@ -258,7 +266,7 @@ tutor config save -i --set K8S_NAMESPACE=$INSTANCE_ID
 
 Then deploy it:
 
-```
+```shell
 tutor k8s start
 tutor k8s init
 ```
@@ -269,8 +277,6 @@ from this job, run:") in a separate terminal in order to monitor the status. Als
 of the box.
 
 **You can repeat step 3 many times to install multiple instances onto the cluster.**
-
-
 
 <br><br><br>
 
@@ -290,9 +296,9 @@ K8S_HARMONY_ENABLE_SHARED_HARMONY_SEARCH: true
 RUN_ELASTICSEARCH: false
 ```
 
-- And create the user on the cluster with `tutor k8s harmony create-elasticsearch-user`.
-- Rebuild your Open edX image `tutor images build openedx`.
-- Finally, redeploy your changes: `tutor k8s start && tutor k8s init`.
+* And create the user on the cluster with `tutor k8s harmony create-elasticsearch-user`.
+* Rebuild your Open edX image `tutor images build openedx`.
+* Finally, redeploy your changes: `tutor k8s start && tutor k8s init`.
 
 #### Caveats
 
@@ -308,18 +314,22 @@ Just run `helm uninstall --namespace harmony harmony` to uninstall this.
 
 If you use DigitalOcean, you can use Terraform to quickly spin up a cluster, try this out, then shut it down again.
 Here's how. First, put the following into `infra-examples/secrets.auto.tfvars` including a valid DigitalOcean access token:
-```
+
+```conf
 cluster_name = "harmony-test"
 do_token = "digital-ocean-token"
 ```
+
 Then run:
-```
+
+```sh
 cd infra-examples/digitalocean
 terraform init
 terraform apply
 cd ..
 export KUBECONFIG=`pwd`/infra-examples/kubeconfig
 ```
+
 Then follow steps 1-4 above. When you're done, run `terraform destroy` to clean
 up everything.
 

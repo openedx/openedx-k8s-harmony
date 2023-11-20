@@ -1,10 +1,10 @@
-from glob import glob
 import os
+from glob import glob
+
 import pkg_resources
-
 from tutor import hooks
-from . import commands
 
+from . import commands
 from .__about__ import __version__
 
 config = {
@@ -32,8 +32,8 @@ config = {
         "ENABLE_HTTPS": True,
     },
     "unique": {
-        "HARMONY_SEARCH_HTTP_AUTH": "{{K8S_NAMESPACE}}:{{ 24|random_string }}",
-        "HARMONY_SEARCH_INDEX_PREFIX": "{{K8S_NAMESPACE}}-{{ 4|random_string|lower }}-",
+        "HARMONY_SEARCH_HTTP_AUTH": "{{ K8S_NAMESPACE }}:{{ 24|random_string }}",
+        "HARMONY_SEARCH_INDEX_PREFIX": "{{ K8S_NAMESPACE }}-{{ 4|random_string|lower }}-",
     },
 }
 
