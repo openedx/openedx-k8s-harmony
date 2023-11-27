@@ -5,20 +5,27 @@ dependencies:
 - name: cert-manager
   repository: https://charts.jetstack.io
   version: v1.11.0
-- name: elasticsearch
-  repository: https://helm.elastic.co
-  version: 7.17.3
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server/
   version: 3.8.4
 - name: vertical-pod-autoscaler
   repository: https://cowboysysop.github.io/charts/
   version: 6.0.3
+- name: elasticsearch
+  repository: https://helm.elastic.co
+  version: 7.17.3
 - name: opensearch
   repository: https://opensearch-project.github.io/helm-charts
   version: 2.13.3
+
 - name: karpenter
   repository: oci://public.ecr.aws/karpenter
   version: v0.29.2
 digest: sha256:453b9f734e2d770948d3cbd36529d98da284b96de051581ea8d11a3c05e7a78e
 generated: "2023-10-03T10:52:43.453442762-05:00"
+
+- name: kube-prometheus-stack
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 54.2.2
+digest: sha256:3296573c744d3a87a4daab2b5cbd63d85b283e72206f8ddddae94a76e7ccfcc3
+generated: "2023-11-24T13:29:51.649052+04:00"
