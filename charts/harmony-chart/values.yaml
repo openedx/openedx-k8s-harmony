@@ -300,7 +300,6 @@ prometheusstack:
       dashboards:
         default_home_dashboard_path: /var/lib/grafana/dashboards/default/kubernetes-views-global.json
 
-
     resources:
       requests:
         cpu: 200m
