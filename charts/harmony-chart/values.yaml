@@ -2,6 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+clusterDomain: "*"
+
 ingress-nginx:
   # Use ingress-nginx as a default controller.
   enabled: true
@@ -13,6 +15,23 @@ cert-manager:
     # Email address associated with the ACME account. Used to notify about expiring
     # certificates.
   email: ""
+
+# Configuration for the metrics server chart
+metricsserver:
+   # Control the chart inclusion
+   enabled: false
+   # See https://github.com/kubernetes-sigs/metrics-server/blob/master/charts/metrics-server/values.yaml
+   # for all available options
+   replicas: 1
+
+# Configuration for the Vertical Pod Autoscaler chart
+vpa:
+   # Control the chart inclusion
+   enabled: false
+   # See https://github.com/cowboysysop/charts/blob/master/charts/vertical-pod-autoscaler/values.yaml
+   # for all available options
+   admissionController:
+      replicaCount: 1
 
 # Multi-tenant ElasticSearch
 elasticsearch:
@@ -66,22 +85,6 @@ elasticsearch:
       xpack.security.transport.ssl.certificate_authorities: /usr/share/elasticsearch/config/certs/ca.crt
       xpack.security.transport.ssl.verification_mode: certificate
 
-# Configuration for the metrics server chart
-metricsserver:
-   # Control the chart inclusion
-   enabled: false
-   # See https://github.com/kubernetes-sigs/metrics-server/blob/master/charts/metrics-server/values.yaml
-   # for all available options
-   replicas: 1
-# Configuration for the Vertical Pod Autoscaler chart
-vpa:
-   # Control the chart inclusion
-   enabled: false
-   # See https://github.com/cowboysysop/charts/blob/master/charts/vertical-pod-autoscaler/values.yaml
-   # for all available options
-   admissionController:
-      replicaCount: 1
-
 # Multi-tenant OpenSearch
 opensearch:
   enabled: false
@@ -98,7 +101,6 @@ opensearch:
   # HARMONY_SEARCH_INDEX_PREFIX: "username-"
   # K8S_HARMONY_USE_SHARED_OPENSEARCH: true
   # HARMONY_SEARCH_HTTP_AUTH: "username:actual_password"
-
 
   # # This secret will contain the ssl certificates.
   secretMounts:
@@ -235,3 +237,71 @@ karpenter:
   # Node template reference. More details in https://karpenter.sh/docs/concepts/node-templates/
   nodeTemplate:
     name: "default"
+
+# Prometheus stack
+prometheusstack:
+  enabled: false
+
+  kubeStateMetrics:
+    enabled: true
+
+  nodeExporter:
+    enabled: true
+
+  prometheus:
+    enabled: true
+
+    prometheusSpec:
+      resources:
+        requests:
+          cpu: "200m"
+          memory: "450Mi"
+
+  alertmanager:
+    enabled: true
+
+    alertmanagerSpec:
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "50Mi"
+
+  # Admin password is not pre-generated, because it is not picked up by the
+  # grafana pod yet -- this is a bug on their end. For more information, visit:
+  # https://github.com/prometheus-community/helm-charts/issues/3679
+  grafana:
+    enabled: false
+
+    ingress:
+      enabled: false
+
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+          - name: 'default'
+            orgId: 1
+            folder: ''
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/default
+
+    dashboards:
+      default:
+        kubernetes-views-global:
+          # url: https://grafana.com/api/dashboards/15757/revisions/31/download
+          gnetId: 15757
+          revision: 31
+          datasource: Prometheus
+
+    grafana.ini:
+      dashboards:
+        default_home_dashboard_path: /var/lib/grafana/dashboards/default/kubernetes-views-global.json
+
+
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi

@@ -2,6 +2,8 @@
 cert-manager:
    enabled: false
 
+clusterDomain: "example.local"
+
 elasticsearch:
    enabled: false
 
@@ -22,3 +24,6 @@ opensearch:
 
    persistence:
      size: 8Gi
+
+prometheusstack:
+  enabled: false

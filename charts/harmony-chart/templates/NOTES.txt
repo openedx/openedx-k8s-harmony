@@ -7,9 +7,14 @@ that the load balancer is working. First, get its external IP using
 
     kubectl get svc -n {{ .Release.Namespace }} harmony-ingress-nginx-controller
 
-Next, go to http://the.external.ip.shown/cluster-echo-test and make sure you get
+Next, go to http://{{ .Values.clusterDomain }}/cluster-echo-test and make sure you get
 a JSON response.
 
+{{ if and .Values.prometheusstack.grafana.enabled .Values.prometheusstack.grafana.ingress.enabled }}
+Grafana shipped with the default admin user password as a bug prevents
+changing it. Since is enabled on the cluster and exposed to the internet.
+Please make sure you update the default admin user password!
+{{- end }}
 
 
 
