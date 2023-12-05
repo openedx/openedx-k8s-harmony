@@ -1,0 +1,15 @@
+{{- if .Values.karpenter.enabled -}}
+apiVersion: karpenter.k8s.aws/v1alpha1
+kind: AWSNodeTemplate
+metadata:
+  name: {{ .Values.karpenter.nodeTemplate.name }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+spec:
+  subnetSelector:
+    karpenter.sh/discovery: {{ .Values.karpenter.settings.aws.clusterName }}
+  securityGroupSelector:
+    karpenter.sh/discovery: {{ .Values.karpenter.settings.aws.clusterName }}
+  tags:
+    karpenter.sh/discovery: {{ .Values.karpenter.settings.aws.clusterName }}
+{{- end }}

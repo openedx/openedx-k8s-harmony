@@ -1,0 +1,23 @@
+{{- if .Values.karpenter.enabled -}}
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: {{ .Values.karpenter.provisioner.name }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+spec:
+  {{- if .Values.karpenter.provisioner.spec.requirements }}
+  requirements: {{ toYaml .Values.karpenter.provisioner.spec.requirements | nindent 4 }}
+  {{- end }}
+  {{- if .Values.karpenter.provisioner.spec.limits.resources }}
+  limits:
+    resources:
+    {{- range $key, $value := .Values.karpenter.provisioner.spec.limits.resources }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+  providerRef:
+    name: {{ .Values.karpenter.nodeTemplate.name }}
+  ttlSecondsUntilExpired: {{ .Values.karpenter.provisioner.spec.ttlSecondsUntilExpired }}
+  ttlSecondsAfterEmpty: {{ .Values.karpenter.provisioner.spec.ttlSecondsAfterEmpty }}
+{{- end }}

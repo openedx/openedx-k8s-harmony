@@ -25,7 +25,7 @@ In particular, this project aims to provide the following benefits to Open edX o
 ## Technology stack and architecture
 
 1. At the base is a Kubernetes cluster, which you must provide (e.g. using Terraform to provision Amazon EKS).
-   * Any cloud provider such as AWS or Digital Ocean should work. There is an example Terraform setup in `infra-example` but it is just a starting point and not recommended for production use.
+   * Any cloud provider such as AWS or Digital Ocean should work. There are Terraform examples in the `infra-examples` folder but it is just a starting point and not recommended for production use.
 2. On top of that, this project's helm chart will install the shared resources you need - an ingress controller, monitoring, database clusters, etc. The following are included but can be disabled/replaced if you prefer an alternative:
    * Ingress controller: [ingress-nginx](https://kubernetes.github.io/ingress-nginx/)
    * Automatic HTTPS cert provisioning: [cert-manager](https://cert-manager.io/)
@@ -89,6 +89,75 @@ still present in your cluster.
 [pod-autoscaling plugin](https://github.com/eduNEXT/tutor-contrib-pod-autoscaling) enables the implementation of HPA and
 VPA to start scaling an installation workloads. Variables for the plugin configuration are documented there.
 
+#### Node-autoscaling with Karpenter in EKS Clusters.
+
+This section provides a guide on how to install and configure [Karpenter](https://karpenter.sh/) in a EKS cluster. We'll use
+infrastructure examples included in this repo for such purposes.
+
+> Prerequisites:
+   - An aws accound id
+   - Kubectl 1.27
+   - Terraform 1.5.x or higher
+   - Helm
+
+1. Clone this repository and navigate to `./infra-examples/aws`. You'll find Terraform modules for `vpc` and `k8s-cluster`
+resources. Proceed creating the `vpc` resources first, followed by the `k8s-cluster` resources. Make sure to have the target
+AWS account ID available, and then execute the following commands on every folder:
+
+   ```
+   terraform init
+   terraform plan
+   terraform apply -auto-approve
+   ```
+
+   It will create an EKS cluster in the new VPC. Required Karpenter resources will also be created.
+
+2. Once the `k8s-cluster` is created, run the `terraform output` command on that module and copy the following output variables:
+
+   - cluster_name
+   - karpenter_irsa_role_arn
+   - karpenter_instance_profile_name
+
+   These variables will be required in the next steps.
+
+3. Karpenter is a dependency of the harmony chart that can be enabled or disabled. To include Karpenter in the Harmony Chart,
+**it is crucial** to configure these variables in your `values.yaml` file:
+
+   - `karpenter.enabled`: true
+   - `karpenter.serviceAccount.annotations.eks\.amazonaws\.com/role-arn`: "<`karpenter_irsa_role_arn` value from module>"
+   - `karpenter.settings.aws.defaultInstanceProfile`: "<`karpenter_instance_profile_name` value from module>"
+   - `karpenter.settings.aws.clusterName`:  "<`cluster_name` value from module>"
+
+   Find below an example of the Karpenter section in the `values.yaml` file:
+
+   ```
+   karpenter:
+      enabled: true
+      serviceAccount:
+         annotations:
+            eks.amazonaws.com/role-arn: "<karpenter_irsa_role_arn>"
+      settings:
+         aws:
+            # -- Cluster name.
+            clusterName: "<cluster_name"
+            # -- Cluster endpoint. If not set, will be discovered during startup (EKS only)
+            # From version 0.25.0, Karpenter helm chart allows the discovery of the cluster endpoint. More details in
+            # https://github.com/aws/karpenter/blob/main/website/content/en/docs/upgrade-guide.md#upgrading-to-v0250
+            # clusterEndpoint: "https://XYZ.eks.amazonaws.com"
+            # -- The default instance profile name to use when launching nodes
+            defaultInstanceProfile: "<karpenter_instance_profile_name>"
+   ```
+
+4. Now, install the Harmony Chart in the new EKS cluster using [these instructions](#usage-instructions). This will provide a
+very basic Karpenter configuration with one [provisioner](https://karpenter.sh/docs/concepts/provisioners/) and one
+[node template](https://karpenter.sh/docs/concepts/node-templates/). Please refer to the official documentation to
+get further details.
+
+> **NOTE:**
+> This Karpenter installation does not support multiple provisioners or node templates for now.
+
+5. To test Karpenter, you can proceed with the instructions included in the
+[official documentation](https://karpenter.sh/docs/getting-started/getting-started-with-karpenter/#first-use).
 
 
 <br><br><br>
@@ -238,18 +307,46 @@ Just run `helm uninstall --namespace harmony harmony` to uninstall this.
 ### How to create a cluster for testing on DigitalOcean
 
 If you use DigitalOcean, you can use Terraform to quickly spin up a cluster, try this out, then shut it down again.
-Here's how. First, put the following into `infra-tests/secrets.auto.tfvars` including a valid DigitalOcean access token:
+Here's how. First, put the following into `infra-examples/secrets.auto.tfvars` including a valid DigitalOcean access token:
 ```
 cluster_name = "harmony-test"
 do_token = "digital-ocean-token"
 ```
 Then run:
 ```
-cd infra-example
+cd infra-examples/digitalocean
 terraform init
 terraform apply
 cd ..
-export KUBECONFIG=`pwd`/infra-example/kubeconfig
+export KUBECONFIG=`pwd`/infra-examples/kubeconfig
 ```
 Then follow steps 1-4 above. When you're done, run `terraform destroy` to clean
 up everything.
+
+## Appendix C: how to create a cluster for testing on AWS
+
+Similarly, if you use AWS, you can use Terraform to spin up a cluster, try this out, then shut it down again.
+Here's how. First, put the following into `infra-examples/aws/vpc/secrets.auto.tfvars` and `infra-examples/aws/k8s-cluster/secrets.auto.tfvars`:
+
+   ```terraform
+   account_id  = "012345678912"
+   aws_region  = "us-east-1"
+   name        = "tutor-multi-test"
+   ```
+
+Then run:
+
+   ```bash
+   aws sts get-caller-identity   # to verify that awscli is properly configured
+   cd infra-examples/aws/vpc
+   terraform init
+   terraform apply               # run time is approximately 1 minute
+   cd ../k8s-cluster
+   terraform init
+   terraform apply               # run time is approximately 30 minutes
+
+   # to configure kubectl
+   aws eks --region us-east-1 update-kubeconfig --name tutor-multi-test --alias tutor-multi-test
+   ```
+
+Then follow steps 1-4 above. When you're done, run `terraform destroy` in both the `aws` and `k8s-cluster` modules to clean up everything.
