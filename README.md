@@ -107,7 +107,7 @@ AWS account ID available, and then execute the following commands on every folde
    ```
    terraform init
    terraform plan
-   terrafrom apply -auto-approve
+   terraform apply -auto-approve
    ```
 
    It will create an EKS cluster in the new VPC. Required Karpenter resources will also be created.
