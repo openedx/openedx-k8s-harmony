@@ -285,6 +285,8 @@ from this job, run:") in a separate terminal in order to monitor the status.
 Tutor creates an Elasticsearch pod as part of the Kubernetes deployment. Depending on the number of instances
 Memory and CPU use can be lowered by running a central ES cluster instead of an ES pod for every instance.
 
+**Please note that this will only work for "Palm" version and later.**
+
 To enable set `elasticsearch.enabled=true` in your `values.yaml` and deploy the chart.
 
 For each instance you would like to enable this on, set the configuration values in the respective `config.yml`:
