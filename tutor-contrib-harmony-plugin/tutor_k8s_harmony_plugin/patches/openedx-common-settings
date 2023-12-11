@@ -1,8 +1,8 @@
 {% if K8S_HARMONY_ENABLE_SHARED_HARMONY_SEARCH %}
-ELASTIC_SEARCH_INDEX_PREFIX = "{{HARMONY_SEARCH_INDEX_PREFIX}}"
+ELASTIC_SEARCH_INDEX_PREFIX = "{{ HARMONY_SEARCH_INDEX_PREFIX }}"
 ELASTIC_SEARCH_CONFIG = [{
   "use_ssl": True,
-  "host": "harmony-search-cluster.{{K8S_HARMONY_NAMESPACE}}.svc.cluster.local",
+  "host": "{{ K8S_HARMONY_ELASTIC_HOST }}",
   "verify_certs": False,
   "port": 9200,
   "http_auth": "{{ HARMONY_SEARCH_HTTP_AUTH }}"

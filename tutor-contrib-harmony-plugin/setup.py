@@ -1,6 +1,7 @@
 import io
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 
@@ -39,10 +40,10 @@ setup(
     packages=find_packages(exclude=["tests*"]),
     include_package_data=True,
     python_requires=">=3.7",
-    install_requires=["tutor"],
+    install_requires=["tutor>=16.0.0,<17.0.0"],
     entry_points={
         "tutor.plugin.v1": [
-            "k8s_harmony = tutor_k8s_harmony_plugin.plugin"
+            "k8s_harmony = tutor_k8s_harmony_plugin.plugin",
         ]
     },
     classifiers=[
@@ -55,5 +56,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
 )

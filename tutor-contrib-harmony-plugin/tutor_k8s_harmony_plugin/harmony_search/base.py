@@ -69,7 +69,7 @@ class BaseSearchAPI:
                 '"Content-Type: application/json"',
             ]
         )
-    
+
     def put(self, endpoint: str, data: dict) -> typing.Union[dict, bytes]:
         """
         Runs a PUT request on the HarmonySearch cluster with the specified

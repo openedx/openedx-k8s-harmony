@@ -1,11 +1,10 @@
-import os
-
 import click
 from tutor import config as tutor_config
-from tutor import env as tutor_env
-from tutor.commands.k8s import K8sContext, kubectl_exec
+from tutor.commands.k8s import K8sContext
+
 from .harmony_search.elasticsearch import ElasticSearchAPI
 from .harmony_search.opensearch import OpenSearchAPI
+
 
 @click.group(help="Commands and subcommands of the openedx-k8s-harmony.")
 @click.pass_context
@@ -41,6 +40,7 @@ def create_elasticsearch_user(context: click.Context):
         },
     )
 
+
 @click.command(help="Create or update Opensearch users")
 @click.pass_obj
 def create_opensearch_user(context: click.Context):
@@ -56,19 +56,21 @@ def create_opensearch_user(context: click.Context):
     prefix = config["HARMONY_SEARCH_INDEX_PREFIX"]
     api.put(
         f"_plugins/_security/api/roles/{role_name}",
-        {"index_permissions": [{
-            "index_patterns": [
-                f"{prefix}*"
-            ],
-            "allowed_actions": [
-                "read",
-                "write",
-                "create_index",
-                "manage",
-                "manage_ilm",
-                "all"
+        {
+            "index_permissions": [
+                {
+                    "index_patterns": [f"{prefix}*"],
+                    "allowed_actions": [
+                        "read",
+                        "write",
+                        "create_index",
+                        "manage",
+                        "manage_ilm",
+                        "all",
+                    ],
+                }
             ]
-        }]},
+        },
     )
 
     api.put(

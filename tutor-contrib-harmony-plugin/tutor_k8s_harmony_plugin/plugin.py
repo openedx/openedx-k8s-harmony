@@ -1,15 +1,16 @@
-from glob import glob
 import os
+from glob import glob
+
 import pkg_resources
-
 from tutor import hooks
-from . import commands
 
+from . import commands
 from .__about__ import __version__
 
 config = {
     "defaults": {
         "VERSION": __version__,
+        "ELASTIC_HOST": "harmony-search-cluster.{{ K8S_HARMONY_NAMESPACE }}.svc.cluster.local",
         # This plugin assumes you are using ingress-nginx as an ingress controller to provide
         # you with a central load balancer. The standard Ingress object uses annotations to
         # trigger the generation of certificates using cert-manager.
@@ -31,8 +32,8 @@ config = {
         "ENABLE_HTTPS": True,
     },
     "unique": {
-        "HARMONY_SEARCH_HTTP_AUTH": "{{K8S_NAMESPACE}}:{{ 24|random_string }}",
-        "HARMONY_SEARCH_INDEX_PREFIX": "{{K8S_NAMESPACE}}-{{ 4|random_string|lower }}-",
+        "HARMONY_SEARCH_HTTP_AUTH": "{{ K8S_NAMESPACE }}:{{ 24|random_string }}",
+        "HARMONY_SEARCH_INDEX_PREFIX": "{{ K8S_NAMESPACE }}-{{ 4|random_string|lower }}-",
     },
 }
 

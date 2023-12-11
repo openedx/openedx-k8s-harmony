@@ -82,7 +82,6 @@ vpa:
    admissionController:
       replicaCount: 1
 
-
 # Multi-tenant OpenSearch
 opensearch:
   enabled: false
