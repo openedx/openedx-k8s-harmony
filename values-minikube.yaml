@@ -27,3 +27,6 @@ opensearch:
 
 prometheusstack:
   enabled: false
+
+k8sdashboard:
+  enabled: false

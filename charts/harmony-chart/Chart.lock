@@ -4,7 +4,7 @@ dependencies:
   version: 4.4.2
 - name: cert-manager
   repository: https://charts.jetstack.io
-  version: v1.11.0
+  version: v1.13.3
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server/
   version: 3.8.4
@@ -23,5 +23,8 @@ dependencies:
 - name: kube-prometheus-stack
   repository: https://prometheus-community.github.io/helm-charts
   version: 56.6.2
-digest: sha256:8d3ab6c27a75b2ab6106164e38ecfaeaecfb329abc3526c25565f4d6fa6d4ed5
-generated: "2024-02-05T14:59:50.438116+04:00"
+- name: kubernetes-dashboard
+  repository: https://kubernetes.github.io/dashboard
+  version: 7.0.0-alpha1
+digest: sha256:375553f6d86feabc825142f4a142f634712a7748684788bd206b02a5401fa8b3
+generated: "2024-02-23T18:20:26.077091+04:00"
