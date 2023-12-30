@@ -10,9 +10,13 @@ that the load balancer is working. First, get its external IP using
 Next, go to http://the.external.ip.shown/cluster-echo-test and make sure you get
 a JSON response.
 
+{{- if .Values.openfaas.enabled }}
+OpenFAAS is enabled. The default admin user password is automatically generated
+for you by default, and available a secret, called "basic-auth". You can
+retrieve the password by using
 
-
-
+    kubectl -n {{ .Release.Namespace }} get secret --template='{{"{{"}}index .data "basic-auth-password"{{"}}"}}' basic-auth
+{{- end }}
 
 {{- /*
 

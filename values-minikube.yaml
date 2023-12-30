@@ -22,3 +22,6 @@ opensearch:
 
    persistence:
      size: 8Gi
+
+openfaas:
+  enabled: false

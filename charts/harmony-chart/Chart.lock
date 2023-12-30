@@ -20,5 +20,8 @@ dependencies:
 - name: karpenter
   repository: oci://public.ecr.aws/karpenter
   version: v0.29.2
-digest: sha256:453b9f734e2d770948d3cbd36529d98da284b96de051581ea8d11a3c05e7a78e
-generated: "2023-10-03T10:52:43.453442762-05:00"
+- name: openfaas
+  repository: https://openfaas.github.io/faas-netes
+  version: 14.2.7
+digest: sha256:9ca8a63e6c6638bc39ede2c30718eb1b2a846101c6ac1d38d4949955948c6e38
+generated: "2023-12-30T11:37:17.137985+04:00"

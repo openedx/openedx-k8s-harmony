@@ -1,0 +1,9 @@
+{{- if .Values.openfaas.enabled -}}
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    kubernetes.io/metadata.name: openfaas-fn
+    name: openfaas-fn
+  name: openfaas-fn
+{{- end }}

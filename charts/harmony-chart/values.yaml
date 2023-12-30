@@ -235,3 +235,7 @@ karpenter:
   # Node template reference. More details in https://karpenter.sh/docs/concepts/node-templates/
   nodeTemplate:
     name: "default"
+
+
+openfaas:
+  enabled: false

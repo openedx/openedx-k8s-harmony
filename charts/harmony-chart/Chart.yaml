@@ -52,3 +52,8 @@ dependencies:
   version: "v0.29.2"
   repository: oci://public.ecr.aws/karpenter
   condition: karpenter.enabled
+
+- name: openfaas
+  version: "14.2.7"
+  repository: https://openfaas.github.io/faas-netes
+  condition: openfaas.enabled
