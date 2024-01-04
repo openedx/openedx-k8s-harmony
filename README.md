@@ -313,7 +313,8 @@ Just run `helm uninstall --namespace harmony harmony` to uninstall this.
 ### How to create a cluster for testing on DigitalOcean
 
 If you use DigitalOcean, you can use Terraform to quickly spin up a cluster, try this out, then shut it down again.
-Here's how. First, put the following into `infra-examples/secrets.auto.tfvars` including a valid DigitalOcean access token:
+
+Here's how. First, put the following into `infra-examples/digitalocean/secrets.auto.tfvars` including a valid DigitalOcean access token:
 
 ```conf
 cluster_name = "harmony-test"
@@ -327,7 +328,7 @@ cd infra-examples/digitalocean
 terraform init
 terraform apply
 cd ..
-export KUBECONFIG=`pwd`/infra-examples/kubeconfig
+export KUBECONFIG=`pwd`/infra-examples/digitalocean/kubeconfig
 ```
 
 Then follow steps 1-4 above. When you're done, run `terraform destroy` to clean
