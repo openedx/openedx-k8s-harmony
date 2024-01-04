@@ -3,6 +3,48 @@ entries:
   harmony-chart:
   - apiVersion: v2
     appVersion: 16.0.2
+    created: "2024-01-04T16:01:19.848847538Z"
+    dependencies:
+    - condition: ingress-nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.4.2
+    - condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.11.0
+    - condition: elasticsearch.enabled
+      name: elasticsearch
+      repository: https://helm.elastic.co
+      version: 7.17.3
+    - alias: metricsserver
+      condition: metricsserver.enabled
+      name: metrics-server
+      repository: https://kubernetes-sigs.github.io/metrics-server/
+      version: ~3.8.3
+    - alias: vpa
+      condition: vpa.enabled
+      name: vertical-pod-autoscaler
+      repository: https://cowboysysop.github.io/charts/
+      version: ~6.0.3
+    - condition: opensearch.enabled
+      name: opensearch
+      repository: https://opensearch-project.github.io/helm-charts
+      version: 2.13.3
+    - condition: karpenter.enabled
+      name: karpenter
+      repository: oci://public.ecr.aws/karpenter
+      version: v0.29.2
+    description: A Helm chart for deploying multiple Open edX instances onto Kubernetes
+      using Tutor
+    digest: cf09e6aa9bfc36fab3493f84627efedde016ebc4db6a79f81e54c4133f31f3f2
+    name: harmony-chart
+    type: application
+    urls:
+    - https://github.com/openedx/openedx-k8s-harmony/releases/download/harmony-chart-0.3.0/harmony-chart-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
+    appVersion: 16.0.2
     created: "2023-07-12T16:24:40.1421312Z"
     dependencies:
     - condition: ingress-nginx.enabled
@@ -73,4 +115,4 @@ entries:
     urls:
     - https://github.com/openedx/openedx-k8s-harmony/releases/download/harmony-chart-0.1.0/harmony-chart-0.1.0.tgz
     version: 0.1.0
-generated: "2023-07-12T16:24:40.142169301Z"
+generated: "2024-01-04T16:01:19.848862205Z"
