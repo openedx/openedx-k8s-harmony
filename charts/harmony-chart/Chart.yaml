@@ -57,3 +57,4 @@ dependencies:
   version: "14.2.7"
   repository: https://openfaas.github.io/faas-netes
   condition: openfaas.enabled
+
