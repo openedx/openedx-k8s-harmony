@@ -16,3 +16,6 @@ vpa:
 
 opensearch:
   enabled: false
+
+openfaas:
+  enabled: false
