@@ -239,6 +239,13 @@ karpenter:
     name: "default"
 
 # Prometheus stack
+#   
+# If no storage is defined, the Prometheus and Grafana data is stored on
+# empheral storage. You can find more information about storages in the
+# Prometheus operator user guides: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/storage.md
+# 
+# - To make Grafana persistent, you may want to set Grafana storage as shown in https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml#L999-L1009
+# - To set Prometheus storage, you can see the example storage spec at https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml#L3557-L3570
 prometheusstack:
   enabled: false
 
