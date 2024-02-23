@@ -5,7 +5,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes to the chart and its
 # templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.4.0
+version: 0.5.0
 # This is the version number of the application being deployed. This version number should be incremented each time you
 # make changes to the application. Versions are not expected to follow Semantic Versioning. They should reflect the
 # version the application is using. It is recommended to use it with quotes.
@@ -22,7 +22,7 @@ dependencies:
   condition: ingress-nginx.enabled
 
 - name: cert-manager
-  version: "1.11.0"
+  version: "1.13.3"
   repository: https://charts.jetstack.io
   condition: cert-manager.enabled
 
@@ -58,3 +58,9 @@ dependencies:
   version: "56.6.2"
   condition: prometheusstack.enabled
   repository: https://prometheus-community.github.io/helm-charts
+
+- name: kubernetes-dashboard
+  version: "7.0.0-alpha1"
+  repository: https://kubernetes.github.io/dashboard
+  alias: k8sdashboard
+  condition: k8sdashboard.enabled

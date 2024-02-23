@@ -2,7 +2,7 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: {{ .Release.Name }}-letsencrypt-global
+  name: harmony-letsencrypt-global
 spec:
   acme:
     {{- if index .Values "cert-manager" "email" }}
@@ -10,7 +10,7 @@ spec:
     {{- end }}
     preferredChain: ""
     privateKeySecretRef:
-      name: {{ .Release.Name }}-letsencrypt-global
+      name: harmony-letsencrypt-global
     server: https://acme-v02.api.letsencrypt.org/directory
     solvers:
     - http01:
