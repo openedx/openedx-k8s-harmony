@@ -47,7 +47,8 @@ metadata:
 spec:
   ingressClassName: {{ (index .Values "ingress-nginx" "controller" "ingressClass") }}
   rules:
-  - http:
+  - host: {{ .Values.clusterDomain }}
+    http:
       paths:
       - path: /cluster-echo-test
         pathType: Prefix

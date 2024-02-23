@@ -1,7 +1,10 @@
+clusterDomain: "example.com"
+
 ingress-nginx:
   controller:
     config:
       proxy-body-size: 100m
+
 cert-manager:
   # Set your email address here so auto-generated HTTPS certs will work:
   email: "email@example.com"
@@ -11,8 +14,31 @@ elasticsearch:
 
 metricsserver:
   enabled: false
+
 vpa:
   enabled: false
 
 opensearch:
   enabled: false
+
+prometheusstack:
+  enabled: false
+
+  grafana:
+    enabled: false
+
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      annotations:
+        cert-manager.io/cluster-issuer: "harmony-letsencrypt-global"
+        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      hosts:
+        - grafana.example.com
+      tls:
+        - secretName: promstack-ingress-tls
+          hosts:
+            - grafana.example.com
+
+  # alertmanager:
+  #   config: {}  # Set it using `--set-file prometheusstack.alertmanager.config=<path-to-file>`
