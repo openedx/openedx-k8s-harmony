@@ -2,7 +2,7 @@ import os
 from glob import glob
 
 import pkg_resources
-from tutor import hooks
+from tutor import hooks as tutor_hooks
 
 from . import commands
 from .__about__ import __version__
@@ -38,12 +38,12 @@ config = {
 }
 
 # Load all configuration entries
-hooks.Filters.CONFIG_DEFAULTS.add_items(
+tutor_hooks.Filters.CONFIG_DEFAULTS.add_items(
     [(f"K8S_HARMONY_{key}", value) for key, value in config["defaults"].items()]
 )
 
-hooks.Filters.CONFIG_OVERRIDES.add_items(list(config["overrides"].items()))
-hooks.Filters.CONFIG_UNIQUE.add_items(list(config["unique"].items()))
+tutor_hooks.Filters.CONFIG_OVERRIDES.add_items(list(config["overrides"].items()))
+tutor_hooks.Filters.CONFIG_UNIQUE.add_items(list(config["unique"].items()))
 
 # Load all patches from the "patches" folder
 for path in glob(
@@ -53,6 +53,6 @@ for path in glob(
     )
 ):
     with open(path, encoding="utf-8") as patch_file:
-        hooks.Filters.ENV_PATCHES.add_item((os.path.basename(path), patch_file.read()))
+        tutor_hooks.Filters.ENV_PATCHES.add_item((os.path.basename(path), patch_file.read()))
 
-hooks.Filters.CLI_COMMANDS.add_item(commands.harmony)
+tutor_hooks.Filters.CLI_COMMANDS.add_item(commands.harmony)
