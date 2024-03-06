@@ -26,7 +26,7 @@ To connect to the dashboard, start port-forwarding with the following command:
 Now you can connect to https://localhost:8443. The certificate is self-signed by
 the cluster.
 {{- end }}
-
+{{ end }}
 
 
 
