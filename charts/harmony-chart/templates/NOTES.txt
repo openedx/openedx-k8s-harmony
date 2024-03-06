@@ -14,6 +14,7 @@ a JSON response.
 Grafana shipped with the default admin user password as a bug prevents
 changing it. Since is enabled on the cluster and exposed to the internet.
 Please make sure you update the default admin user password!
+{{ end }}
 {{- if .Values.k8sdashboard.enabled }}
 You have enabled the Kubernetes dashboard. For security purposes, it is not
 exposed to the internet as is, however, by adjusting the settings, you could
@@ -26,7 +27,6 @@ To connect to the dashboard, start port-forwarding with the following command:
 Now you can connect to https://localhost:8443. The certificate is self-signed by
 the cluster.
 {{- end }}
-{{ end }}
 
 
 
