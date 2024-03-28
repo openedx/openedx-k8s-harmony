@@ -85,23 +85,6 @@ elasticsearch:
       xpack.security.transport.ssl.certificate_authorities: /usr/share/elasticsearch/config/certs/ca.crt
       xpack.security.transport.ssl.verification_mode: certificate
 
-# Configuration for the metrics server chart
-metricsserver:
-   # Control the chart inclusion
-   enabled: false
-   # See https://github.com/kubernetes-sigs/metrics-server/blob/master/charts/metrics-server/values.yaml
-   # for all available options
-   replicas: 1
-
-# Configuration for the Vertical Pod Autoscaler chart
-vpa:
-   # Control the chart inclusion
-   enabled: false
-   # See https://github.com/cowboysysop/charts/blob/master/charts/vertical-pod-autoscaler/values.yaml
-   # for all available options
-   admissionController:
-      replicaCount: 1
-
 # Multi-tenant OpenSearch
 opensearch:
   enabled: false
@@ -333,3 +316,57 @@ prometheusstack:
 # Configuration for the K8s Dashboard chart
 k8sdashboard:
   enabled: false
+
+# Before enablin Velero, make sure to execute "velero install --crds-only" to install
+# the CRDs in the cluster.
+velero:
+  enabled: false
+
+  # For the list of supported providers, and their configuration,
+  # please visit https://velero.io/docs/main/supported-providers/
+  configuration:
+    backupStorageLocation:
+      - name: "velero-backup-harmony"
+        provider: aws
+        bucket: ""  # unique name of the bucket
+        default: true
+        config:
+          s3Url: "" # the endpoint can be any S3 compatible storage
+          region: "" # the region of the bucket
+
+    volumeSnapshotLocation:
+      - name: "velero-volume-snapshot-harmony"
+        provider: "" # provider configuration
+        config:
+          region: "" # the region of the bucket
+
+  credentials:
+    secretContents:
+      cloud: |
+        [default]
+        aws_access_key_id=""     # AWS access key ID
+        aws_secret_access_key="" # AWS secret access key
+
+  initContainers:
+    - name: velero-plugin-for-aws
+      image: velero/velero-plugin-for-aws:1.8.4
+      volumeMounts:
+        - mountPath: /target
+          name: plugins
+
+  schedules:
+    hourly-backup:
+      disabled: false
+      schedule: "30 */1 * * *"
+      template:
+        ttl: "24h"
+    daily-backup:
+      disabled: false
+      schedule: "0 6 * * *"
+      template:
+        ttl: "168h"
+    weekly-backup:
+      disabled: false
+      schedule: "59 23 * * 0"
+      template:
+        ttl: "720h"

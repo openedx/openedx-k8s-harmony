@@ -45,3 +45,44 @@ prometheusstack:
 
 k8sdashboard:
   enabled: false
+
+velero:
+  enabled: false
+
+  configuration:
+    backupStorageLocation:
+      - name: velero-backup-harmony
+        provider: aws
+        bucket: se6099-e665a5
+        default: true
+        config:
+          s3Url: https://nyc3.digitaloceanspaces.com
+          region: nyc3
+
+    volumeSnapshotLocation:
+      - name: velero-volume-snapshot-harmony
+        provider: digitalocean.com/velero"
+        config:
+          region: nyc3
+
+  credentials:
+    extraEnvVars:
+        DIGITALOCEAN_TOKEN: ""   # DigitalOcean API token
+    secretContents:
+      cloud: |
+        [default]
+        aws_access_key_id=""     # AWS access key ID
+        aws_secret_access_key="" # AWS secret access key
+
+  initContainers:
+    - name: velero-plugin-for-aws
+      image: velero/velero-plugin-for-aws:1.8.4
+      volumeMounts:
+        - mountPath: /target
+          name: plugins
+
+    - name: velero-plugin-for-digitalocean
+      image: digitalocean/velero-plugin:1.1.0
+      volumeMounts:
+        - mountPath: /target
+          name: plugins
