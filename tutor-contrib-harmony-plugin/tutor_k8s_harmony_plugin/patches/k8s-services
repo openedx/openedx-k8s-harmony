@@ -3,13 +3,17 @@
 # handle HTTPS certs and forward traffic to each Open edX instance's Caddy
 # instance.
 {%- set HOSTS = [LMS_HOST, CMS_HOST, PREVIEW_HOST, MFE_HOST] + K8S_HARMONY_INGRESS_HOST_LIST %}
+{%- HOSTS.append(ECOMMERCE_HOST) if ECOMMERCE_HOST is defined %}
+{%- HOSTS.append(DISCOVERY_HOST) if DISCOVERY_HOST is defined %}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: central-lb-to-caddy-ingress
+  namespace: {{ K8S_NAMESPACE }}
   labels:
     app.kubernetes.io/component: ingress
   annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
     cert-manager.io/cluster-issuer: harmony-letsencrypt-global
 spec:
   ingressClassName: {{ K8S_HARMONY_INGRESS_CLASS_NAME }}
