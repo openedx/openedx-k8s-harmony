@@ -48,7 +48,7 @@ data "digitalocean_kubernetes_cluster" "cluster" {
   name = var.cluster_name
   # Set the depends_on so that the data source doesn't
   # try to read from a cluster that doesn't exist, causing
-  # failures when trying to run a `terraform plan`.
+  # failures when trying to run a `tofu plan`.
   depends_on = [module.k8s_cluster.cluster_id]
 }
 
@@ -76,7 +76,7 @@ provider "kubectl" {
 }
 
 
-# Declare the kubeconfig as an output - access it anytime with "terraform output -raw kubeconfig"
+# Declare the kubeconfig as an output - access it anytime with "tofu output -raw kubeconfig"
 output "kubeconfig" {
   value     = module.k8s_cluster.kubeconfig.raw_config
   sensitive = true

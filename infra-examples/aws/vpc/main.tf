@@ -36,10 +36,10 @@ locals {
   }
 
   tags = {
-    "Name"                          = var.name
-    "openedx-k8s-harmony/name"      = var.name
-    "openedx-k8s-harmony/region"    = var.aws_region
-    "openedx-k8s-harmony/terraform" = "true"
+    "Name"                       = var.name
+    "openedx-k8s-harmony/name"   = var.name
+    "openedx-k8s-harmony/region" = var.aws_region
+    "openedx-k8s-harmony/tofu"   = "true"
   }
 
 

@@ -1,6 +1,6 @@
 # Reference Architecture for AWS
 
-This module includes Terraform modules to create AWS reference resources that are preconfigured to support Open edX as well as [Karpenter](https://karpenter.sh/) for management of [AWS EC2 spot-priced](https://aws.amazon.com/ec2/spot/) compute nodes and enhanced pod bin packing.
+This module includes OpenTofu modules to create AWS reference resources that are preconfigured to support Open edX as well as [Karpenter](https://karpenter.sh/) for management of [AWS EC2 spot-priced](https://aws.amazon.com/ec2/spot/) compute nodes and enhanced pod bin packing.
 
 ## Virtual Private Cloud (VPC)
 
