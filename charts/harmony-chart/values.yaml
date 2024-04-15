@@ -370,3 +370,6 @@ velero:
       schedule: "59 23 * * 0"
       template:
         ttl: "720h"
+
+openfaas:
+  enabled: false

@@ -86,3 +86,6 @@ velero:
       volumeMounts:
         - mountPath: /target
           name: plugins
+
+openfaas:
+  enabled: false
