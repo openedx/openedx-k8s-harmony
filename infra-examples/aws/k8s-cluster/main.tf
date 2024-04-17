@@ -18,10 +18,10 @@ locals {
   partition = data.aws_partition.current.partition
 
   tags = {
-    "Name"                          = var.name
-    "openedx-k8s-harmony/name"      = var.name
-    "openedx-k8s-harmony/region"    = var.aws_region
-    "openedx-k8s-harmony/terraform" = "true"
+    "Name"                       = var.name
+    "openedx-k8s-harmony/name"   = var.name
+    "openedx-k8s-harmony/region" = var.aws_region
+    "openedx-k8s-harmony/tofu"   = "true"
   }
 
 }
@@ -168,7 +168,7 @@ module "eks" {
 # See more details in
 # https://github.com/terraform-aws-modules/terraform-aws-eks/blob/v19.16.0/modules/karpenter/README.md#external-node-iam-role-default
 module "karpenter" {
-  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
+  source  = "terraform-aws-modules/eks/aws/modules/karpenter"
   version = "~> 19.16"
 
   cluster_name = module.eks.cluster_name

@@ -26,15 +26,15 @@ In particular, this project aims to provide the following benefits to Open edX o
 
 ## Technology stack and architecture
 
-1. At the base is a Kubernetes cluster, which you must provide (e.g. using Terraform to provision Amazon EKS).
-   * Any cloud provider such as AWS or Digital Ocean should work. There are Terraform examples in the `infra-examples` folder but it is just a starting point and not recommended for production use.
+1. At the base is a Kubernetes cluster, which you must provide (e.g. using OpenTofu to provision Amazon EKS).
+   * Any cloud provider such as AWS or Digital Ocean should work. There are OpenTofu examples in the `infra-examples` folder but it is just a starting point and not recommended for production use.
 2. On top of that, this project's helm chart will install the shared resources you need - an ingress controller, monitoring, database clusters, etc. The following are included but can be disabled/replaced if you prefer an alternative:
    * Ingress controller: [ingress-nginx](https://kubernetes.github.io/ingress-nginx/)
    * Automatic HTTPS cert provisioning: [cert-manager](https://cert-manager.io/)
    * Autoscaling: `metrics-server` and `vertical-pod-autoscaler`
    * Search index: ElasticSearch (support for OpenSearch is planned)
    * Monitoring: TODO
-   * Database clusters: TODO (for now we recommend provisioning managed MySQL/MongoDB database clusters from your cloud provider using Terraform or a tool like [Grove](https://grove.opencraft.com/).)
+   * Database clusters: TODO (for now we recommend provisioning managed MySQL/MongoDB database clusters from your cloud provider using OpenTofu or a tool like [Grove](https://grove.opencraft.com/).)
    * Where possible, we try to configure these systems to **auto-detect** newly deployed Open edX instances and adapt to them automatically; where that isn't possible, Tutor plugins are used so that the instances self-register or self-provision the shared resources as needed.
 3. [Tutor](https://docs.tutor.overhang.io/) is used to build the container images that will be deployed onto the cluster.
    * This project's Tutor plugin is required to make the images compatible with the shared resources deployed by the Helm chart.
@@ -100,22 +100,22 @@ infrastructure examples included in this repo for such purposes.
 
 * An aws account id
 * Kubectl 1.27
-* Terraform 1.5.x or higher
+* OpenTofu 1.6.x or higher
 * Helm
 
-1. Clone this repository and navigate to `./infra-examples/aws`. You'll find Terraform modules for `vpc` and `k8s-cluster`
+1. Clone this repository and navigate to `./infra-examples/aws`. You'll find OpenTofu modules for `vpc` and `k8s-cluster`
 resources. Proceed creating the `vpc` resources first, followed by the `k8s-cluster` resources. Make sure to have the target
 AWS account ID available, and then execute the following commands on every folder:
 
    ```sh
-   terraform init
-   terraform plan
-   terraform apply -auto-approve
+   tofu init
+   tofu plan
+   tofu apply -auto-approve
    ```
 
    It will create an EKS cluster in the new VPC. Required Karpenter resources will also be created.
 
-2. Once the `k8s-cluster` is created, run the `terraform output` command on that module and copy the following output variables:
+2. Once the `k8s-cluster` is created, run the `tofu output` command on that module and copy the following output variables:
 
    * cluster_name
    * karpenter_irsa_role_arn
@@ -312,7 +312,7 @@ Just run `helm uninstall --namespace harmony harmony` to uninstall this.
 
 ### How to create a cluster for testing on DigitalOcean
 
-If you use DigitalOcean, you can use Terraform to quickly spin up a cluster, try this out, then shut it down again.
+If you use DigitalOcean, you can use OpenTofu to quickly spin up a cluster, try this out, then shut it down again.
 
 Here's how. First, put the following into `infra-examples/digitalocean/secrets.auto.tfvars` including a valid DigitalOcean access token:
 
@@ -325,18 +325,18 @@ Then run:
 
 ```sh
 cd infra-examples/digitalocean
-terraform init
-terraform apply
+tofu init
+tofu apply
 cd ..
 export KUBECONFIG=`pwd`/infra-examples/digitalocean/kubeconfig
 ```
 
-Then follow steps 1-4 above. When you're done, run `terraform destroy` to clean
+Then follow steps 1-4 above. When you're done, run `tofu destroy` to clean
 up everything.
 
 ## Appendix C: how to create a cluster for testing on AWS
 
-Similarly, if you use AWS, you can use Terraform to spin up a cluster, try this out, then shut it down again.
+Similarly, if you use AWS, you can use OpenTofu to spin up a cluster, try this out, then shut it down again.
 Here's how. First, put the following into `infra-examples/aws/vpc/secrets.auto.tfvars` and `infra-examples/aws/k8s-cluster/secrets.auto.tfvars`:
 
    ```terraform
@@ -350,14 +350,14 @@ Then run:
    ```bash
    aws sts get-caller-identity   # to verify that awscli is properly configured
    cd infra-examples/aws/vpc
-   terraform init
-   terraform apply               # run time is approximately 1 minute
+   tofu init
+   tofu apply               # run time is approximately 1 minute
    cd ../k8s-cluster
-   terraform init
-   terraform apply               # run time is approximately 30 minutes
+   tofu init
+   tofu apply               # run time is approximately 30 minutes
 
    # to configure kubectl
    aws eks --region us-east-1 update-kubeconfig --name tutor-multi-test --alias tutor-multi-test
    ```
 
-Then follow steps 1-4 above. When you're done, run `terraform destroy` in both the `aws` and `k8s-cluster` modules to clean up everything.
+Then follow steps 1-4 above. When you're done, run `tofu destroy` in both the `aws` and `k8s-cluster` modules to clean up everything.
