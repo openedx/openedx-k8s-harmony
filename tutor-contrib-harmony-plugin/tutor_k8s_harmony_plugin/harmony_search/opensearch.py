@@ -9,5 +9,5 @@ class OpenSearchAPI(BaseSearchAPI):
 
     def __init__(self, namespace):
         super().__init__(namespace)
-        # TODO: Make this configurable
-        self._curl_base = ["curl", "--insecure", "-u", "harmony:${HARMONY_PASSWORD}"]
+        cluster_password = self.get_cluster_password("opensearch-credentials")
+        self._curl_base = ["curl", "--insecure", "-u", f"harmony:{cluster_password}"]

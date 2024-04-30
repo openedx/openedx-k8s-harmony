@@ -1,17 +1,14 @@
-{%- if K8S_HARMONY_ENABLE_SHARED_SEARCH_CLUSTER %}
+{%- if is_plugin_loaded("discovery") and K8S_HARMONY_ENABLE_SHARED_SEARCH_CLUSTER %}
 import os
 import ssl
 
 with open(os.getenv("ELASTICSEARCH_CA_PATH")) as ca_cert:
     ELASTICSEARCH_CA_CERT = ca_cert.read()
 
-ELASTIC_SEARCH_INDEX_PREFIX = "{{ K8S_HARMONY_SEARCH_CLUSTER_INDEX_PREFIX }}"
-
-ELASTIC_SEARCH_CONFIG = [{
+ELASTICSEARCH_DSL['default'].update({
   "use_ssl": True,
-  "host": "{{ ELASTICSEARCH_HOST }}",
-  "port": 9200,
+  "hosts": "{{ ELASTICSEARCH_HOST }}",
   "http_auth": "{{ K8S_HARMONY_SEARCH_CLUSTER_HTTP_AUTH }}",
   "ssl_context": ssl.create_default_context(cadata=ELASTICSEARCH_CA_CERT),
-}]
+})
 {% endif %}

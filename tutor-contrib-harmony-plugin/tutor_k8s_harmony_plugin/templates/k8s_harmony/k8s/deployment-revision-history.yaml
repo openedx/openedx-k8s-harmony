@@ -1,0 +1,8 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # This name does not have to match anything as we are using this yaml to
+  # override resources using kustomize "patches", not patch strategic merge.
+  name: x-revision-history
+spec:
+  revisionHistoryLimit: {{ K8S_HARMONY_DEPLOYMENT_REVISION_HISTORY_LIMIT }}

@@ -32,7 +32,7 @@ In particular, this project aims to provide the following benefits to Open edX o
    * Ingress controller: [ingress-nginx](https://kubernetes.github.io/ingress-nginx/)
    * Automatic HTTPS cert provisioning: [cert-manager](https://cert-manager.io/)
    * Autoscaling: `metrics-server` and `vertical-pod-autoscaler`
-   * Search index: ElasticSearch (support for OpenSearch is planned)
+   * Search index: ElasticSearch or OpenSearch
    * Monitoring: TODO
    * Database clusters: TODO (for now we recommend provisioning managed MySQL/MongoDB database clusters from your cloud provider using OpenTofu or a tool like [Grove](https://grove.opencraft.com/).)
    * Where possible, we try to configure these systems to **auto-detect** newly deployed Open edX instances and adapt to them automatically; where that isn't possible, Tutor plugins are used so that the instances self-register or self-provision the shared resources as needed.
@@ -292,11 +292,18 @@ To enable set `elasticsearch.enabled=true` in your `values.yaml` and deploy the 
 For each instance you would like to enable this on, set the configuration values in the respective `config.yml`:
 
 ```yaml
-K8S_HARMONY_ENABLE_SHARED_HARMONY_SEARCH: true
 RUN_ELASTICSEARCH: false
+K8S_HARMONY_ENABLE_SHARED_SEARCH_CLUSTER: true
 ```
 
-* And create the user on the cluster with `tutor k8s harmony create-elasticsearch-user`.
+* Create the user on the cluster with `tutor k8s harmony create-elasticsearch-user`.
+* Copy the Elasticsearch CA certificate to the instance's namespace where `$INSTANCE_NAMESPACE` is where the instance is installed in.
+  ```shell
+  kubectl get secret "search-cluster-certificates-elasticsearch" -n "harmony" -o "yaml" | \
+      grep -v '^\s*namespace:\s' | \
+      sed s/-elasticsearch//g |\
+      kubectl apply -n "$INSTANCE_NAMESPACE" --force -f -
+  ```
 * Rebuild your Open edX image `tutor images build openedx`.
 * Finally, redeploy your changes: `tutor k8s start && tutor k8s init`.
 

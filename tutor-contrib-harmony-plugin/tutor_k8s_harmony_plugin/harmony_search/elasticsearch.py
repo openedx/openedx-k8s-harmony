@@ -9,4 +9,5 @@ class ElasticSearchAPI(BaseSearchAPI):
 
     def __init__(self, namespace):
         super().__init__(namespace)
-        self._curl_base = ["curl", "--insecure", "-u", "elastic:${ELASTIC_PASSWORD}"]
+        cluster_password = self.get_cluster_password("elasticsearch-credentials")
+        self._curl_base = ["curl", "--insecure", "-u", f"elastic:{cluster_password}"]
