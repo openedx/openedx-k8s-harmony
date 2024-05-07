@@ -21,7 +21,7 @@ config = {
         # when installing additional plugins such as tutor-ecommerce or tutor-minio.
         # The workaround is to manually add a list of hosts to be routed to the caddy
         # instance.
-        "INGRESS_HOST_LIST": [],
+        "ADDITIONAL_INGRESS_HOST_LIST": [],
         "ENABLE_SHARED_HARMONY_SEARCH": False,
     },
     "overrides": {

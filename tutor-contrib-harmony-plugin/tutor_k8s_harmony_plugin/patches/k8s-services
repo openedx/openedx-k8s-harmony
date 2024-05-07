@@ -2,7 +2,7 @@
 # For multi-instance clusters. Allow one central load balancer on the cluster to
 # handle HTTPS certs and forward traffic to each Open edX instance's Caddy
 # instance.
-{%- set HOSTS = [LMS_HOST, CMS_HOST, PREVIEW_HOST, MFE_HOST] + K8S_HARMONY_INGRESS_HOST_LIST %}
+{%- set HOSTS = [LMS_HOST, CMS_HOST, PREVIEW_HOST, MFE_HOST] + K8S_HARMONY_ADDITIONAL_INGRESS_HOST_LIST %}
 {%- HOSTS.append(ECOMMERCE_HOST) if ECOMMERCE_HOST is defined %}
 {%- HOSTS.append(DISCOVERY_HOST) if DISCOVERY_HOST is defined %}
 apiVersion: networking.k8s.io/v1
