@@ -108,7 +108,7 @@ if FORUM_ENV:
         """
         Override froum env vars to configure the search cluster.
 
-        The default Elasticsearch configuraiton does not allow HTTP auth or CA
+        The default Elasticsearch configuration does not allow HTTP auth or CA
         cert path configuration. This needs to be done through overriding the
         default env values.
         """
