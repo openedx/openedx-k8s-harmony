@@ -1,14 +1,17 @@
----
 # For multi-instance clusters. Allow one central load balancer on the cluster to
 # handle HTTPS certs and forward traffic to each Open edX instance's Caddy
 # instance.
-{%- set HOSTS = [LMS_HOST, CMS_HOST, PREVIEW_HOST, MFE_HOST] + K8S_HARMONY_ADDITIONAL_INGRESS_HOST_LIST %}
-{%- HOSTS.append(ECOMMERCE_HOST) if ECOMMERCE_HOST is defined %}
-{%- HOSTS.append(DISCOVERY_HOST) if DISCOVERY_HOST is defined %}
+{%- set HOSTS = [LMS_HOST, CMS_HOST] + K8S_HARMONY_ADDITIONAL_INGRESS_HOST_LIST %}
+{%- set tmp = HOSTS.append(PREVIEW_HOST) if PREVIEW_HOST is defined %}
+{%- set tmp = HOSTS.append(MFE_HOST) if MFE_HOST is defined %}
+{%- set tmp = HOSTS.append(ECOMMERCE_HOST) if ECOMMERCE_HOST is defined %}
+{%- set tmp = HOSTS.append(DISCOVERY_HOST) if DISCOVERY_HOST is defined %}
+{%- for host in HOSTS %}
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: central-lb-to-caddy-ingress
+  name: {{ host | replace(".", "-") }}-to-caddy
   namespace: {{ K8S_NAMESPACE }}
   labels:
     app.kubernetes.io/component: ingress
@@ -18,7 +21,6 @@ metadata:
 spec:
   ingressClassName: {{ K8S_HARMONY_INGRESS_CLASS_NAME }}
   rules:
-  {%- for host in HOSTS if host is defined %}
   - host: "{{ host }}"
     http:
       paths:
@@ -29,10 +31,9 @@ spec:
             name: caddy
             port:
               number: {{ CADDY_HTTP_PORT }}
-    {%- endfor %}
   tls:
   - hosts:
-    {%- for host in HOSTS if host is defined %}
-    - {{ host -}}
-    {% endfor %}
+    - {{ host }}
     secretName: central-lb-ingress-tls
+{%- endfor %}
+
