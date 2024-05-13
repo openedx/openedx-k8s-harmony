@@ -34,6 +34,6 @@ spec:
   tls:
   - hosts:
     - {{ host }}
-    secretName: central-lb-ingress-tls
+    secretName: {{ host | replace(".", "-") }}-tls
 {%- endfor %}
 
