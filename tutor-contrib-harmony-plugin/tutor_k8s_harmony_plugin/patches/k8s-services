@@ -6,6 +6,8 @@
 {%- set tmp = HOSTS.append(MFE_HOST) if MFE_HOST is defined %}
 {%- set tmp = HOSTS.append(ECOMMERCE_HOST) if ECOMMERCE_HOST is defined %}
 {%- set tmp = HOSTS.append(DISCOVERY_HOST) if DISCOVERY_HOST is defined %}
+{%- set tmp = HOSTS.append(MINIO_HOST) if MINIO_HOST is defined %}
+{%- set tmp = HOSTS.append(MINIO_CONSOLE_HOST) if MINIO_CONSOLE_HOST is defined %}
 {%- for host in HOSTS %}
 ---
 apiVersion: networking.k8s.io/v1
