@@ -2,7 +2,7 @@
 # handle HTTPS certs and forward traffic to each Open edX instance's Caddy
 # instance.
 {%- set HOSTS = [LMS_HOST, CMS_HOST] + K8S_HARMONY_ADDITIONAL_INGRESS_HOST_LIST %}
-{%- set tmp = HOSTS.append(PREVIEW_HOST) if PREVIEW_HOST is defined %}
+{%- set tmp = HOSTS.append(PREVIEW_LMS_HOST) if PREVIEW_LMS_HOST is defined %}
 {%- set tmp = HOSTS.append(MFE_HOST) if MFE_HOST is defined %}
 {%- set tmp = HOSTS.append(ECOMMERCE_HOST) if ECOMMERCE_HOST is defined %}
 {%- set tmp = HOSTS.append(DISCOVERY_HOST) if DISCOVERY_HOST is defined %}
