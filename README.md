@@ -285,7 +285,7 @@ from this job, run:") in a separate terminal in order to monitor the status.
 Tutor creates an Elasticsearch pod as part of the Kubernetes deployment. Depending on the number of instances
 Memory and CPU use can be lowered by running a central ES cluster instead of an ES pod for every instance.
 
-**Please note that this will only work for "Palm" version and later.**
+**Please note that this will only work for "Redwood" version and later. The OpenSearch implementation is not yet confirmed to work as expected.**
 
 To enable set `elasticsearch.enabled=true` in your `values.yaml` and deploy the chart.
 
@@ -296,10 +296,10 @@ RUN_ELASTICSEARCH: false
 K8S_HARMONY_ENABLE_SHARED_SEARCH_CLUSTER: true
 ```
 
-* Create the user on the cluster with `tutor k8s harmony create-elasticsearch-user`.
-* Copy the Elasticsearch CA certificate to the instance's namespace where `$INSTANCE_NAMESPACE` is where the instance is installed in.
+* Create the user on the cluster with `tutor harmony create-elasticsearch-user`.
+* Copy the Elasticsearch CA certificate to the instance's namespace where `$INSTANCE_NAMESPACE` is where the instance is installed in. The `$HARMONY_NAMESPACE` should be set to the namespace where the Harmony is installed to.
   ```shell
-  kubectl get secret "search-cluster-certificates-elasticsearch" -n "harmony" -o "yaml" | \
+  kubectl get secret "search-cluster-certificates-elasticsearch" -n "$HARMONY_NAMESPACE" -o "yaml" | \
       grep -v '^\s*namespace:\s' | \
       sed s/-elasticsearch//g |\
       kubectl apply -n "$INSTANCE_NAMESPACE" --force -f -
