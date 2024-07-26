@@ -37,7 +37,8 @@ config = {
         # The workaround is to manually add a list of hosts to be routed to the caddy
         # instance.
         "ADDITIONAL_INGRESS_HOST_LIST": [],
-        "ENABLE_SHARED_HARMONY_SEARCH": False,
+        "ENABLE_SHARED_SEARCH_CLUSTER": False,
+        "DEPLOYMENT_REVISION_HISTORY_LIMIT": 10,
     },
     "overrides": {
         # Don't use Caddy as a per-instance external web proxy, but do still use it
@@ -108,7 +109,7 @@ if FORUM_ENV:
         """
         Override froum env vars to configure the search cluster.
 
-        The default Elasticsearch configuration does not allow HTTP auth or CA
+        The default Elasticsearch configuraiton does not allow HTTP auth or CA
         cert path configuration. This needs to be done through overriding the
         default env values.
         """
