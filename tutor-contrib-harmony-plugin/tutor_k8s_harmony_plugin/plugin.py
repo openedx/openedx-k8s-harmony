@@ -1,7 +1,6 @@
 import os
-from glob import glob
 
-import pkg_resources
+from importlib import resources
 from tutor import hooks as tutor_hooks
 
 try:
@@ -78,7 +77,7 @@ tutor_hooks.Filters.CONFIG_UNIQUE.add_items(list(config["unique"].items()))
 tutor_hooks.Filters.CLI_COMMANDS.add_item(commands.harmony)
 
 tutor_hooks.Filters.ENV_TEMPLATE_ROOTS.add_item(
-    pkg_resources.resource_filename(PLUGIN_DIR_NAME, "templates")
+    str(resources.files(PLUGIN_DIR_NAME) / "templates")
 )
 
 tutor_hooks.Filters.ENV_TEMPLATE_TARGETS.add_items(
@@ -95,8 +94,8 @@ tutor_hooks.Filters.ENV_TEMPLATE_VARIABLES.add_item(
 # the overrides configured for individual instances are themselves not overriden
 # by the default patches of other plugins. The priority of these patches are
 # therefore set to 100.
-patches = pkg_resources.resource_filename(PLUGIN_DIR_NAME, "patches")
-for path in glob(os.path.join(patches, "*")):
+patches = resources.files(PLUGIN_DIR_NAME) / "patches"
+for path in patches.glob("*"):
     with open(path, encoding="utf-8") as patch_file:
         tutor_hooks.Filters.ENV_PATCHES.add_item(
             (os.path.basename(path), patch_file.read()), priority=100
