@@ -282,8 +282,8 @@ from this job, run:") in a separate terminal in order to monitor the status.
 
 ### Multi-tenant Elasticsearch
 
-Tutor creates an Elasticsearch pod as part of the Kubernetes deployment. Depending on the number of instances
-Memory and CPU use can be lowered by running a central ES cluster instead of an ES pod for every instance.
+Tutor creates an Elasticsearch pod as part of the Kubernetes deployment. Depending on the number of instances, memory
+and CPU use can be lowered by running a central ES cluster instead of an ES pod for every instance.
 
 **Please note that this will only work for "Redwood" version and later. The OpenSearch implementation is not yet confirmed to work as expected.**
 
@@ -294,7 +294,12 @@ For each instance you would like to enable this on, set the configuration values
 ```yaml
 RUN_ELASTICSEARCH: false
 K8S_HARMONY_ENABLE_SHARED_SEARCH_CLUSTER: true
+K8S_HARMONY_SEARCH_CLUSTER_HTTP_AUTH: instance-name:desired-password
+K8S_HARMONY_SEARCH_CLUSTER_INDEX_PREFIX: prefix-
 ```
+
+If the `K8S_HARMONY_SEARCH_CLUSTER_HTTP_AUTH` or `K8S_HARMONY_SEARCH_CLUSTER_INDEX_PREFIX` is not set, the settings are
+populated with random value to ensure uniqueness.
 
 * Create the user on the cluster with `tutor harmony create-elasticsearch-user`.
 * Copy the Elasticsearch CA certificate to the instance's namespace where `$INSTANCE_NAMESPACE` is where the instance is installed in. The `$HARMONY_NAMESPACE` should be set to the namespace where the Harmony is installed to.
