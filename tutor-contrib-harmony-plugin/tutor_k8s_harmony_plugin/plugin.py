@@ -49,6 +49,8 @@ config = {
         "ELASTICSEARCH_SCHEME": "https",
         # Override the elasticsearch host to point to the internal cluster
         "ELASTICSEARCH_HOST": "harmony-search-cluster.{{ K8S_HARMONY_NAMESPACE }}.svc.cluster.local",
+        # Disable the per-namespace elasticsearch instance
+        "RUN_ELASTICSEARCH": False,
         # The list of indexes is defined in:
         # https://github.com/openedx/course-discovery/blob/master/course_discovery/settings/base.py
         # We need to keep a copy of this list so that we can prefix the index names when using shared ES.
