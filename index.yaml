@@ -2,6 +2,66 @@ apiVersion: v1
 entries:
   harmony-chart:
   - apiVersion: v2
+    appVersion: 18.0.0
+    created: "2024-07-31T15:26:36.765985723Z"
+    dependencies:
+    - condition: ingress-nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.4.2
+    - condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.13.3
+    - alias: metricsserver
+      condition: metricsserver.enabled
+      name: metrics-server
+      repository: https://kubernetes-sigs.github.io/metrics-server/
+      version: ~3.8.3
+    - alias: vpa
+      condition: vpa.enabled
+      name: vertical-pod-autoscaler
+      repository: https://cowboysysop.github.io/charts/
+      version: ~6.0.3
+    - condition: elasticsearch.enabled
+      name: elasticsearch
+      repository: https://helm.elastic.co
+      version: 7.17.3
+    - condition: opensearch.enabled
+      name: opensearch
+      repository: https://opensearch-project.github.io/helm-charts
+      version: 2.13.3
+    - condition: karpenter.enabled
+      name: karpenter
+      repository: oci://public.ecr.aws/karpenter
+      version: v0.29.2
+    - alias: prometheusstack
+      condition: prometheusstack.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 56.6.2
+    - alias: k8sdashboard
+      condition: k8sdashboard.enabled
+      name: kubernetes-dashboard
+      repository: https://kubernetes.github.io/dashboard
+      version: 7.3.1
+    - condition: velero.enabled
+      name: velero
+      repository: https://vmware-tanzu.github.io/helm-charts
+      version: 5.2.0
+    - condition: openfaas.enabled
+      name: openfaas
+      repository: https://openfaas.github.io/faas-netes
+      version: 14.2.34
+    description: A Helm chart for deploying multiple Open edX instances onto Kubernetes
+      using Tutor
+    digest: 2821266dc34a99f6ce7bfb4eed226e7f7aee9c79db70bc80f7abf9e5534f482e
+    name: harmony-chart
+    type: application
+    urls:
+    - https://github.com/openedx/openedx-k8s-harmony/releases/download/harmony-chart-0.7.5/harmony-chart-0.7.5.tgz
+    version: 0.7.5
+  - apiVersion: v2
     appVersion: 17.0.4
     created: "2024-07-31T15:01:33.287339399Z"
     dependencies:
@@ -622,4 +682,4 @@ entries:
     urls:
     - https://github.com/openedx/openedx-k8s-harmony/releases/download/harmony-chart-0.1.0/harmony-chart-0.1.0.tgz
     version: 0.1.0
-generated: "2024-07-31T15:01:33.287372341Z"
+generated: "2024-07-31T15:26:36.766085219Z"
