@@ -108,7 +108,7 @@ if FORUM_ENV:
     @FORUM_ENV.add()
     def _add_forum_env_vars(env_vars: dict):
         """
-        Override froum env vars to configure the search cluster.
+        Override forum env vars to configure the search cluster.
 
         The default Elasticsearch configuraiton does not allow HTTP auth or CA
         cert path configuration. This needs to be done through overriding the
