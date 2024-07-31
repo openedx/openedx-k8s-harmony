@@ -1,0 +1,33 @@
+# Most of the open edX resources have volumes and volumeMounts, which means that
+# we can add an extra volume to their volume list. However, in some cases, like
+# the forum and forum-job, the resource does not define any volumes. This means,
+# we cannot have a common solution as adding extra volumes to non-existing list
+# breaks, while adding a volume definition to existing volumes replaces the
+# original set of volumes. We have to manually distinguish between resources.
+{%- set HAS_VOLUME = ["lms", "cms", "lms-job", "cms-job"] %}
+{%- set VOLUMELESS = [] %}
+
+{%- if is_plugin_loaded("discovery") %}
+  {%- set HAS_VOLUME = HAS_VOLUME + ["discovery", "discovery-job"] %}
+{% endif %}
+
+{%- if is_plugin_loaded("forum") %}
+  {%- set VOLUMELESS = VOLUMELESS + ["forum", "forum-job"] %}
+{% endif %}
+
+patches:
+- path: plugins/k8s_harmony/k8s/deployment-revision-history.yaml
+  target:
+    kind: Deployment
+{%- for res in HAS_VOLUME %}
+- path: plugins/k8s_harmony/k8s/shared-search-cert-patch.yaml
+  target:
+    kind: {% if "-job" in res %}Job{% else %}Deployment{% endif %}
+    name: {{ res }}.*
+{%- endfor %}
+{%- for res in VOLUMELESS %}
+- path: plugins/k8s_harmony/k8s/shared-search-cert-patch-volumeless.yaml
+  target:
+    kind: {% if "-job" in res %}Job{% else %}Deployment{% endif %}
+    name: {{ res }}.*
+{%- endfor %}

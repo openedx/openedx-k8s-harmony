@@ -1,0 +1,17 @@
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: ELASTICSEARCH_CA_PATH
+    value: /etc/ssl/certs/search-cluster.pem
+- op: add
+  path: /spec/template/spec/containers/0/volumeMounts
+  value:
+    - mountPath: /etc/ssl/certs/search-cluster.pem
+      name: search-cluster-certs
+      subPath: ca.crt
+- op: add
+  path: /spec/template/spec/volumes
+  value:
+    - name: search-cluster-certs
+      secret:
+        secretName: search-cluster-certificates

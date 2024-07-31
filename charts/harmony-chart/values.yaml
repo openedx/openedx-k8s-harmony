@@ -47,9 +47,7 @@ elasticsearch:
   # tutor harmony create-elasticsearch-user
   # ```
   # RUN_ELASTICSEARCH: false
-  # HARMONY_SEARCH_INDEX_PREFIX: "username-"
   # K8S_HARMONY_ENABLE_SHARED_HARMONY_SEARCH: true
-  # HARMONY_SEARCH_HTTP_AUTH: "username:actual_password"
 
   # We will create the relevant certs, because they need to shared
   # with pods in other namespaces.
@@ -60,7 +58,7 @@ elasticsearch:
   # This secret will contain the http certificates.
   secretMounts:
     - name: elasticsearch-certificates
-      secretName: elasticsearch-certificates
+      secretName: search-cluster-certificates-elasticsearch
       path: /usr/share/elasticsearch/config/certs
       defaultMode: 0777
 
@@ -78,7 +76,7 @@ elasticsearch:
       xpack.security.enabled: true
       xpack.security.http.ssl.enabled: true
       xpack.security.http.ssl.key: /usr/share/elasticsearch/config/certs/tls.key
-      xpack.security.http.ssl.certificate: /usr/share/elasticsearch/config/certs/tls.crt
+      xpack.security.http.ssl.certificate: /usr/share/elasticsearch/config/certs/chain.crt
       xpack.security.transport.ssl.enabled: true
       xpack.security.transport.ssl.key: /usr/share/elasticsearch/config/certs/tls.key
       xpack.security.transport.ssl.certificate: /usr/share/elasticsearch/config/certs/tls.crt
@@ -98,14 +96,12 @@ opensearch:
   # tutor harmony create-opensearch-user
   # ```
   # RUN_ELASTICSEARCH: false
-  # HARMONY_SEARCH_INDEX_PREFIX: "username-"
   # K8S_HARMONY_USE_SHARED_OPENSEARCH: true
-  # HARMONY_SEARCH_HTTP_AUTH: "username:actual_password"
 
   # # This secret will contain the ssl certificates.
   secretMounts:
     - name: opensearch-certificates
-      secretName: opensearch-certificates
+      secretName: search-cluster-certificates-elasticsearch
       path: /usr/share/opensearch/config/certs
       defaultMode: 0777
 
@@ -125,11 +121,6 @@ opensearch:
   extraEnvs:
     - name: DISABLE_INSTALL_DEMO_CONFIG
       value: "true"
-    - name: HARMONY_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: opensearch-credentials
-          key: harmony_password
 
   # Allows you to add any config files in {{ .Values.opensearchHome }}/config
   opensearchHome: /usr/share/opensearch

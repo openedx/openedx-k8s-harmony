@@ -21,13 +21,21 @@ def create_elasticsearch_user(context: click.Context):
     config = tutor_config.load(context.root)
     namespace = config["K8S_HARMONY_NAMESPACE"]
     api = ElasticSearchAPI(namespace)
-    username, password = config["HARMONY_SEARCH_HTTP_AUTH"].split(":", 1)
+    username, password = config["K8S_HARMONY_SEARCH_CLUSTER_HTTP_AUTH"].split(":", 1)
     role_name = f"{username}_role"
 
-    prefix = config["HARMONY_SEARCH_INDEX_PREFIX"]
+    prefix = config["K8S_HARMONY_SEARCH_CLUSTER_INDEX_PREFIX"]
     api.post(
         f"_security/role/{role_name}",
-        {"indices": [{"names": [f"{prefix}*"], "privileges": ["all"]}]},
+        {
+            "cluster": ["monitor"], 
+            "indices": [
+                {
+                    "names": [f"{prefix}*"],
+                    "privileges": ["all"],
+                },
+            ],
+        },
     )
 
     api.post(
@@ -50,10 +58,10 @@ def create_opensearch_user(context: click.Context):
     config = tutor_config.load(context.root)
     namespace = config["K8S_HARMONY_NAMESPACE"]
     api = OpenSearchAPI(namespace)
-    username, password = config["HARMONY_SEARCH_HTTP_AUTH"].split(":", 1)
+    username, password = config["K8S_HARMONY_SEARCH_CLUSTER_HTTP_AUTH"].split(":", 1)
     role_name = f"{username}_role"
 
-    prefix = config["HARMONY_SEARCH_INDEX_PREFIX"]
+    prefix = config["K8S_HARMONY_SEARCH_CLUSTER_INDEX_PREFIX"]
     api.put(
         f"_plugins/_security/api/roles/{role_name}",
         {
