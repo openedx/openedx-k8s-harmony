@@ -1,0 +1,61 @@
+name: Integration Test
+
+on:
+  pull_request:
+
+jobs:
+
+  k8s:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cluster:
+          - cluster-01
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Kind
+        uses: helm/kind-action@v1.10.0
+        with:
+          install_only: true
+
+      - name: Start Kind
+        run: |
+          kind create cluster --config integration-test/cluster.yaml
+          kubectl config set-context --current --namespace=openedx-harmony
+          sudo echo "127.0.0.1 harmony.test" | sudo tee -a /etc/hosts
+
+      - name: Helm dependency add
+        run: |
+          helm dependency list charts/harmony-chart 2> /dev/null | tail +2 | awk '{ print "helm" " repo add " $1 " " $3 }' | while read cmd; do $cmd || true; done
+          kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.1/cert-manager.crds.yaml --namespace=harmony
+
+      - name: Helm dependency build
+        run: |
+          helm dependency update charts/harmony-chart
+          helm dependency build charts/harmony-chart
+
+      - name: Helm install
+        run: |
+          helm install harmony --namespace openedx-harmony --create-namespace -f integration-test/${{matrix.cluster}}/values.yaml charts/harmony-chart
+          kubectl rollout status deployment --timeout 300s
+
+      - name: Healthcheck
+        run: |
+          curl http://harmony.test/cluster-echo-test
+
+      - name: setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install openedx
+        run: |
+          export INSTALLATIONS=$(ls -d integration-test/${{matrix.cluster}}/*/)
+          export CI_ROOT=$(pwd)
+          for installation in $(ls -d integration-test/${{matrix.cluster}}/*/)
+          do
+            bash integration-test/environment.sh $installation
+          done

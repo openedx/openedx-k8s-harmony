@@ -1,6 +1,21 @@
 # Disable HTTPS cert provisioning for testing with minikube
 cert-manager:
-   enabled: true
+   enabled: false
+
+ingress-nginx:
+  # Use ingress-nginx as a default controller.
+  enabled: true
+  controller:
+    # All these needed for local development
+    service:
+      type: NodePort
+    hostPort:
+      enabled: true
+    publishService:
+      enabled: false
+    extraArgs:
+      publish-status-address: localhost
+
 
 clusterDomain: harmony.test
 

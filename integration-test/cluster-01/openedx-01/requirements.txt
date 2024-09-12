@@ -1,0 +1,2 @@
+../../../tutor-contrib-harmony-plugin
+tutor[full]<19
