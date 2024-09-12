@@ -1,0 +1,34 @@
+# ingress nginx
+# cert manager
+# elastichsearch - openedx
+# opensearch - openedx
+# prometheusstack
+
+
+
+# steps
+# 1. Create a key for a CA
+openssl genrsa -des3 -out harmony.key 2048
+# 2. Generate a root certificate
+openssl req -x509 -new -nodes -key harmony.key -sha256 -days 1825 -out harmony.pem
+# 3. Install Certificate
+sudo cp harmony.pem /usr/local/share/ca-certificates/harmony.crt
+sudo update-ca-certificates
+# 4. Creating CA-signed certificates for dev site
+openssl genrsa -out harmony.test.key 2048
+# 4.1 Create CSR:
+openssl req -new -key harmony.test.key -out harmony.test.csr
+# 4.2 Sign certifcate
+openssl x509 -req -in harmony.test.csr -CA harmony.pem -CAkey harmony.key -CAcreateserial -out harmony.test.crt -days 825 -sha256 -extfile harmony.test.ext
+
+# Setup certificates
+sudo mkdir -p /etc/systemd/resolved.conf.d
+sudo tee /etc/systemd/resolved.conf.d/minikube.conf << EOF
+[Resolve]
+DNS=$(minikube ip)
+Domains=~harmony.test
+EOF
+sudo systemctl restart systemd-resolved
+
+# Enable certificate on minikube
+cp harmony.pem $HOME/.minikube/certs/harmony.pem
