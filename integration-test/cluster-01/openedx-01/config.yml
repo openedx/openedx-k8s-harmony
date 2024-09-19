@@ -1,1 +1,2 @@
 K8S_NAMESPACE: openedx-01
+K8S_HARMONY_NAMESPACE: openedx-harmony
