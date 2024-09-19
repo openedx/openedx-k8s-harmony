@@ -23,6 +23,7 @@ jobs:
       - name: Setup namespace
         run: |
           kubectl config set-context --current --namespace=openedx-harmony
+          kubectl config view
 
       - name: Helm dependency add
         run: |
