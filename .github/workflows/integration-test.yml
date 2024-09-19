@@ -45,6 +45,7 @@ jobs:
         run: |
           export CLUSTER_HTTP_URL=$(minikube service harmony-ingress-nginx-controller -n harmony --url | head -n 1)
           curl $CLUSTER_HTTP_URL/cluster-echo-test -H "host: harmony.test"
+          minikube status
 
       - name: setup python
         uses: actions/setup-python@v5
