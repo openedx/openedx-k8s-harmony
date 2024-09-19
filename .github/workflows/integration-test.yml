@@ -20,7 +20,7 @@ jobs:
         id: minikube
         uses: medyagh/setup-minikube@latest
         with:
-          kubernetes-version: 1.29
+          kubernetes-version: 1.30
 
       - name: Setup namespace
         run: |
