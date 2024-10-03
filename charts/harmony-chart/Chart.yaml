@@ -17,24 +17,24 @@ dependencies:
 # This is just info for the "helm dependency update" command, which will update the ./charts/ directory when run, using
 # this information.
 - name: ingress-nginx
-  version: "4.4.2"
+  version: "4.11.2"
   repository: https://kubernetes.github.io/ingress-nginx
   condition: ingress-nginx.enabled
 
 - name: cert-manager
-  version: "1.13.3"
+  version: "1.16.0"
   repository: https://charts.jetstack.io
   condition: cert-manager.enabled
 
 - name: metrics-server
   alias: metricsserver
-  version: "~3.8.3"
+  version: "3.12.1"
   repository: https://kubernetes-sigs.github.io/metrics-server/
   condition: metricsserver.enabled
 
 - name: vertical-pod-autoscaler
   alias: vpa
-  version: "~6.0.3"
+  version: "9.9.0"
   repository: https://cowboysysop.github.io/charts/
   condition: vpa.enabled
 
@@ -49,18 +49,18 @@ dependencies:
   repository: https://opensearch-project.github.io/helm-charts
 
 - name: karpenter
-  version: "v0.29.2"
+  version: "1.0.0"
   repository: oci://public.ecr.aws/karpenter
   condition: karpenter.enabled
 
 - name: kube-prometheus-stack
   alias: prometheusstack
-  version: "56.6.2"
+  version: "65.0.0"
   condition: prometheusstack.enabled
   repository: https://prometheus-community.github.io/helm-charts
 
 - name: kubernetes-dashboard
-  version: "7.3.1"
+  version: "7.6.1"
   repository: https://kubernetes.github.io/dashboard
   alias: k8sdashboard
   condition: k8sdashboard.enabled

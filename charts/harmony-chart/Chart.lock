@@ -1,16 +1,16 @@
 dependencies:
 - name: ingress-nginx
   repository: https://kubernetes.github.io/ingress-nginx
-  version: 4.4.2
+  version: 4.11.2
 - name: cert-manager
   repository: https://charts.jetstack.io
-  version: v1.13.3
+  version: v1.16.0
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server/
-  version: 3.8.4
+  version: 3.12.1
 - name: vertical-pod-autoscaler
   repository: https://cowboysysop.github.io/charts/
-  version: 6.0.3
+  version: 9.9.0
 - name: elasticsearch
   repository: https://helm.elastic.co
   version: 7.17.3
@@ -19,18 +19,18 @@ dependencies:
   version: 2.13.3
 - name: karpenter
   repository: oci://public.ecr.aws/karpenter
-  version: v0.29.2
+  version: 1.0.0
 - name: kube-prometheus-stack
   repository: https://prometheus-community.github.io/helm-charts
-  version: 56.6.2
+  version: 65.0.0
 - name: kubernetes-dashboard
   repository: https://kubernetes.github.io/dashboard
-  version: 7.3.1
+  version: 7.6.1
 - name: velero
   repository: https://vmware-tanzu.github.io/helm-charts
   version: 5.2.0
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
   version: 14.2.34
-digest: sha256:b636bd16d732d51544ca7223f460e22f45a7132e31e874a789c5fc0cac460a45
-generated: "2024-05-02T12:32:49.796635+04:00"
+digest: sha256:d50c470429a43d05357395ed41fda8c85034643e93ccce67f49bd80c0e2877d9
+generated: "2024-10-03T12:49:09.307756453-05:00"
