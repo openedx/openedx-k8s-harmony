@@ -4,7 +4,7 @@ dependencies:
   version: 4.11.2
 - name: cert-manager
   repository: https://charts.jetstack.io
-  version: v1.16.0
+  version: v1.15.3
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server/
   version: 3.12.1
@@ -32,5 +32,5 @@ dependencies:
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
   version: 14.2.34
-digest: sha256:d50c470429a43d05357395ed41fda8c85034643e93ccce67f49bd80c0e2877d9
-generated: "2024-10-03T12:49:09.307756453-05:00"
+digest: sha256:548b955e15c04e3eb4a270b4f6a869675d20becad8e75702cf945b214809a63e
+generated: "2024-10-07T15:49:37.65074391-05:00"
