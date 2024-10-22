@@ -143,7 +143,7 @@ module "eks" {
 
 module "ebs_csi_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.5.7"
+  version = "~> 5.47"
 
   role_name             = "ebs-csi-controller-${var.cluster_name}"
   attach_ebs_csi_policy = true
@@ -160,7 +160,7 @@ module "ebs_csi_irsa_role" {
 # Role required by cluster_autoscaler
 module "cluster_autoscaler_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.5.7"
+  version = "~> 5.47"
 
   count = var.enable_cluster_autoscaler ? 1 : 0
 
