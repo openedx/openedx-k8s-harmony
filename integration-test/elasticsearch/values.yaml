@@ -16,29 +16,29 @@ ingress-nginx:
     extraArgs:
       publish-status-address: localhost
 
-
 clusterDomain: harmony.test
 
 elasticsearch:
-   enabled: true
+  enabled: true
 
    # TODO: move this to a separate PR
    # Permit co-located instances for solitary minikube virtual machines.
-   antiAffinity: "soft"
+  antiAffinity: "soft"
 
-   volumeClaimTemplate:
-     resources:
-       requests:
-         storage: 8Gi
+  volumeClaimTemplate:
+    resources:
+      requests:
+        storage: 8Gi
+  replicas: 1
 
 opensearch:
-   enabled: false
+  enabled: false
 
    # Permit co-located instances for solitary minikube virtual machines.
-   antiAffinity: "soft"
+  antiAffinity: "soft"
 
-   persistence:
-     size: 8Gi
+  persistence:
+    size: 8Gi
 
 prometheusstack:
   enabled: true

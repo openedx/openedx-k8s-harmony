@@ -13,3 +13,4 @@ infra-*/secrets.auto.tfvars
 *secrets.auto.tfvars
 my-notes
 **/env/
+**/venv/
