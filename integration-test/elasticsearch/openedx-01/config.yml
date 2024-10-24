@@ -1,4 +1,14 @@
 CMS_OAUTH2_SECRET: kWYPh15ecORZ75TvEqtzfghk
+DISCOVERY_INDEX_OVERRIDES:
+  course_discovery.apps.course_metadata.search_indexes.documents.course: openedx-01-owrj-course
+  course_discovery.apps.course_metadata.search_indexes.documents.course_run: openedx-01-owrj-course_run
+  course_discovery.apps.course_metadata.search_indexes.documents.learner_pathway: openedx-01-owrj-learner_pathway
+  course_discovery.apps.course_metadata.search_indexes.documents.person: openedx-01-owrj-person
+  course_discovery.apps.course_metadata.search_indexes.documents.program: openedx-01-owrj-program
+ELASTICSEARCH_HOST: harmony-search-cluster.openedx-harmony.svc.cluster.local
+ELASTICSEARCH_SCHEME: https
+ENABLE_HTTPS: true
+ENABLE_WEB_PROXY: false
 ID: K3vsruy7oOdTvOcKmhiCybNz
 JWT_RSA_PRIVATE_KEY: '-----BEGIN RSA PRIVATE KEY-----
 
@@ -54,7 +64,10 @@ JWT_RSA_PRIVATE_KEY: '-----BEGIN RSA PRIVATE KEY-----
 
   -----END RSA PRIVATE KEY-----'
 K8S_HARMONY_NAMESPACE: openedx-harmony
+K8S_HARMONY_SEARCH_CLUSTER_HTTP_AUTH: openedx-01:gXkYL5RNzzP3Zc6BHL1oJrKy
+K8S_HARMONY_SEARCH_CLUSTER_INDEX_PREFIX: openedx-01-owrj-
 K8S_NAMESPACE: openedx-01
+LMS_HOST: local.openedx.io
 MYSQL_ROOT_PASSWORD: c7SVvBJl
 OPENEDX_MYSQL_PASSWORD: M4CBFYO9
 OPENEDX_SECRET_KEY: dskQ9UXPKcsSi2molXmggxID
@@ -64,3 +77,4 @@ PLUGINS:
 - mfe
 PLUGIN_INDEXES:
 - https://overhang.io/tutor/main
+RUN_ELASTICSEARCH: false

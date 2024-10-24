@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         cluster:
-          - cluster-01
+          - elasticsearch
 
     steps:
       - name: Checkout
@@ -45,6 +45,10 @@ jobs:
       - name: Healthcheck
         run: |
           curl http://harmony.test/cluster-echo-test
+
+      - name: Boostrap cluster
+        run: |
+          bash integration-test/${{matrix.cluster}}/cluster.sh
 
       - name: setup python
         uses: actions/setup-python@v5

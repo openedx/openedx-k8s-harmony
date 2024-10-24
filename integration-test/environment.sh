@@ -8,9 +8,20 @@ pip install -r $TUTOR_ROOT/requirements.txt
 # Start/init installation
 tutor config save
 tutor plugins enable k8s_harmony
+
 tutor k8s start
+
+echo "########################################"
+echo "#             Pre init                 #"
+echo "########################################"
+
+bash ./pre-init.sh
+
 tutor k8s init
 
+echo "########################################"
+echo "#             Post init                 #"
+echo "########################################"
 bash ./post-installation.sh
 
 # Go back
