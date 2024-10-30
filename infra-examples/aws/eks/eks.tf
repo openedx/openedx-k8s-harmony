@@ -70,22 +70,6 @@ module "eks" {
       type        = "ingress"
       cidr_blocks = concat([module.vpc.vpc_cidr_block], var.extra_ssh_cidrs)
     }
-    ingress_self_all = {
-      description = "Node to node all ports/protocols"
-      protocol    = "-1"
-      from_port   = 0
-      to_port     = 0
-      type        = "ingress"
-      self        = true
-    }
-    cluster_to_node = {
-      description                   = "Cluster to ingress-nginx webhook"
-      protocol                      = "-1"
-      from_port                     = 8443
-      to_port                       = 8443
-      type                          = "ingress"
-      source_cluster_security_group = true
-    }
   }
 
   # Disable secrets encryption
