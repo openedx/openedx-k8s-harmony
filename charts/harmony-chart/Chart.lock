@@ -35,5 +35,5 @@ dependencies:
 - name: altinity-clickhouse-operator
   repository: https://docs.altinity.com/clickhouse-operator/
   version: 0.24.0
-digest: sha256:fb28d1da10557ed1bf3bbc8c79ee673e5eee75a63214fdfe6390d55e2ff688fe
-generated: "2024-11-15T11:16:15.358929755-05:00"
+digest: sha256:4089b809a8c4ccccfc6309f97cf6002cec66a93e64955e1ccecd0aaef52782ab
+generated: "2024-11-05T11:48:25.090620077-05:00"
