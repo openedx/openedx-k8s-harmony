@@ -1,0 +1,6 @@
+{
+    "branchPrefix": "renovate/",
+    "pinDigests": false,
+    "prHourlyLimit": 20,
+    "labels": ["global", "dependencies"]
+}
