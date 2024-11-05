@@ -32,5 +32,8 @@ dependencies:
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
   version: 14.2.34
-digest: sha256:b636bd16d732d51544ca7223f460e22f45a7132e31e874a789c5fc0cac460a45
-generated: "2024-05-02T12:32:49.796635+04:00"
+- name: altinity-clickhouse-operator
+  repository: https://docs.altinity.com/clickhouse-operator/
+  version: 0.24.0
+digest: sha256:4089b809a8c4ccccfc6309f97cf6002cec66a93e64955e1ccecd0aaef52782ab
+generated: "2024-11-05T11:48:25.090620077-05:00"
