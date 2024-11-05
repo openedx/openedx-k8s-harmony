@@ -1,0 +1,9 @@
+K8S_HARMONY_NAMESPACE: openedx-harmony
+K8S_NAMESPACE: openedx-01
+LMS_HOST: local.openedx.io
+PLUGINS:
+- indigo
+- k8s_harmony
+- mfe
+PLUGIN_INDEXES:
+- https://overhang.io/tutor/main

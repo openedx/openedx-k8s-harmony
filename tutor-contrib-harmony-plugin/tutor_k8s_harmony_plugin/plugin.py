@@ -37,7 +37,7 @@ config = {
         # instance.
         "ADDITIONAL_INGRESS_HOST_LIST": [],
         "ENABLE_SHARED_SEARCH_CLUSTER": False,
-        "DEPLOYMENT_REVISION_HISTORY_LIMIT": 10,
+        "DEPLOYMENT_REVISION_HISTORY_LIMIT": 10
     },
     "overrides": {
         # Don't use Caddy as a per-instance external web proxy, but do still use it

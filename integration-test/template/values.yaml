@@ -1,0 +1,50 @@
+clusterDomain: harmony.test
+
+# Disable HTTPS cert provisioning for testing with minikube
+cert-manager:
+   enabled: false
+
+ingress-nginx:
+  # Use ingress-nginx as a default controller.
+  enabled: true
+  controller:
+    # All these needed for local development
+    service:
+      type: NodePort
+    hostPort:
+      enabled: true
+    publishService:
+      enabled: false
+    extraArgs:
+      publish-status-address: localhost
+
+elasticsearch:
+  enabled: false
+
+   # TODO: move this to a separate PR
+   # Permit co-located instances for solitary minikube virtual machines.
+  antiAffinity: "soft"
+
+  volumeClaimTemplate:
+    resources:
+      requests:
+        storage: 8Gi
+  replicas: 1
+
+opensearch:
+  enabled: false
+
+   # Permit co-located instances for solitary minikube virtual machines.
+  antiAffinity: "soft"
+
+  persistence:
+    size: 8Gi
+
+prometheusstack:
+  enabled: false
+
+k8sdashboard:
+  enabled: false
+
+openfaas:
+  enabled: false
