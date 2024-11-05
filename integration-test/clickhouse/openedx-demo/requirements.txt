@@ -1,0 +1,3 @@
+../../../tutor-contrib-harmony-plugin
+tutor<19
+tutor-contrib-aspects==1.2.0
