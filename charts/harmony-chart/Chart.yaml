@@ -74,3 +74,8 @@ dependencies:
   version: "14.2.34"
   repository: https://openfaas.github.io/faas-netes
   condition: openfaas.enabled
+
+- name: altinity-clickhouse-operator
+  version: "0.24.0"
+  repository: https://docs.altinity.com/clickhouse-operator/
+  condition: clickhouse-operator.enabled
