@@ -35,5 +35,8 @@ dependencies:
 - name: vector
   repository: https://helm.vector.dev
   version: 0.37.0
-digest: sha256:6620a3f1bac1f49165da56dc845b6435d73fd3d6c83e2ff4876e2d5c7394ae7b
-generated: "2024-12-08T13:24:03.513574144-05:00"
+- name: altinity-clickhouse-operator
+  repository: https://docs.altinity.com/clickhouse-operator/
+  version: 0.24.0
+digest: sha256:ebf7f57f1f5ac2067105096a2e2961cd428b801ca04349e1aba5390cf3cf83dd
+generated: "2024-12-09T12:19:37.000035907-05:00"

@@ -79,3 +79,8 @@ dependencies:
   version:  0.37.0
   repository: https://helm.vector.dev
   condition: vector.enabled
+
+- name: altinity-clickhouse-operator
+  version: "0.24.0"
+  repository: https://docs.altinity.com/clickhouse-operator/
+  condition: clickhouse-operator.enabled

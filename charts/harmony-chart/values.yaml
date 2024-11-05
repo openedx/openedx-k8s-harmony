@@ -486,3 +486,13 @@ vector:
 
     # Make sure to check out values-example.yml to now how to sink logs to S3, CloudWatch and other services
     sinks: {}
+
+clickhouse-operator:
+  enabled: false
+  dashboards: # Change this if you have monitoring disabled
+    enabled: true
+  serviceMonitor: # Change this if you have monitoring disabled
+    enabled: true
+  secret:
+    username: "change_me"
+    password: "change_me"
