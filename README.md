@@ -316,6 +316,44 @@ populated with random value to ensure uniqueness.
 
 In order for SSL to work without warnings the CA certificate needs to be mounted in the relevant pods. This is not yet implemented as due to an [outstanding issue in tutor](https://github.com/overhangio/tutor/issues/791) that had not yet been completed at the time of writing.
 
+### ClickHouse Cluster
+
+ClickHouse is needed for running Aspects, however for medium/large instances one single ClickHouse node can be
+a bottleneck for Aspects and the default ClickHouse deployment in Aspects can take down other services running on the
+same node as the ClickHouse pod. In case you are interested on running a ClickHouse cluster, you can enable the
+Altinity ClickHouse Operator and follow the templates available on `charts/examples/clickhouse` to setup a ClickHouseKeeper
+quorum (needed for replication) and a ClickHouse cluster based on your needs.
+
+Once your cluster is created and working on Kubernetes, you need to update your installation settings:
+
+```yaml
+# See the clickhouse-installation.yml template for more details
+CLICKHOUSE_ADMIN_USER: default
+CLICKHOUSE_ADMIN_PASSWORD: change_me
+CLICKHOUSE_CLUSTER_NAME: openedx-demo
+# Set the first ClickHouse node as the DDL node.
+CLICKHOUSE_CLUSTER_DDL_NODE_HOST: chi-clickhouse-{{CLICKHOUSE_CLUSTER_NAME}}-0-0.{{namespace}}
+CLICKHOUSE_HOST: clickhouse-clickhouse.{{namespace}}
+CLICKHOUSE_SECURE_CONNECTION: false
+RUN_CLICKHOUSE: false
+```
+
+For multitenancy you have two options, either have multiple ClickHouse clusters or use different databases and users:
+
+*Using different users and databases*: Make sure to update the users and databases on your config:
+
+```yaml
+ASPECTS_CLICKHOUSE_CMS_USER: openedx_demo_ch_cms
+ASPECTS_CLICKHOUSE_LRS_USER: openedx_demo_ch_lrs
+ASPECTS_CLICKHOUSE_REPORT_USER: openedx_demo_ch_report
+ASPECTS_CLICKHOUSE_VECTOR_USER: openedx_demo_ch_vector
+ASPECTS_XAPI_DATABASE: openedx_demo_xapi
+ASPECTS_EVENT_SINK_DATABASE: openedx_demo_event_sink
+ASPECTS_VECTOR_DATABASE: openedx_demo_openedx
+DBT_PROFILE_TARGET_DATABASE: openedx_demo_reporting
+```
+
+
 ## Extended Documentation
 
 ### How to uninstall this chart

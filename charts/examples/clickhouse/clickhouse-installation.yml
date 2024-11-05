@@ -1,0 +1,76 @@
+---
+apiVersion: "clickhouse.altinity.com/v1"
+kind: "ClickHouseInstallation"
+metadata:
+  name: "clickhouse"
+spec:
+  configuration:
+    clusters:
+      - name: "openedx-demo"
+        layout:
+          shardsCount: 1 # Shards have not been tested with Aspects and we don't recommend it.
+          replicasCount: 2 # Scale as you need/can
+        templates:
+          podTemplate: server
+          volumeClaimTemplate: storage
+    users:
+      test/networks/ip:
+        - "::/0"
+      test/profile: default
+      test/password: change_me
+      test/quota: default
+      # Default permissions needed for user creation
+      test/access_management: 1
+      test/named_collection_control: 1
+      test/show_named_collections: 1
+      test/show_named_collections_secrets: 1
+    zookeeper:
+      nodes:
+        - host: clickhouse-keeper-0.clickhouse-keeper-headless
+        - host: clickhouse-keeper-1.clickhouse-keeper-headless
+        - host: clickhouse-keeper-2.clickhouse-keeper-headless
+    files:
+      # Enable user replication
+      users-replication.xml: |
+        <clickhouse>
+          <user_directories replace="replace">
+            <users_xml>
+              <path>/etc/clickhouse-server/users.xml</path>
+            </users_xml>
+            <replicated>
+              <zookeeper_path>/clickhouse/access/</zookeeper_path>
+            </replicated>
+          </user_directories>
+        </clickhouse>
+      # Enable function replication
+      functions-replication.xml: |
+        <clickhouse>
+            <user_defined_zookeeper_path>/udf</user_defined_zookeeper_path>
+        </clickhouse>
+  templates:
+    podTemplates:
+      - name: server
+        spec:
+          containers:
+            - name: clickhouse
+              image: clickhouse/clickhouse-server:24.8
+          # If you are running a dedicated node group for ClickHouse (and you should)
+          # make sure to add it tolerations.
+          tolerations:
+          - key: "clickhouseInstance"
+            operator: "Exists"
+            effect: "NoSchedule"
+          # Optional: set the nodegroup name
+          nodeSelector:
+            eks.amazonaws.com/nodegroup: clickhouse_worker
+    volumeClaimTemplates:
+      - name: storage
+        # Do not delete PV if installation is deleted. If a new ClickHouseInstallation is created
+        # data will be re-used, allowing recovery of data
+        reclaimPolicy: Retain
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 50Gi
