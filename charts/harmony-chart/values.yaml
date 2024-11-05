@@ -496,3 +496,4 @@ clickhouse-operator:
   secret:
     username: "change_me"
     password: "change_me"
+  fullnameOverride: "clickhouse-operator"
