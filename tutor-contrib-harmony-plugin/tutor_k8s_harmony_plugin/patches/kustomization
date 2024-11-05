@@ -19,6 +19,7 @@ patches:
 - path: plugins/k8s_harmony/k8s/deployment-revision-history.yaml
   target:
     kind: Deployment
+{%- if K8S_HARMONY_ENABLE_SHARED_SEARCH_CLUSTER %}
 {%- for res in HAS_VOLUME %}
 - path: plugins/k8s_harmony/k8s/shared-search-cert-patch.yaml
   target:
@@ -31,3 +32,4 @@ patches:
     kind: {% if "-job" in res %}Job{% else %}Deployment{% endif %}
     name: {{ res }}.*
 {%- endfor %}
+{%- endif %}
