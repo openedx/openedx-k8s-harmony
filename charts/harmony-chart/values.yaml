@@ -373,14 +373,14 @@ vector:
     minAvailable: 1
   # Configures a PodMonitor CRD used by the Prometheus operator
   podMonitor:
-    enabled: true
+    enabled: false
   tolerations:
   - operator: Exists
   logLevel: "info"
   customConfig:
     data_dir: /vector-data-dir
     api:
-      enabled: true
+      enabled: false
       address: 0.0.0.0:8686
       playground: false
 
@@ -462,6 +462,59 @@ vector:
           .message = message
           .type = "tracking"
 
+      # Example ClickHouse Filter
+
+      # Events should be separated per namespace, and a different sink should be
+      # implemented for it
+
+      # logs_openedx_demo:
+      #   type: filter
+      #   inputs:
+      #   - kubernetes_tutor_logs
+      #   condition: '.kubernetes.pod_namespace == "openedx_demo"'
+
+      # xapi_openedx_demo:
+      #   type: remap
+      #   inputs:
+      #   - kubernetes_tutor_logs
+      #   source: >
+      #     parsed, err_regex = parse_regex(.message, r'^.* \[xapi_tracking\] [^{}]*
+      #     (?P<tracking_message>\{.*\})$')
+
+      #     if err_regex != null {
+      #       abort
+      #     }
+
+      #     message, err = strip_whitespace(parsed.tracking_message)
+
+
+      #     parsed_json, err_json = parse_json(parsed.tracking_message)
+
+
+      #     if err_json != null {
+      #       log("Unable to parse JSON from xapi tracking log message: " + err_json, level: "error")
+      #       abort
+      #     }
+
+
+      #     time, err_timestamp = parse_timestamp(parsed_json.timestamp, "%+")
+
+      #     if err_timestamp != null {
+      #       log("Unable to parse timestamp from tracking log 'time' field: " + err_timestamp, level: "warn")
+      #       time, err_timestamp = parse_timestamp(parsed_json.timestamp, "%+")
+      #       if err_timestamp != null {
+      #         log("Unable to parse timestamp from tracking log 'timestamp' field: " + err_timestamp, level: "error")
+      #         abort
+      #       }
+      #     }
+
+      #     event_id = parsed_json.id
+
+      #     . = {"event_id": event_id, "emission_time": format_timestamp!(time,
+      #     format: "%+"), "event": encode_json(parsed_json)}
+      #   drop_on_error: true
+      #   drop_on_abort: true
+
     sinks:
       logs_to_s3:
         type: aws_s3
@@ -486,3 +539,21 @@ vector:
         # region: none
         healthcheck:
           enabled: false
+
+      # Example ClickHouse Sink
+
+      # clickhouse_openedx_demo:
+      #   type: clickhouse
+      #   auth:
+      #     strategy: basic
+      #     user: '{{ ASPECTS_CLICKHOUSE_VECTOR_USER }}'
+      #     password: '{{ ASPECTS_CLICKHOUSE_VECTOR_PASSWORD }}'
+      #   encoding:
+      #     timestamp_format: unix
+      #   date_time_best_effort: true
+      #   inputs:
+      #     - xapi_openedx_demo
+      #   endpoint: http://{{CLICKHOUSE_HOST }}:{{ CLICKHOUSE_INTERNAL_HTTP_PORT }}
+      #   database: '{{ ASPECTS_VECTOR_DATABASE }}'
+      #   table: '{{ ASPECTS_VECTOR_RAW_XAPI_TABLE }}'
+      #   healthcheck: true
