@@ -364,3 +364,125 @@ velero:
 
 openfaas:
   enabled: false
+
+vector:
+  enabled: false
+  role: "Agent"
+  podDisruptionBudget: # Optional, but recommended
+    enabled: true
+    minAvailable: 1
+  # Configures a PodMonitor CRD used by the Prometheus operator
+  podMonitor:
+    enabled: true
+  tolerations:
+  - operator: Exists
+  logLevel: "info"
+  customConfig:
+    data_dir: /vector-data-dir
+    api:
+      enabled: true
+      address: 0.0.0.0:8686
+      playground: false
+
+    sources:
+      kubernetes_tutor_logs:
+        type: kubernetes_logs
+        extra_namespace_label_selector: app.kubernetes.io/managed-by=tutor
+      kubernetes_global_logs:
+        type: kubernetes_logs
+        extra_namespace_label_selector: app.kubernetes.io/managed-by!=tutor
+        extra_field_selector: |
+          metadata.labels."app.kubernetes.io/name"=ingress-nginx,
+          metadata.labels."app.kubernetes.io/name"=cert-manager
+
+    transforms:
+
+      # Extract logs from Open edX applications
+      application_logs:
+        type: filter
+        inputs:
+        - kubernetes_tutor_logs
+        condition: '!contains(string!(.message), "[tracking]")'
+
+      # Filter out application and global logs whose message is empty to prevent Vector process crash when sending logs to Cloudwatch
+      # More details in https://github.com/vectordotdev/vector/issues/15539
+      typed_application_logs:
+        type: remap
+        inputs:
+        - application_logs
+        source: |-
+          .type = "application"
+        drop_on_error: true
+        drop_on_abort: true
+
+      typed_global_logs:
+        type: remap
+        inputs:
+        - kubernetes_global_logs
+        source: |-
+          .type = "global"
+        drop_on_error: true
+        drop_on_abort: true
+
+      # Appplication logs (OpenedX, ingress-nginx, cert-manager) can be send to cloudwatch
+      # or to s3. It will depend on user needs.
+      non_empty_logs:
+        type: remap
+        inputs:
+        - typed_application_logs
+        - typed_global_logs
+        source: |-
+          if is_empty(string!(.message)) {
+            log("Events with empty message are discarded", level: "info")
+            abort
+          }
+
+      # Extract tracking logs from Open edX applications
+      parsed_tracking_logs:
+        type: remap
+        inputs:
+        - kubernetes_tutor_logs
+        source: |-
+          parsed, err_regex = parse_regex(.message, r'^.* \[tracking\] [^{}]* (?P<tracking_message>\{.*\})$')
+          if err_regex != null {
+            abort
+          }
+          message = parsed.tracking_message
+          parsed_json, err_json = parse_json(parsed.tracking_message)
+          if err_json != null {
+            log("Unable to parse JSON from tracking log message: " + err_json, level: "info")
+            abort
+          }
+          time, err_timestamp = parse_timestamp(parsed_json.time, "%+")
+          if err_timestamp != null {
+            log("Unable to parse timestamp from tracking log message: " + err_timestamp, level: "info")
+            abort
+          }
+          .time = time
+          .message = message
+          .type = "tracking"
+
+    sinks:
+      logs_to_s3:
+        type: aws_s3
+        inputs:
+        - parsed_tracking_logs
+        filename_append_uuid: true
+        filename_time_format: "log-%Y%m%d-%H"
+        # Helm tries to render the .type and .kubernetes variables. We need to escape them to avoid errors
+        # See> https://github.com/helm/helm/issues/2798
+        key_prefix: |
+          {{ `{{ .kubernetes.pod_namespace }}/{{ .type }}/{{ .kubernetes.container_name }}/date=%F/` }}
+        compression: gzip
+        encoding:
+          codec: text
+        bucket: "set_me"
+        auth:
+          access_key_id: "set_me"
+          secret_access_key: "set_me"
+        region: "set_me"
+        # When using AWS-compatible services like MinIO, set the endpoint and tweak SSL if necessary
+        # endpoint: "http://minio.{namespace}:9000"
+        # region: none
+        healthcheck:
+          enabled: false
