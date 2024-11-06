@@ -476,29 +476,22 @@ vector:
       # xapi_openedx_demo:
       #   type: remap
       #   inputs:
-      #   - kubernetes_tutor_logs
-      #   source: >
+      #   - logs_openedx_demo
+      #   drop_on_error: true
+      #   drop_on_abort: true
+      #   source: |-
       #     parsed, err_regex = parse_regex(.message, r'^.* \[xapi_tracking\] [^{}]*
       #     (?P<tracking_message>\{.*\})$')
-
       #     if err_regex != null {
       #       abort
       #     }
-
       #     message, err = strip_whitespace(parsed.tracking_message)
-
-
       #     parsed_json, err_json = parse_json(parsed.tracking_message)
-
-
       #     if err_json != null {
       #       log("Unable to parse JSON from xapi tracking log message: " + err_json, level: "error")
       #       abort
       #     }
-
-
       #     time, err_timestamp = parse_timestamp(parsed_json.timestamp, "%+")
-
       #     if err_timestamp != null {
       #       log("Unable to parse timestamp from tracking log 'time' field: " + err_timestamp, level: "warn")
       #       time, err_timestamp = parse_timestamp(parsed_json.timestamp, "%+")
@@ -507,13 +500,10 @@ vector:
       #         abort
       #       }
       #     }
-
       #     event_id = parsed_json.id
-
       #     . = {"event_id": event_id, "emission_time": format_timestamp!(time,
       #     format: "%+"), "event": encode_json(parsed_json)}
-      #   drop_on_error: true
-      #   drop_on_abort: true
+
 
     sinks:
       logs_to_s3:
