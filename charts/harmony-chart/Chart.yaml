@@ -74,3 +74,8 @@ dependencies:
   version: "14.2.34"
   repository: https://openfaas.github.io/faas-netes
   condition: openfaas.enabled
+
+- name: vector
+  version:  0.37.0
+  repository: https://helm.vector.dev
+  condition: vector.enabled
