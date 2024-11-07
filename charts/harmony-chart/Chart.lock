@@ -10,7 +10,7 @@ dependencies:
   version: 3.8.4
 - name: vertical-pod-autoscaler
   repository: https://cowboysysop.github.io/charts/
-  version: 6.0.3
+  version: 6.1.0
 - name: elasticsearch
   repository: https://helm.elastic.co
   version: 7.17.3
@@ -32,5 +32,5 @@ dependencies:
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
   version: 14.2.34
-digest: sha256:b636bd16d732d51544ca7223f460e22f45a7132e31e874a789c5fc0cac460a45
-generated: "2024-05-02T12:32:49.796635+04:00"
+digest: sha256:ae28f751c75e8f9899cd45eb934e1a4220f1c501cb69fdda9b175d5d6233e110
+generated: "2024-11-07T15:59:35.545819412Z"
