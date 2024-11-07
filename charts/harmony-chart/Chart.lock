@@ -7,7 +7,7 @@ dependencies:
   version: v1.13.3
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server/
-  version: 3.8.4
+  version: 3.12.2
 - name: vertical-pod-autoscaler
   repository: https://cowboysysop.github.io/charts/
   version: 6.0.3
@@ -32,5 +32,5 @@ dependencies:
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
   version: 14.2.34
-digest: sha256:b636bd16d732d51544ca7223f460e22f45a7132e31e874a789c5fc0cac460a45
-generated: "2024-05-02T12:32:49.796635+04:00"
+digest: sha256:91f1c02bf05d8a133da117b77a72cf15c09031d53ebe2ca2fc760cd386840677
+generated: "2024-11-07T15:57:20.84653393Z"
