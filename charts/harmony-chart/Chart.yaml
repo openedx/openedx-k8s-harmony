@@ -34,7 +34,7 @@ dependencies:
 
 - name: vertical-pod-autoscaler
   alias: vpa
-  version: "~6.0.3"
+  version: "~6.1.0"
   repository: https://cowboysysop.github.io/charts/
   condition: vpa.enabled
 
