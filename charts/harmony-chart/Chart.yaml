@@ -71,6 +71,6 @@ dependencies:
   condition: velero.enabled
 
 - name: openfaas
-  version: "14.2.34"
+  version: "14.2.77"
   repository: https://openfaas.github.io/faas-netes
   condition: openfaas.enabled
