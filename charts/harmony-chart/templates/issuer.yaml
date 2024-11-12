@@ -8,7 +8,6 @@ spec:
     {{- if index .Values "cert-manager" "email" }}
     email: {{ index .Values "cert-manager" "email" }}
     {{- end }}
-    preferredChain: ""
     privateKeySecretRef:
       name: harmony-letsencrypt-global
     server: https://acme-v02.api.letsencrypt.org/directory
