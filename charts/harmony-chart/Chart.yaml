@@ -74,3 +74,8 @@ dependencies:
   version: "14.2.34"
   repository: https://openfaas.github.io/faas-netes
   condition: openfaas.enabled
+
+- name: meilisearch
+  version: "0.10.2"
+  repository: "https://meilisearch.github.io/meilisearch-kubernetes"
+  condition: meilisearch.enabled

@@ -364,3 +364,17 @@ velero:
 
 openfaas:
   enabled: false
+
+meilisearch:
+  enabled: false
+  environment:
+    MEILI_ENV: production
+    MEILI_MASTER_KEY: Cu5t0mS3cR3tK3Y
+  ingress:
+    enabled: false
+  persistence:
+    enabled: true
+    size: "10Gi"
+  replicaCount: 1
+  serviceMonitor:
+    enabled: false
