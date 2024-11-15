@@ -1,0 +1,22 @@
+ENABLE_HTTPS: true
+ENABLE_WEB_PROXY: false
+K8S_HARMONY_NAMESPACE: openedx-harmony
+K8S_NAMESPACE: openedx-demo
+LMS_HOST: local.openedx.io
+PLUGINS:
+- k8s_harmony
+- mfe
+- aspects
+DOCKER_IMAGE_OPENEDX: edunext/openedx-aspects:1.2.0
+PLUGIN_INDEXES:
+- https://overhang.io/tutor/main
+
+# Aspects settings
+CLICKHOUSE_ADMIN_PASSWORD: change_me
+CLICKHOUSE_ADMIN_USER: test
+CLICKHOUSE_CLUSTER_NAME: openedx-demo
+# Set the first ClickHouse node as the DDL node.
+CLICKHOUSE_CLUSTER_DDL_NODE_HOST: chi-clickhouse-{{CLICKHOUSE_CLUSTER_NAME}}-0-0.{{K8S_HARMONY_NAMESPACE}}
+CLICKHOUSE_HOST: clickhouse-clickhouse.{{K8S_HARMONY_NAMESPACE}}
+CLICKHOUSE_SECURE_CONNECTION: false
+RUN_CLICKHOUSE: false
