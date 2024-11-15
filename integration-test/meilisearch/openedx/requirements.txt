@@ -1,0 +1,3 @@
+../../../tutor-contrib-harmony-plugin
+tutor[full]<19
+git+https://github.com/edunext/tutor-contrib-meilisearch@cag/improvements

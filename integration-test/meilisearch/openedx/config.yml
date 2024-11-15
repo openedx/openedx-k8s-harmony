@@ -1,0 +1,86 @@
+CMS_OAUTH2_SECRET: RbxjczDDBgfDPZAQ8CkbfF8o
+DISCOVERY_INDEX_OVERRIDES:
+  course_discovery.apps.course_metadata.search_indexes.documents.course: openedx-01-bfia-course
+  course_discovery.apps.course_metadata.search_indexes.documents.course_run: openedx-01-bfia-course_run
+  course_discovery.apps.course_metadata.search_indexes.documents.learner_pathway: openedx-01-bfia-learner_pathway
+  course_discovery.apps.course_metadata.search_indexes.documents.person: openedx-01-bfia-person
+  course_discovery.apps.course_metadata.search_indexes.documents.program: openedx-01-bfia-program
+ELASTICSEARCH_HOST: harmony-search-cluster.openedx-harmony.svc.cluster.local
+ELASTICSEARCH_SCHEME: https
+ENABLE_HTTPS: true
+ENABLE_WEB_PROXY: false
+ID: FkxVpg29MZ78GSu3Vk5VqDxi
+JWT_RSA_PRIVATE_KEY: '-----BEGIN RSA PRIVATE KEY-----
+
+  MIIEpQIBAAKCAQEAyAC17HQD/UGceIvJVRyiXZcueW+h/NpEn9tQ4UpPsmL5EPfr
+
+  T/n/jnperbD32VjzqWL+pM16x9PhpGgv1iJNsydn2JBKFu9d87pPfwORcI1GpquS
+
+  SXD1ZMaWk+UMfWfuj9NoE2AIh7lKCzBpnzZAE9LOIDMzMo+cBAReMfyvDZpiX6fH
+
+  OXBKz+Jn79rwTPIGrFaMIQQijzPbWBcyiRXAxqRvujC5melk1JpTq/DV2RxYbo/0
+
+  oYOqJH6MQIjcwnmfAFfEcoeT9TjHv+ZilsvSHFx9JVQCvVKaZKPLV6QkAv0TwJh5
+
+  4gvNELXoVXHZG/jSRvo5lGzeJckWjEcUJwCPVwIDAQABAoIBADiiauGgIJkQgTxp
+
+  aQOe7iNOciyU/evZ6uDRe9+v6U18VUcGzS2Cf2lbIYBRwn1bgPQQQkdsoD4Bs72Y
+
+  eyNJ53K5z+A1S6We9p3TvjsbSY3zk3QS1YPSZsq4qV8L1zOTwKwdkzUZVpEIWP0+
+
+  IkqhVBfI8/GOTgsdO3KvwfSptvBErTVOyr1Y8SIfUHPN2/kRB37pNl49G6LwrapP
+
+  rFFdA3bl7qZf9A7Rgc2D34jYg+x1e0Lt1LyXHsQgvoLuKVYIrDQoj/NFh4u5AK5u
+
+  +3XdUnhIfnxOy8pmB4MRcP0PVYln7kdV6AWJrg7iw181FGk4+Dxm0iBm1FpIUmY2
+
+  04fG00ECgYEA3a96eIREJb2pmEmPW906Oo3vU5T4MsgyGJrKqRJakmre8Yv4UGqa
+
+  xCWvBeC3e5Q8egWGdXUS7m6EWnrcCbvvG0IOQ6r/oVYHHR6Oe/8j1UlZoAS2T9Vo
+
+  52Fx5T7y5uujVXtFRdoX0mDOFvGv4LcIMYLa32IOsWyfOBfcEeTssOcCgYEA5vYI
+
+  ZHlAzW7qVu52173BAR5PiB8v3AXZxo+Jo2kxsVpme2PKS+brTE0s118Ewcw8NrCk
+
+  vuYXBakEZMLvOlEWQCNrIfw7ylMKUZuU9QKGoK6NdhIdL+VgjgAQbq7+ZbhJHH96
+
+  /ubnw0e+u+z65FxCBgbty30YAUhXkygP1IHGsBECgYEAsjnPG68y3qjR/ZY+RFvi
+
+  4YqU+7yLosAiznc8MZuI56g2Hzop4/UhAktNoEsfGKJ/0JY6mJoMI1cE331hBA5s
+
+  2JxNvYdvx3TTeUzEvtnMJEC5ZpYDQMHRehx0phrqzE5r3WCiu9rwRfoAFqAuh1p/
+
+  otaSQv+h0nECvOUpz9UdmccCgYEAofj/j779dFUJ4SdhjxGTbn5cVmFQxiQQQ1Fc
+
+  vI5EfFWis3wbXjm24I7rGKuZgXQC8nPVRc/Fa4HKBAQ1k5dUXGy6cF4dbFnqTasn
+
+  vuAjnEJuENTJRVK+8TcYTxdIb/vawjKhBmzXMrt5BwA+P7J31xQ65k93a0bZq+kX
+
+  mPfeaJECgYEAiJ2UGjLjlwIlpFVHP57UnlEiabpt4StuOfFWLiAQP6D5GidHk32l
+
+  PpOhUiL0tlugipVn5dSjr7fm8ebob2JVFyJwwoZ8ZB+ab27hNkesOn1QiAwhQSJQ
+
+  DTTky7R3INIlvfEIhkmS3F73QNr9qXzqiDW9vXBQLTDCAy6Hs3EeXos=
+
+  -----END RSA PRIVATE KEY-----'
+K8S_HARMONY_NAMESPACE: openedx-harmony
+K8S_HARMONY_SEARCH_CLUSTER_HTTP_AUTH: openedx-01:lbIG1C55XSsif7jchRgqcXaI
+K8S_HARMONY_SEARCH_CLUSTER_INDEX_PREFIX: openedx-01-bfia-
+K8S_NAMESPACE: openedx-01
+LMS_HOST: local.openedx.io
+MEILISEARCH_API_KEY: e61b334c88dc2d896866011bd4d3b52eb05753b5352cf13102a179037df80d96
+MEILISEARCH_HOST: harmony-meilisearch.openedx-harmony:7700
+MEILISEARCH_MASTER_KEY: e1sTVK6KXSQZ5PzItboZiVEnW3YYbN4cQWlsh7kxK0s
+MEILISEARCH_RUN: false
+MEILISEARCH__INTERNAL_API_KEY_UID: 8a37b2e6-874a-4347-9372-69725cf01d70
+MYSQL_ROOT_PASSWORD: yPq52wz4
+OPENEDX_MYSQL_PASSWORD: Ggs01C3P
+OPENEDX_SECRET_KEY: mR3C2DnjAnCgPON8hfAiK0lj
+PLUGINS:
+- indigo
+- k8s_harmony
+- meilisearch
+- mfe
+PLUGIN_INDEXES:
+- https://overhang.io/tutor/main
+RUN_ELASTICSEARCH: false
