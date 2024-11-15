@@ -32,5 +32,8 @@ dependencies:
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
   version: 14.2.34
-digest: sha256:548b955e15c04e3eb4a270b4f6a869675d20becad8e75702cf945b214809a63e
-generated: "2024-10-07T15:49:37.65074391-05:00"
+- name: meilisearch
+  repository: https://meilisearch.github.io/meilisearch-kubernetes
+  version: 0.10.2
+digest: sha256:4ec85343278799faafdf7a5ce04e71e3b9a03ab2333c18813da76422198603d2
+generated: "2024-11-15T11:32:33.060844445-05:00"

@@ -62,3 +62,7 @@ Examples of more stuff that can be in a NOTES file:
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
 {{- end }}
 */}}
+
+{{- if .Values.meilisearch.enabled }}
+Meilisearch enabled, make sure to install tutor-contrib-meilisearch on your Open edX installation.
+{{- end }}
