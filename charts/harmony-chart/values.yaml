@@ -391,54 +391,76 @@ vector:
       kubernetes_global_logs:
         type: kubernetes_logs
         extra_namespace_label_selector: app.kubernetes.io/managed-by!=tutor
-        extra_field_selector: |
-          metadata.labels."app.kubernetes.io/name"=ingress-nginx,
-          metadata.labels."app.kubernetes.io/name"=cert-manager
 
     transforms:
 
-      # Extract logs from Open edX applications
-      application_logs:
-        type: filter
-        inputs:
-        - kubernetes_tutor_logs
-        condition: '!contains(string!(.message), "[tracking]")'
-
       # Filter out application and global logs whose message is empty to prevent Vector process crash when sending logs to Cloudwatch
       # More details in https://github.com/vectordotdev/vector/issues/15539
-      typed_application_logs:
+      openedx_logs:
         type: remap
         inputs:
-        - application_logs
+        - kubernetes_tutor_logs
         source: |-
+          if !includes(["lms", "cms", "cms-worker", "lms-worker", "lms-job", "cms-job"], .kubernetes.pod_labels."app.kubernetes.io/name"){
+            abort
+          }
+          if contains(string!(.message), "[tracking]") {
+            abort
+          }
           .type = "application"
-        drop_on_error: true
         drop_on_abort: true
+        drop_on_error: true
 
+      # Group multiline logs for better observabitlity
+      grouped_openedx_logs:
+        type: reduce
+        merge_strategies:
+          message: concat_newline
+        inputs:
+          - openedx_logs
+        starts_when:
+          type: "vrl"
+          source: |-
+            match(string!(.message), r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*')
+      operation_openedx_logs:
+        type: remap
+        inputs:
+        - kubernetes_tutor_logs
+        source: |-
+          if includes(["lms", "cms", "cms-worker", "lms-worker", "lms-job", "cms-job"], .kubernetes.pod_labels."app.kubernetes.io/name"){
+            abort
+          }
+          .type = "application"
+        drop_on_abort: true
+        drop_on_error: true
+      global_logs:
+        type: filter
+        inputs:
+          - kubernetes_global_logs
+        condition: 'includes(["ingress-nginx"], .kubernetes.pod_labels."app.kubernetes.io/name")'
       typed_global_logs:
         type: remap
         inputs:
-        - kubernetes_global_logs
+        - global_logs
         source: |-
           .type = "global"
         drop_on_error: true
         drop_on_abort: true
-
       # Appplication logs (OpenedX, ingress-nginx, cert-manager) can be send to cloudwatch
       # or to s3. It will depend on user needs.
-      non_empty_logs:
+      application_logs:
         type: remap
         inputs:
-        - typed_application_logs
+        - grouped_openedx_logs
+        - operation_openedx_logs
         - typed_global_logs
         source: |-
           if is_empty(string!(.message)) {
             log("Events with empty message are discarded", level: "info")
             abort
           }
-
       # Extract tracking logs from Open edX applications
-      parsed_tracking_logs:
+      tracking_logs:
         type: remap
         inputs:
         - kubernetes_tutor_logs
@@ -462,88 +484,5 @@ vector:
           .message = message
           .type = "tracking"
 
-      # Example ClickHouse Filter
-
-      # Events should be separated per namespace, and a different sink should be
-      # implemented for it
-
-      # logs_openedx_demo:
-      #   type: filter
-      #   inputs:
-      #   - kubernetes_tutor_logs
-      #   condition: '.kubernetes.pod_namespace == "openedx_demo"'
-
-      # xapi_openedx_demo:
-      #   type: remap
-      #   inputs:
-      #   - logs_openedx_demo
-      #   drop_on_error: true
-      #   drop_on_abort: true
-      #   source: |-
-      #     parsed, err_regex = parse_regex(.message, r'^.* \[xapi_tracking\] [^{}]*
-      #     (?P<tracking_message>\{.*\})$')
-      #     if err_regex != null {
-      #       abort
-      #     }
-      #     message, err = strip_whitespace(parsed.tracking_message)
-      #     parsed_json, err_json = parse_json(parsed.tracking_message)
-      #     if err_json != null {
-      #       log("Unable to parse JSON from xapi tracking log message: " + err_json, level: "error")
-      #       abort
-      #     }
-      #     time, err_timestamp = parse_timestamp(parsed_json.timestamp, "%+")
-      #     if err_timestamp != null {
-      #       log("Unable to parse timestamp from tracking log 'time' field: " + err_timestamp, level: "warn")
-      #       time, err_timestamp = parse_timestamp(parsed_json.timestamp, "%+")
-      #       if err_timestamp != null {
-      #         log("Unable to parse timestamp from tracking log 'timestamp' field: " + err_timestamp, level: "error")
-      #         abort
-      #       }
-      #     }
-      #     event_id = parsed_json.id
-      #     . = {"event_id": event_id, "emission_time": format_timestamp!(time,
-      #     format: "%+"), "event": encode_json(parsed_json)}
-
-
-    sinks:
-      logs_to_s3:
-        type: aws_s3
-        inputs:
-        - parsed_tracking_logs
-        filename_append_uuid: true
-        filename_time_format: "log-%Y%m%d-%H"
-        # Helm tries to render the .type and .kubernetes variables. We need to escape them to avoid errors
-        # See> https://github.com/helm/helm/issues/2798
-        key_prefix: |
-          {{ `{{ .kubernetes.pod_namespace }}/{{ .type }}/{{ .kubernetes.container_name }}/date=%F/` }}
-        compression: gzip
-        encoding:
-          codec: text
-        bucket: "set_me"
-        auth:
-          access_key_id: "set_me"
-          secret_access_key: "set_me"
-        region: "set_me"
-        # When using AWS-compatible services like MinIO, set the endpoint and tweak SSL if necessary
-        # endpoint: "http://minio.{namespace}:9000"
-        # region: none
-        healthcheck:
-          enabled: false
-
-      # Example ClickHouse Sink
-
-      # clickhouse_openedx_demo:
-      #   type: clickhouse
-      #   auth:
-      #     strategy: basic
-      #     user: '{{ ASPECTS_CLICKHOUSE_VECTOR_USER }}'
-      #     password: '{{ ASPECTS_CLICKHOUSE_VECTOR_PASSWORD }}'
-      #   encoding:
-      #     timestamp_format: unix
-      #   date_time_best_effort: true
-      #   inputs:
-      #     - xapi_openedx_demo
-      #   endpoint: http://{{CLICKHOUSE_HOST }}:{{ CLICKHOUSE_INTERNAL_HTTP_PORT }}
-      #   database: '{{ ASPECTS_VECTOR_DATABASE }}'
-      #   table: '{{ ASPECTS_VECTOR_RAW_XAPI_TABLE }}'
-      #   healthcheck: true
+    # Make sure to check out values-example.yml to now how to sink logs to S3, CloudWatch and other services
+    sinks: {}
