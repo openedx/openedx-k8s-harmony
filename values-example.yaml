@@ -141,16 +141,18 @@ vector:
         type: clickhouse
         auth:
           strategy: basic
-          user: '{{ ASPECTS_CLICKHOUSE_VECTOR_USER }}'
-          password: '{{ ASPECTS_CLICKHOUSE_VECTOR_PASSWORD }}'
+          user: 'ch_vector'
+          password: 'password'
         encoding:
           timestamp_format: unix
         date_time_best_effort: true
         inputs:
           - xapi_openedx_demo
-        endpoint: http://{{CLICKHOUSE_HOST }}:{{ CLICKHOUSE_INTERNAL_HTTP_PORT }}
-        database: '{{ ASPECTS_VECTOR_DATABASE }}'
-        table: '{{ ASPECTS_VECTOR_RAW_XAPI_TABLE }}'
+        # http://{{CLICKHOUSE_HOST }}.{{CLICKHOUSE_NAMESPACE}}:{{ CLICKHOUSE_INTERNAL_HTTP_PORT }}
+        endpoint: http://clickhouse-clickhouse.openedx-harmony:8123
+        # ASPECTS_VECTOR_DATABASE
+        database: 'openedx'
+        table: 'xapi_events_all'
         healthcheck: true
 
       tracking_logs_to_s3:
