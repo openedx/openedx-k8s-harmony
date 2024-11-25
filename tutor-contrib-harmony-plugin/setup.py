@@ -26,7 +26,7 @@ ABOUT = load_about()
 
 
 setup(
-    name="tutor-contrib-harmony-plugin",
+    name="tutor-contrib-harmony",
     version=ABOUT["__version__"],
     url="https://github.com/openedx/openedx-k8s-harmony",
     project_urls={
