@@ -1,0 +1,86 @@
+apiVersion: "clickhouse-keeper.altinity.com/v1"
+kind: "ClickHouseKeeperInstallation"
+metadata:
+  name: clickhouse-keeper
+spec:
+  configuration:
+    clusters:
+      - name: "openedx-demo"
+        layout:
+          # ClickHouseKeeper needs at least tree pods to form a Quorum for high
+          # availability.
+          replicasCount: 3
+    settings:
+      logger/level: "trace"
+      logger/console: "true"
+      listen_host: "0.0.0.0"
+      keeper_server/storage_path: /var/lib/clickhouse-keeper
+      keeper_server/tcp_port: "2181"
+      keeper_server/four_letter_word_white_list: "*"
+      keeper_server/coordination_settings/raft_logs_level: "information"
+      keeper_server/raft_configuration/server/port: "9444"
+      prometheus/endpoint: "/metrics"
+      prometheus/port: "7000"
+      prometheus/metrics: "true"
+      prometheus/events: "true"
+      prometheus/asynchronous_metrics: "true"
+      prometheus/status_info: "false"
+  templates:
+    podTemplates:
+      - name: default
+        spec:
+          # affinity removed to allow use in single node test environment
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: "app"
+                        operator: In
+                        values:
+                          - clickhouse-keeper
+                  topologyKey: "kubernetes.io/hostname"
+          containers:
+            - name: clickhouse-keeper
+              imagePullPolicy: IfNotPresent
+              # Make sure to keep this up to date with the ClickHouse compatible version
+              image: "clickhouse/clickhouse-keeper:24.8-alpine"
+              resources:
+                requests:
+                  memory: "256M"
+                  cpu: "0.25"
+                limits:
+                  memory: "1Gi"
+                  cpu: "1"
+          priorityClassName: clickhouse-priority
+    volumeClaimTemplates:
+      - name: default
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+      - name: snapshot-storage-path
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+      - name: log-storage-path
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: clickhouse-priority
+value: 1000000
+globalDefault: false
+description: "This priority class should be used for ClickHouse service pods only."
