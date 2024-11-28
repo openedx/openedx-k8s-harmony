@@ -1,7 +1,7 @@
 dependencies:
 - name: ingress-nginx
   repository: https://kubernetes.github.io/ingress-nginx
-  version: 4.11.2
+  version: 4.11.3
 - name: cert-manager
   repository: https://charts.jetstack.io
   version: v1.15.3
@@ -32,5 +32,5 @@ dependencies:
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
   version: 14.2.34
-digest: sha256:f8c1bca5421db7c9a0948041ae289c94cd1b2dbe88b5d96c27dfce0e967bb181
-generated: "2024-11-12T16:55:35.165376559Z"
+digest: sha256:2798fc62013380ef5c87733fe5980992768b4cbd177eb8714fc06f9e2b6e80bd
+generated: "2024-11-28T19:26:00.463954101Z"
