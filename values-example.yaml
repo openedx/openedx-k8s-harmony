@@ -163,8 +163,7 @@ vector:
         filename_time_format: "log-%Y%m%d-%H"
         # Helm tries to render the .type and .kubernetes variables. We need to escape them to avoid errors
         # See> https://github.com/helm/helm/issues/2798
-        key_prefix: |
-          {{ `{{ .kubernetes.pod_namespace }}/{{ .type }}/{{ .kubernetes.container_name }}/date=%F/` }}
+        key_prefix: {{ `{{ .kubernetes.pod_namespace }}/{{ .type }}/{{ .kubernetes.container_name }}/date=%F/` }}
         compression: gzip
         encoding:
           codec: text
@@ -184,8 +183,7 @@ vector:
         inputs:
         - application_logs
         group_name: my-cluster
-        stream_name: |-
-          {{ `{{ .kubernetes.pod_namespace }}/{{ .kubernetes.container_name }}` }}
+        stream_name: {{ `{{ .kubernetes.pod_namespace }}/{{ .kubernetes.container_name }}` }}
         auth:
           access_key_id: "set_me"
           secret_access_key: "set_me"
