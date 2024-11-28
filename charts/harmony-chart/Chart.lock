@@ -25,12 +25,12 @@ dependencies:
   version: 65.8.1
 - name: kubernetes-dashboard
   repository: https://kubernetes.github.io/dashboard
-  version: 7.6.1
+  version: 7.10.0
 - name: velero
   repository: https://vmware-tanzu.github.io/helm-charts
   version: 5.2.0
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
   version: 14.2.34
-digest: sha256:57acdeeecd984d0019a3ca1f0665005cc39eb03f3b96d3cf2f15315bbad82617
-generated: "2024-11-28T14:41:52.243769127-05:00"
+digest: sha256:42e4f43f0c7fc38842729cf24c72c7e540b5149d49b1bb8899612b53e69dc54f
+generated: "2024-11-28T14:44:09.451667993-05:00"
