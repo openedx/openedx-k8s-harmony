@@ -13,7 +13,7 @@ dependencies:
   version: 9.9.0
 - name: elasticsearch
   repository: https://helm.elastic.co
-  version: 7.17.3
+  version: 8.5.1
 - name: opensearch
   repository: https://opensearch-project.github.io/helm-charts
   version: 2.13.3
@@ -32,5 +32,5 @@ dependencies:
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
   version: 14.2.34
-digest: sha256:42e4f43f0c7fc38842729cf24c72c7e540b5149d49b1bb8899612b53e69dc54f
-generated: "2024-11-28T14:44:09.451667993-05:00"
+digest: sha256:c7ab3c680f70a844605f21504a8a76c77ce4dec6e2aba1a5362aaafddc9c86f2
+generated: "2024-11-28T19:50:04.866395262Z"
