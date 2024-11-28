@@ -60,7 +60,7 @@ dependencies:
   repository: https://prometheus-community.github.io/helm-charts
 
 - name: kubernetes-dashboard
-  version: "7.6.1"
+  version: "7.10.0"
   repository: https://kubernetes.github.io/dashboard
   alias: k8sdashboard
   condition: k8sdashboard.enabled
