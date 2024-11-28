@@ -16,7 +16,7 @@ dependencies:
   version: 7.17.3
 - name: opensearch
   repository: https://opensearch-project.github.io/helm-charts
-  version: 2.13.3
+  version: 2.27.1
 - name: karpenter
   repository: oci://public.ecr.aws/karpenter
   version: 1.0.8
@@ -32,5 +32,5 @@ dependencies:
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
   version: 14.2.34
-digest: sha256:42e4f43f0c7fc38842729cf24c72c7e540b5149d49b1bb8899612b53e69dc54f
-generated: "2024-11-28T14:44:09.451667993-05:00"
+digest: sha256:2530701ecad5d886cef92774a385867c3d81e044ae68917cdf4a5832c714ead5
+generated: "2024-11-28T19:48:02.651653949Z"
