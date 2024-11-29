@@ -31,6 +31,6 @@ dependencies:
   version: 5.2.0
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
-  version: 14.2.34
-digest: sha256:42e4f43f0c7fc38842729cf24c72c7e540b5149d49b1bb8899612b53e69dc54f
-generated: "2024-11-28T14:44:09.451667993-05:00"
+  version: 14.2.85
+digest: sha256:8a53040e852b7abd55b1f67f254671ac4f055cd64a3b168873d15d981b7e6c68
+generated: "2024-11-29T16:20:08.730030692Z"
