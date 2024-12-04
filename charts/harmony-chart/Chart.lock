@@ -22,7 +22,7 @@ dependencies:
   version: 1.0.8
 - name: kube-prometheus-stack
   repository: https://prometheus-community.github.io/helm-charts
-  version: 65.8.1
+  version: 66.3.1
 - name: kubernetes-dashboard
   repository: https://kubernetes.github.io/dashboard
   version: 7.10.0
@@ -32,5 +32,5 @@ dependencies:
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
   version: 14.2.34
-digest: sha256:42e4f43f0c7fc38842729cf24c72c7e540b5149d49b1bb8899612b53e69dc54f
-generated: "2024-11-28T14:44:09.451667993-05:00"
+digest: sha256:16c56d3d64d6e2215326d505515d792a98d92c14be4136798a3cdd760a77453c
+generated: "2024-12-04T15:09:37.903529333Z"
