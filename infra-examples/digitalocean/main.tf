@@ -1,94 +1,116 @@
-# A cluster to test proof of concept on DigitalOcean
-terraform {
-  required_providers {
-    digitalocean = {
-      source  = "digitalocean/digitalocean"
-      version = ">=2.23"
-    }
-    kubernetes = {
-      source = "hashicorp/kubernetes"
-      version = "2.35.0"
-    }
-    kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = "1.18.0"
-    }
-    helm = {
-      source = "hashicorp/helm"
-      version = "2.16.1"
+locals {
+  instances = [
+    "my-instance-1",
+    "my-instance-2",
+    "my-instance-3",
+  ]
+}
+
+data "digitalocean_kubernetes_versions" "available_versions" {}
+
+module "main_vpc" {
+  source = "../../terraform/modules/digitalocean/vpc"
+
+  region = var.region
+  environment = var.environment
+}
+
+module "kubernetes_cluster" {
+  source = "../../terraform/modules/digitalocean/doks"
+
+  region = var.region
+  environment = var.environment
+  vpc_id = module.main_vpc.vpc_id
+
+  cluster_name = var.kubernetes_cluster_name
+  kubernetes_version = data.digitalocean_kubernetes_versions.available_versions.latest_version
+}
+
+module "spaces" {
+  source = "../../terraform/modules/digitalocean/spaces"
+
+  region = var.region
+  environment = var.environment
+
+  bucket_prefix = "my-institute"
+}
+
+module "mysql_database" {
+  source = "../../terraform/modules/digitalocean/database"
+
+  region = var.region
+  environment = var.environment
+  access_token = var.do_access_token
+  vpc_id = module.main_vpc.vpc_id
+  kubernetes_cluster_name = var.kubernetes_cluster_name
+
+  database_engine = "mysql"
+  database_engine_version = 8
+  database_cluster_instances = 1
+  database_cluster_instance_size = "db-s-1vcpu-1gb"
+  database_maintenance_window_day = "sunday"
+  database_maintenance_window_time = "01:00:00"
+
+  # Database cluster firewalls cannot use VPC CIDR, therefore the access is
+  # limited to the k8s cluster
+  firewall_rules = [
+    {
+      type  = "k8s"
+      value = module.kubernetes_cluster.cluster_id
+    },
+  ]
+}
+
+module "mongodb_database" {
+  source = "../../terraform/modules/digitalocean/database"
+
+  region = var.region
+  environment = var.environment
+  access_token = var.do_access_token
+  vpc_id = module.main_vpc.vpc_id
+  kubernetes_cluster_name = var.kubernetes_cluster_name
+
+  database_engine = "mongodb"
+  database_engine_version = 7
+  database_cluster_instances = 3
+  database_cluster_instance_size = "db-s-1vcpu-1gb"
+  database_maintenance_window_day = "sunday"
+  database_maintenance_window_time = "1:00"
+
+  database_users = {
+    for instance in toset(local.instances) :
+    instance => {
+      username = instance,
+      database = "${instance}-db"
     }
   }
+
+  # Database cluster firewalls cannot use VPC CIDR, therefore the access is
+  # limited to the k8s cluster
+  firewall_rules = [
+    {
+      type  = "k8s"
+      value = module.kubernetes_cluster.cluster_id
+    },
+  ]
 }
 
-# Configure the DigitalOcean Provider
-provider "digitalocean" {
-  token = var.do_token
-}
+resource "digitalocean_database_db" "forum_database" {
+  for_each   = toset(local.instances)
 
-variable "cluster_name" { type = string }
-variable "do_token" {
-  type = string
-  sensitive = true
-}
-
-module "k8s_cluster" {
-  source = "./k8s-cluster"
-
-  cluster_name          = var.cluster_name
-  # max_worker_node_count = var.max_worker_node_count
-  # min_worker_node_count = var.min_worker_node_count
-  # worker_node_size      = var.worker_node_size
-  # region                = var.do_region
-  # vpc_uuid              = digitalocean_vpc.main_vpc.id
-  # vpc_ip_range          = var.vpc_ip_range
-}
-
-# Pre-declare data sources that we can use to get the cluster ID and auth info, once it's created
-data "digitalocean_kubernetes_cluster" "cluster" {
-  name = var.cluster_name
-  # Set the depends_on so that the data source doesn't
-  # try to read from a cluster that doesn't exist, causing
-  # failures when trying to run a `tofu plan`.
-  depends_on = [module.k8s_cluster.cluster_id]
-}
-
-# Configure Kubernetes provider
-provider "kubernetes" {
-  host                   = data.digitalocean_kubernetes_cluster.cluster.endpoint
-  token                  = data.digitalocean_kubernetes_cluster.cluster.kube_config[0].token
-  cluster_ca_certificate = base64decode(data.digitalocean_kubernetes_cluster.cluster.kube_config[0].cluster_ca_certificate)
-}
-
-# Configure Helm provider
-provider "helm" {
-  kubernetes {
-    host                   = data.digitalocean_kubernetes_cluster.cluster.endpoint
-    token                  = data.digitalocean_kubernetes_cluster.cluster.kube_config[0].token
-    cluster_ca_certificate = base64decode(data.digitalocean_kubernetes_cluster.cluster.kube_config[0].cluster_ca_certificate)
-  }
-}
-
-provider "kubectl" {
-  host                   = data.digitalocean_kubernetes_cluster.cluster.endpoint
-  token                  = data.digitalocean_kubernetes_cluster.cluster.kube_config[0].token
-  cluster_ca_certificate = base64decode(data.digitalocean_kubernetes_cluster.cluster.kube_config[0].cluster_ca_certificate)
-  load_config_file       = false
-}
-
-
-# Declare the kubeconfig as an output - access it anytime with "tofu output -raw kubeconfig"
-output "kubeconfig" {
-  value     = module.k8s_cluster.kubeconfig.raw_config
-  sensitive = true
+  cluster_id = module.mongodb_database.cluster_id
+  name       = "${each.key}-cs_comments_service"
 }
 
 resource "digitalocean_project" "project" {
-  name        = var.cluster_name
-  description = "Testing the use of Helm to provision a cluster for multi-instance tutor deployment"
+  name        = var.kubernetes_cluster_name
+  description = "Open edX deployment using Harmony"
   purpose     = "Web Application"
-  environment = "Production"
 
   resources = [
-    module.k8s_cluster.cluster_urn,
+    module.kubernetes_cluster.cluster_urn,
+    module.spaces.bucket_urn,
+    module.mysql_database.cluster_urn,
+    module.mongodb_database.cluster_urn,
   ]
 }
