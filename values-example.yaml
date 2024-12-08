@@ -89,3 +89,103 @@ velero:
 
 openfaas:
   enabled: false
+
+# ClickHouse Vector Sink
+
+vector:
+  enabled: false
+  customConfig:
+    transforms:
+      # Events should be separated per namespace, and a different sink should be
+      # implemented for every namespace with Aspects
+      logs_openedx_demo:
+        type: filter
+        inputs:
+        - kubernetes_tutor_logs
+        condition: '.kubernetes.pod_namespace == "openedx_demo"' # Mkae sure to update the namespace
+
+      xapi_openedx_demo:
+        type: remap
+        inputs:
+        - logs_openedx_demo
+        drop_on_error: true
+        drop_on_abort: true
+        source: |-
+          parsed, err_regex = parse_regex(.message, r'^.* \[xapi_tracking\] [^{}]*
+          (?P<tracking_message>\{.*\})$')
+          if err_regex != null {
+            abort
+          }
+          message, err = strip_whitespace(parsed.tracking_message)
+          parsed_json, err_json = parse_json(parsed.tracking_message)
+          if err_json != null {
+            log("Unable to parse JSON from xapi tracking log message: " + err_json, level: "error")
+            abort
+          }
+          time, err_timestamp = parse_timestamp(parsed_json.timestamp, "%+")
+          if err_timestamp != null {
+            log("Unable to parse timestamp from tracking log 'time' field: " + err_timestamp, level: "warn")
+            time, err_timestamp = parse_timestamp(parsed_json.timestamp, "%+")
+            if err_timestamp != null {
+              log("Unable to parse timestamp from tracking log 'timestamp' field: " + err_timestamp, level: "error")
+              abort
+            }
+          }
+          event_id = parsed_json.id
+          . = {"event_id": event_id, "emission_time": format_timestamp!(time,
+          format: "%+"), "event": encode_json(parsed_json)}
+
+    sinks:
+      # Example ClickHouse Sink
+      clickhouse_openedx_demo:
+        type: clickhouse
+        auth:
+          strategy: basic
+          user: 'ch_vector'
+          password: 'password'
+        encoding:
+          timestamp_format: unix
+        date_time_best_effort: true
+        inputs:
+          - xapi_openedx_demo
+        # http://{{CLICKHOUSE_HOST }}.{{CLICKHOUSE_NAMESPACE}}:{{ CLICKHOUSE_INTERNAL_HTTP_PORT }}
+        endpoint: http://clickhouse-clickhouse.openedx-harmony:8123
+        # ASPECTS_VECTOR_DATABASE
+        database: 'openedx'
+        table: 'xapi_events_all'
+        healthcheck: true
+
+      tracking_logs_to_s3:
+        type: aws_s3
+        inputs:
+        - tracking_logs
+        filename_append_uuid: true
+        filename_time_format: "log-%Y%m%d-%H"
+        # Helm tries to render the .type and .kubernetes variables. We need to escape them to avoid errors
+        # See> https://github.com/helm/helm/issues/2798
+        key_prefix: {{ `{{ .kubernetes.pod_namespace }}/{{ .type }}/{{ .kubernetes.container_name }}/date=%F/` }}
+        compression: gzip
+        encoding:
+          codec: text
+        bucket: "set_me"
+        auth:
+          access_key_id: "set_me"
+          secret_access_key: "set_me"
+        region: "set_me"
+        # When using AWS-compatible services like MinIO, set the endpoint and tweak SSL if necessary
+        # endpoint: "http://minio.{namespace}:9000"
+        # region: none
+        healthcheck:
+          enabled: false
+
+      logs_to_cloudwatch:
+        type: aws_cloudwatch
+        inputs:
+        - application_logs
+        group_name: my-cluster
+        stream_name: {{ `{{ .kubernetes.pod_namespace }}/{{ .kubernetes.container_name }}` }}
+        auth:
+          access_key_id: "set_me"
+          secret_access_key: "set_me"
+        encoding:
+          codec: json
