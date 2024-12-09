@@ -28,12 +28,12 @@ dependencies:
   version: 7.10.0
 - name: velero
   repository: https://vmware-tanzu.github.io/helm-charts
-  version: 5.2.0
+  version: 5.4.1
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
   version: 14.2.34
 - name: vector
   repository: https://helm.vector.dev
   version: 0.37.0
-digest: sha256:6620a3f1bac1f49165da56dc845b6435d73fd3d6c83e2ff4876e2d5c7394ae7b
-generated: "2024-12-08T13:24:03.513574144-05:00"
+digest: sha256:e7f564616b03d25194046719f4a1b93a7fe018ce0ee14e7f296d7ddfe97939ed
+generated: "2024-12-09T17:19:30.723740219Z"
