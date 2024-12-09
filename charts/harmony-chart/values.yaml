@@ -12,9 +12,6 @@ cert-manager:
   # Use cert-manager as a default certificate controller.
   enabled: true
   installCRDs: false
-    # Email address associated with the ACME account. Used to notify about expiring
-    # certificates.
-  email: ""
 
 # Configuration for the metrics server chart
 metricsserver:
