@@ -49,7 +49,7 @@ dependencies:
   repository: https://opensearch-project.github.io/helm-charts
 
 - name: karpenter
-  version: "1.0.8"
+  version: "1.1.1"
   repository: oci://public.ecr.aws/karpenter
   condition: karpenter.enabled
 
