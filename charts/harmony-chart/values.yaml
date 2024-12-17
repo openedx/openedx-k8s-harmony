@@ -4,6 +4,10 @@
 
 clusterDomain: "*"
 
+# Email address used for receiving Let's encrypt notifications if cert-manager
+# is enabled.
+notificationEmail: null
+
 ingress-nginx:
   # Use ingress-nginx as a default controller.
   enabled: true

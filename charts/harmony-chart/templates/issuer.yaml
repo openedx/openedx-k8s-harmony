@@ -5,8 +5,8 @@ metadata:
   name: harmony-letsencrypt-global
 spec:
   acme:
-    {{- if index .Values "cert-manager" "email" }}
-    email: {{ index .Values "cert-manager" "email" }}
+    {{- if .Values.notificationEmail }}
+    email: {{ .Values.notificationEmail }}
     {{- end }}
     privateKeySecretRef:
       name: harmony-letsencrypt-global
