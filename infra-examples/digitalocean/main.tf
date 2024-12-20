@@ -1,11 +1,3 @@
-locals {
-  instances = [
-    "my-instance-1",
-    "my-instance-2",
-    "my-instance-3",
-  ]
-}
-
 data "digitalocean_kubernetes_versions" "available_versions" {}
 
 module "main_vpc" {
@@ -77,14 +69,6 @@ module "mongodb_database" {
   database_maintenance_window_day = "sunday"
   database_maintenance_window_time = "1:00"
 
-  database_users = {
-    for instance in toset(local.instances) :
-    instance => {
-      username = instance,
-      database = "${instance}-db"
-    }
-  }
-
   # Database cluster firewalls cannot use VPC CIDR, therefore the access is
   # limited to the k8s cluster
   firewall_rules = [
@@ -93,13 +77,6 @@ module "mongodb_database" {
       value = module.kubernetes_cluster.cluster_id
     },
   ]
-}
-
-resource "digitalocean_database_db" "forum_database" {
-  for_each   = toset(local.instances)
-
-  cluster_id = module.mongodb_database.cluster_id
-  name       = "${each.key}-cs_comments_service"
 }
 
 resource "digitalocean_project" "project" {
