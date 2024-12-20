@@ -64,7 +64,7 @@ resource "digitalocean_database_db" "databases" {
 }
 
 
-resource "null_resource" "no_primay_key_patch_database_cluster" {
+resource "null_resource" "no_primary_key_patch_database_cluster" {
   triggers = {
     cluster_id = digitalocean_database_cluster.database_cluster.id
   }
