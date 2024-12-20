@@ -27,7 +27,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_node_pools"></a> [additional\_node\_pools](#input\_additional\_node\_pools) | Additional node pools attached to the cluster. | <pre>list(object({<br/>    name           = string<br/>    size           = string<br/>    min_node_count = number<br/>    max_node_count = number<br/>    labels         = optional(map(any))<br/>  }))</pre> | `[]` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name of the Kubernetes cluster. | `string` | n/a | yes |
-| <a name="input_environment"></a> [environment](#input\_environment) | The DigitalOcean project environment. | `string` | n/a | yes |
+| <a name="input_environment"></a> [environment](#input\_environment) | The DigitalOcean project environment. (for example: production, staging, development, etc.) | `string` | n/a | yes |
 | <a name="input_is_auto_scaling_enabled"></a> [is\_auto\_scaling\_enabled](#input\_is\_auto\_scaling\_enabled) | Whether auto scaling is enabled for the cluster or not. | `bool` | n/a | yes |
 | <a name="input_is_auto_upgrade_enabled"></a> [is\_auto\_upgrade\_enabled](#input\_is\_auto\_upgrade\_enabled) | Whether auto upgrade is enabled for the cluster or not. | `bool` | n/a | yes |
 | <a name="input_is_surge_upgrade_enabled"></a> [is\_surge\_upgrade\_enabled](#input\_is\_surge\_upgrade\_enabled) | Whether surge upgrade is enabled for the cluster or not. | `bool` | n/a | yes |

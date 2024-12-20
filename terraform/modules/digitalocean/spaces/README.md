@@ -28,7 +28,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_allowed_cors_origins"></a> [allowed\_cors\_origins](#input\_allowed\_cors\_origins) | Lists the CORS origins to allow CORS requests from. | `list(string)` | <pre>[<br/>  "*"<br/>]</pre> | no |
 | <a name="input_bucket_prefix"></a> [bucket\_prefix](#input\_bucket\_prefix) | The prefix for the DigitalOcean spaces bucket for easier identification. | `string` | n/a | yes |
-| <a name="input_environment"></a> [environment](#input\_environment) | The DigitalOcean project environment. | `string` | n/a | yes |
+| <a name="input_environment"></a> [environment](#input\_environment) | The DigitalOcean project environment. (for example: production, staging, development, etc.) | `string` | n/a | yes |
 | <a name="input_is_force_destroy_enabled"></a> [is\_force\_destroy\_enabled](#input\_is\_force\_destroy\_enabled) | Determines if the DigitalOcean spaces bucket is force-destroyed or not upon deletion. | `bool` | `true` | no |
 | <a name="input_is_public"></a> [is\_public](#input\_is\_public) | Determines whether the DigitalOcean spaces bucket's root object is publicly available or not. | `bool` | `false` | no |
 | <a name="input_is_versioning_enabled"></a> [is\_versioning\_enabled](#input\_is\_versioning\_enabled) | Determines if versioning is allowed on the DigitalOcean spaces bucket or not. | `bool` | `true` | no |

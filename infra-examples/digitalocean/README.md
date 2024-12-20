@@ -41,7 +41,7 @@ This is an example implementation to create a production grade infrastructure fo
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_do_access_token"></a> [do\_access\_token](#input\_do\_access\_token) | DitialOcean access token. | `string` | n/a | yes |
-| <a name="input_environment"></a> [environment](#input\_environment) | The DigitalOcean project environment. | `string` | n/a | yes |
+| <a name="input_environment"></a> [environment](#input\_environment) | The DigitalOcean project environment. (for example: production, staging, development, etc.) | `string` | n/a | yes |
 | <a name="input_kubernetes_cluster_name"></a> [kubernetes\_cluster\_name](#input\_kubernetes\_cluster\_name) | Name of the DigitalOcean Kubernetes cluster to create. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | DigitalOcean region to create the resources in. | `string` | n/a | yes |
 

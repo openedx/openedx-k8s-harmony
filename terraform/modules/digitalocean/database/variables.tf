@@ -25,7 +25,7 @@ variable "region" {
 
 variable "environment" {
   type        = string
-  description = "The DigitalOcean project environment."
+  description = "The DigitalOcean project environment. (for example: production, staging, development, etc.)"
 }
 
 variable "database_engine" {

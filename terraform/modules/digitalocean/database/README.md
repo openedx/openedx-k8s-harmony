@@ -36,7 +36,7 @@ No modules.
 | <a name="input_database_maintenance_window_day"></a> [database\_maintenance\_window\_day](#input\_database\_maintenance\_window\_day) | The day when maintenance can be executed on the database cluster. | `string` | `"sunday"` | no |
 | <a name="input_database_maintenance_window_time"></a> [database\_maintenance\_window\_time](#input\_database\_maintenance\_window\_time) | The hour in UTC at which maintenance updates will be applied in 24 hour format. | `string` | n/a | yes |
 | <a name="input_database_users"></a> [database\_users](#input\_database\_users) | Map of overrides for the user and database names. | <pre>map(object({<br/>    username = string<br/>    database = string<br/>  }))</pre> | `{}` | no |
-| <a name="input_environment"></a> [environment](#input\_environment) | The DigitalOcean project environment. | `string` | n/a | yes |
+| <a name="input_environment"></a> [environment](#input\_environment) | The DigitalOcean project environment. (for example: production, staging, development, etc.) | `string` | n/a | yes |
 | <a name="input_firewall_rules"></a> [firewall\_rules](#input\_firewall\_rules) | List of rules to apply on the related firewalls. | <pre>list(object({<br/>    type  = string<br/>    value = string<br/>  }))</pre> | n/a | yes |
 | <a name="input_kubernetes_cluster_name"></a> [kubernetes\_cluster\_name](#input\_kubernetes\_cluster\_name) | The name of the Kubernetes cluster. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | DigitalOcean region to create the resources in. | `string` | n/a | yes |
