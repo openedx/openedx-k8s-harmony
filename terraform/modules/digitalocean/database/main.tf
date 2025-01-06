@@ -63,7 +63,8 @@ resource "digitalocean_database_db" "databases" {
   name       = each.value
 }
 
-
+# This change is needed because of a foreign key constraint issue in Django-wiki version
+# that was used by open edX. openedx/edx-platform#30709
 resource "null_resource" "no_primary_key_patch_database_cluster" {
   triggers = {
     cluster_id = digitalocean_database_cluster.database_cluster.id
