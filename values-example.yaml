@@ -477,3 +477,44 @@ vector:
 
     # Make sure to check out values-example.yml to now how to sink logs to S3, CloudWatch and other services
     sinks: {}
+
+cluster-autoscaler:
+  enabled: false
+  awsRegion: set_me
+  rbac:
+    serviceAccount:
+      name: "cluster-autoscaler"
+      annotations:
+        eks.amazonaws.com/role-arn: "arn:aws:iam::<set_aws_account_id>:role/cluster-autoscaler-<set_cluster_name>"
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 90
+        preference:
+          matchExpressions:
+          - key: eks.amazonaws.com/capacityType
+            operator: In
+            values:
+            - ON_DEMAND
+  autoDiscovery:
+    clusterName: "set_cluster_name"
+  image:
+    tag: "v1.29.2"
+  extraArgs:
+    balance-similar-node-groups: true
+    skip-nodes-with-system-pods: false
+    scan-interval: 20s
+    expander: "priority"
+    scale-down-unneeded-time: 10m
+    scale-down-unready-time: 10m
+  expanderPriorities:
+    5:
+    - ".*"
+    10:
+    - ".*ubuntu_worker.*"
+    90:
+    - ".*spot_worker.*"
+  deployment:
+    # deployment.annotations -- Annotations to add to the Deployment object.
+    annotations:
+      cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
