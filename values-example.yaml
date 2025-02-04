@@ -478,6 +478,7 @@ vector:
     # Make sure to check out values-example.yml to now how to sink logs to S3, CloudWatch and other services
     sinks: {}
 
+# This is a proposed configuration for Cluster Autoscaler designed for AWS, but it could be adapted and tested with other cloud providers
 cluster-autoscaler:
   enabled: false
   awsRegion: set_me
@@ -499,7 +500,9 @@ cluster-autoscaler:
   autoDiscovery:
     clusterName: "set_cluster_name"
   image:
-    tag: "v1.29.2"
+    # You can set hare the image of the cluster-autoscaler compatible with your cluster version
+    # See the CA tags in https://github.com/kubernetes/autoscaler
+    tag: "v1.31.1"
   extraArgs:
     balance-similar-node-groups: true
     skip-nodes-with-system-pods: false
