@@ -146,11 +146,6 @@ resource "mongodbatlas_database_user" "users" {
     database_name = each.value.database
   }
 
-  roles {
-    role_name     = "readWrite"
-    database_name = each.value.forum_database
-  }
-
   scopes {
     type = "CLUSTER"
     name = mongodbatlas_cluster.cluster.name

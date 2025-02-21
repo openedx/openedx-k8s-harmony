@@ -133,8 +133,7 @@ variable "database_users" {
   type = map(object({
     username       = string
     database       = string
-    forum_database = string
   }))
   default     = {}
-  description = "Map of overrides for the user and database names."
+  description = "Map of additional user and database names."
 }

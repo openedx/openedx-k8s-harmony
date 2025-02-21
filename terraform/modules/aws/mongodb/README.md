@@ -48,7 +48,7 @@ No modules.
 | <a name="input_database_storage_ipos"></a> [database\_storage\_ipos](#input\_database\_storage\_ipos) | The disk IOPS to have for the database instance | `number` | `null` | no |
 | <a name="input_database_storage_size"></a> [database\_storage\_size](#input\_database\_storage\_size) | The storage assigned to the database instance | `number` | `null` | no |
 | <a name="input_database_storage_type"></a> [database\_storage\_type](#input\_database\_storage\_type) | The storage type to use for the database instance | `string` | `null` | no |
-| <a name="input_database_users"></a> [database\_users](#input\_database\_users) | Map of overrides for the user and database names. | <pre>map(object({<br/>    username       = string<br/>    database       = string<br/>    forum_database = string<br/>  }))</pre> | `{}` | no |
+| <a name="input_database_users"></a> [database\_users](#input\_database\_users) | Map of additional user and database names. | <pre>map(object({<br/>    username       = string<br/>    database       = string<br/>  }))</pre> | `{}` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The AWS project environment. (for example: production, staging, development, etc.) | `string` | n/a | yes |
 | <a name="input_is_database_autoscaling_compute_enabled"></a> [is\_database\_autoscaling\_compute\_enabled](#input\_is\_database\_autoscaling\_compute\_enabled) | Whether to enable autoscaling of database instances | `bool` | `false` | no |
 | <a name="input_is_database_autoscaling_disk_gb_enabled"></a> [is\_database\_autoscaling\_disk\_gb\_enabled](#input\_is\_database\_autoscaling\_disk\_gb\_enabled) | Whether to enable autoscaling disk size for the database instance | `bool` | `true` | no |

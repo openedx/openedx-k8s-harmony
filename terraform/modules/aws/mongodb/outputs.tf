@@ -25,7 +25,6 @@ output "database_user_credentials" {
       username       = user.username
       password       = try(mongodbatlas_database_user.users[user.username].password, "")
       database       = user.database
-      forum_database = "${key}-cs_comments_service"
     }
   }
   description = "List of database and user credentials mapping."
