@@ -16,7 +16,7 @@ variable "docker_registry_credentials" {
 
 variable "kubernetes_cluster_name" {
   type        = string
-  description = "Name of the DigitalOcean Kubernetes cluster to create."
+  description = "Name of the Kubernetes cluster to create."
 }
 
 variable "worker_node_ssh_key_name" {
