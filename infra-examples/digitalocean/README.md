@@ -2,6 +2,12 @@
 
 This is an example implementation to create a production grade infrastructure for hosting Open edX instances on DigitalOcean, using the Terraform modules provided by Harmony.
 
+## Important notes
+
+Be aware that the current implementation does not support the creation of MongoDB users and Spaces buckets through Tutor plugins.
+
+While Tutor can handle MySQL database and user creation, Terraform is required (as of now) for setting up MongoDB databases and users. This approach is not ideal as it necessitates running Terraform code when adding or removing instances, which contradicts the goal of separating cluster provisioning from instance provisioning. Until a more streamlined solution, such as a plugin or automation tool, is developed, users must manually manage these resources. For now, please ensure you manually configure MongoDB users and Spaces buckets to maintain a fully functional environment (either using Terraform or other methods).
+
 ## Requirements
 
 | Name | Version |
