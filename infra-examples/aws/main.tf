@@ -28,18 +28,13 @@ module "main_vpc" {
     "10.0.103.0/24",
   ]
 
-  tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
-  }
-
   public_subnet_tags = {
     "Tier"                                        = "Public"
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
     "kubernetes.io/role/elb"                      = "1"
   }
+
   private_subnet_tags = {
     "Tier"                                        = "Private"
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
     "kubernetes.io/role/internal-elb"             = "1"
   }
 }
