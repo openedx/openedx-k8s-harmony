@@ -16,7 +16,7 @@ dependencies:
   version: 7.17.3
 - name: opensearch
   repository: https://opensearch-project.github.io/helm-charts
-  version: 2.13.3
+  version: 2.32.0
 - name: karpenter
   repository: oci://public.ecr.aws/karpenter
   version: 1.0.8
@@ -35,5 +35,5 @@ dependencies:
 - name: vector
   repository: https://helm.vector.dev
   version: 0.37.0
-digest: sha256:f470a766885ea840bc6b822c07c5ff55bff415195bd3bb76c2f37f89c75a460d
-generated: "2024-12-17T05:51:57.22165494Z"
+digest: sha256:3bbdc454e2cac70079b47f355dedac7e96e239df2b03ea72092ba00499b94e6f
+generated: "2025-02-28T07:25:07.68086966Z"
