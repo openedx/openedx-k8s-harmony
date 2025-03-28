@@ -8,6 +8,7 @@
 {%- set tmp = HOSTS.append(DISCOVERY_HOST) if DISCOVERY_HOST is defined %}
 {%- set tmp = HOSTS.append(MINIO_HOST) if MINIO_HOST is defined %}
 {%- set tmp = HOSTS.append(MINIO_CONSOLE_HOST) if MINIO_CONSOLE_HOST is defined %}
+{%- set tmp = HOSTS.append(MEILISEARCH_HOST) if MEILISEARCH_HOST is defined %}
 {%- for host in HOSTS %}
 ---
 apiVersion: networking.k8s.io/v1
