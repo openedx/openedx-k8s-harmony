@@ -44,10 +44,6 @@ In particular, this project aims to provide the following benefits to Open edX o
 
 ## FAQ
 
-### Is this ready to use in production?
-
-We are tracking that in [issue 26](https://github.com/openedx/openedx-k8s-harmony/issues/26), so check that issue for the current status.
-
 ### This project aims to support many small/medium instances deployed onto a cluster; is it also suitable for deploying one really high traffic instance?
 
 Supporting one really large instance is not a core design goal, but it should work well and we may consider including this as a goal in the future. Please reach out to us or get involved with this project if you have this requirement.
@@ -280,12 +276,12 @@ from this job, run:") in a separate terminal in order to monitor the status.
 
 ## Configuration Reference
 
-### Multi-tenant Elasticsearch
+### Multi-tenant Elasticsearch (Deprecated)
 
-Tutor creates an Elasticsearch pod as part of the Kubernetes deployment. Depending on the number of instances, memory
+Note: this is not required nor recommended for "Sumac" and newer versions of Open edX, which use Meilisearch instead of Elasticsearch.
+
+For "Redwood" versions of Open edX, Tutor creates an Elasticsearch pod as part of the Kubernetes deployment. Depending on the number of instances, memory
 and CPU use can be lowered by running a central ES cluster instead of an ES pod for every instance.
-
-**Please note that this will only work for "Redwood" version and later. The OpenSearch implementation is not yet confirmed to work as expected.**
 
 To enable set `elasticsearch.enabled=true` in your `values.yaml` and deploy the chart.
 
@@ -311,10 +307,6 @@ populated with random value to ensure uniqueness.
   ```
 * Rebuild your Open edX image `tutor images build openedx`.
 * Finally, redeploy your changes: `tutor k8s start && tutor k8s init`.
-
-#### Caveats
-
-In order for SSL to work without warnings the CA certificate needs to be mounted in the relevant pods. This is not yet implemented as due to an [outstanding issue in tutor](https://github.com/overhangio/tutor/issues/791) that had not yet been completed at the time of writing.
 
 ## Extended Documentation
 
