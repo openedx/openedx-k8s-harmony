@@ -25,7 +25,7 @@ dependencies:
   version: 65.8.1
 - name: kubernetes-dashboard
   repository: https://kubernetes.github.io/dashboard
-  version: 7.10.0
+  version: 7.12.0
 - name: velero
   repository: https://vmware-tanzu.github.io/helm-charts
   version: 5.4.1
@@ -35,5 +35,5 @@ dependencies:
 - name: vector
   repository: https://helm.vector.dev
   version: 0.37.0
-digest: sha256:a85bf11b69911769b19202ae261c21f3e3b6e4e2d3714561da13775698be3fd9
-generated: "2025-03-28T18:50:31.908422+04:00"
+digest: sha256:fc2af693237e22f5076eed309b646f36fd00a1f5dc052cd6891a8b6b2323e145
+generated: "2025-04-16T19:50:30.547534283Z"
