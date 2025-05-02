@@ -1,0 +1,3 @@
+{% if not RUN_MEILISEARCH %}{{ MEILISEARCH_HOST }}{$default_site_port} {
+    import proxy "{{ MEILISEARCH_URL.split("://")[1] }}"
+}{% endif %}

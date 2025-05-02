@@ -276,6 +276,42 @@ from this job, run:") in a separate terminal in order to monitor the status.
 
 ## Configuration Reference
 
+### Multi-tenant Meilisearch
+
+Meilisearch is the new search engine used by Open edX since "Sumac" version.
+If you are running Redwood or an older version, please check the instructions to
+set up Elasticsearch bellow.
+
+You have three options to run Meilisearch for Open edX:
+
+#### Default installation
+
+By default, Tutor will setup a Meilisearch instance inside the K8s cluster.
+If you have multiple sites in your cluster, each one will have its own Meilisearch pod.
+Just leave all Meilisearch settings by default.
+
+#### Public Meilisearch server
+
+If you want to use [Meilisearch Cloud](https://www.meilisearch.com/cloud) or you have your own Meilisarch
+internet-facing server, set `RUN_MEILISEARCH=false` and `MEILISEARCH_PUBLIC_URL` to the public address 
+(e.g. https://ms-yourinstanceid.meilisearch.io). The server must be accessible from Internet and must 
+support HTTPS with its own certificates.
+
+Make sure to set `MEILISEARCH_INDEX_PREFIX` to a value different for each site.
+
+#### Private Meilisearch server
+
+You can [install Meilisearch](https://www.meilisearch.com/docs/learn/self_hosted/getting_started_with_self_hosted_meilisearch) 
+in a private server. In this case, make sure that the cluster has routes and security rules
+that allow traffic from and to the server (by default Meilisearch listens to port 7700).
+In this case, set `RUN_MEILISEARCH=false` and `MEILISEARCH_URL` with the internal name or IP address of the Meilisearch
+server, including port number (e.g., http://10.1.2.3:7700). 
+
+The server doesn't need SSL certificates; they will be managed by cert-manager. 
+Just leave MEILISEARCH_PUBLIC_URL unset, which will be https://meilisearch.{{LMS_HOST}} by default.
+
+Make sure to set `MEILISEARCH_INDEX_PREFIX` to a value different for each site.
+
 ### Multi-tenant Elasticsearch (Deprecated)
 
 Note: this is not required nor recommended for "Sumac" and newer versions of Open edX, which use Meilisearch instead of Elasticsearch.
