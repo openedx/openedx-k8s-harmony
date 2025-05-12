@@ -75,12 +75,12 @@ dependencies:
     repository: https://openfaas.github.io/faas-netes
     condition: openfaas.enabled
 
-- name: vector
-  version:  0.37.0
-  repository: https://helm.vector.dev
-  condition: vector.enabled
+  - name: vector
+    version:  0.37.0
+    repository: https://helm.vector.dev
+    condition: vector.enabled
 
-- name: cluster-autoscaler
-  version: "9.46.0"
-  repository: https://kubernetes.github.io/autoscaler
-  condition: cluster-autoscaler.enabled
+  - name: cluster-autoscaler
+    version: "9.46.0"
+    repository: https://kubernetes.github.io/autoscaler
+    condition: cluster-autoscaler.enabled
