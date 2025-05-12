@@ -76,7 +76,7 @@ dependencies:
     condition: openfaas.enabled
 
   - name: vector
-    version:  0.37.0
+    version: "0.37.0"
     repository: https://helm.vector.dev
     condition: vector.enabled
 
