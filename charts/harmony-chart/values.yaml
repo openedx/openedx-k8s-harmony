@@ -15,7 +15,6 @@ ingress-nginx:
 cert-manager:
   # Use cert-manager as a default certificate controller.
   enabled: true
-  installCRDs: false
 
 # Configuration for the metrics server chart
 metricsserver:
@@ -23,7 +22,6 @@ metricsserver:
    enabled: false
    # See https://github.com/kubernetes-sigs/metrics-server/blob/master/charts/metrics-server/values.yaml
    # for all available options
-   replicas: 1
 
 # Configuration for the Vertical Pod Autoscaler chart
 vpa:
@@ -31,205 +29,19 @@ vpa:
    enabled: false
    # See https://github.com/cowboysysop/charts/blob/master/charts/vertical-pod-autoscaler/values.yaml
    # for all available options
-   admissionController:
-      replicaCount: 1
 
 # Multi-tenant ElasticSearch
 elasticsearch:
   enabled: false
 
-  clusterName: "harmony-search-cluster"
-  masterService: "harmony-search-cluster"
-
-  # Operators will need to add/update the following setting in each
-  # of their instances by running the commands:
-  # ```
-  # tutor config save --set K8S_HARMONY_ENABLE_SHARED_HARMONY_SEARCH=true --set RUN_ELASTICSEARCH=false
-  # tutor harmony create-elasticsearch-user
-  # ```
-  # RUN_ELASTICSEARCH: false
-  # K8S_HARMONY_ENABLE_SHARED_HARMONY_SEARCH: true
-
-  # We will create the relevant certs, because they need to shared
-  # with pods in other namespaces.
-  createCert: false
-  # Authentication is only available in https
-  protocol: https
-
-  # This secret will contain the http certificates.
-  secretMounts:
-    - name: elasticsearch-certificates
-      secretName: search-cluster-certificates-elasticsearch
-      path: /usr/share/elasticsearch/config/certs
-      defaultMode: 0777
-
-  # The password for the elastic user is stored in this secret
-  extraEnvs:
-    - name: ELASTIC_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: elasticsearch-credentials
-          key: password
-
-  esConfig:
-    "elasticsearch.yml": |
-      cluster.name: harmony-search-cluster
-      xpack.security.enabled: true
-      xpack.security.http.ssl.enabled: true
-      xpack.security.http.ssl.key: /usr/share/elasticsearch/config/certs/tls.key
-      xpack.security.http.ssl.certificate: /usr/share/elasticsearch/config/certs/chain.crt
-      xpack.security.transport.ssl.enabled: true
-      xpack.security.transport.ssl.key: /usr/share/elasticsearch/config/certs/tls.key
-      xpack.security.transport.ssl.certificate: /usr/share/elasticsearch/config/certs/tls.crt
-      xpack.security.transport.ssl.certificate_authorities: /usr/share/elasticsearch/config/certs/ca.crt
-      xpack.security.transport.ssl.verification_mode: certificate
-
 # Multi-tenant OpenSearch
 opensearch:
   enabled: false
-  clusterName: "harmony-search-cluster"
-  masterService: "harmony-search-cluster"
-
-  # Operators will need to add/update the following setting in each
-  # of their instances by running the commands:
-  # ```
-  # tutor config save --set K8S_HARMONY_ENABLE_SHARED_HARMONY_SEARCH=true --set RUN_ELASTICSEARCH=false
-  # tutor harmony create-opensearch-user
-  # ```
-  # RUN_ELASTICSEARCH: false
-  # K8S_HARMONY_USE_SHARED_OPENSEARCH: true
-
-  # # This secret will contain the ssl certificates.
-  secretMounts:
-    - name: opensearch-certificates
-      secretName: search-cluster-certificates-elasticsearch
-      path: /usr/share/opensearch/config/certs
-      defaultMode: 0777
-
-  resources:
-    requests:
-      cpu: "1000m"
-      memory: "100Mi"
-
-  persistence:
-    size: 30Gi
-
-  # Set vm.max_map_count
-  # Default value is 262144
-  sysctlInit:
-    enabled: true
-
-  extraEnvs:
-    - name: DISABLE_INSTALL_DEMO_CONFIG
-      value: "true"
-
-  # Allows you to add any config files in {{ .Values.opensearchHome }}/config
-  opensearchHome: /usr/share/opensearch
-  # such as opensearch.yml and log4j2.properties
-
-  securityConfig:
-    enabled: true
-    internalUsersSecret: opensearch-credentials
-
-  config:
-    opensearch.yml: |
-      cluster.name: harmony-search-cluster
-      network.host: 0.0.0.0
-      plugins:
-        security:
-          ssl:
-            transport:
-              enabled: true
-              pemcert_filepath: certs/tls.crt
-              pemkey_filepath: certs/tls.key
-              pemtrustedcas_filepath: certs/ca.crt
-              enforce_hostname_verification: false
-            http:
-              enabled: true
-              pemcert_filepath: certs/tls.crt
-              pemkey_filepath: certs/tls.key
-              pemtrustedcas_filepath: certs/ca.crt
-          authcz:
-            admin_dn:
-              - CN=opensearch-master.*.local
-          nodes_dn:
-            - CN=opensearch-master.*.local
-          allow_unsafe_democertificates: false
-          allow_default_init_securityindex: true
-          audit.type: internal_opensearch
-          enable_snapshot_restore_privilege: true
-          check_snapshot_restore_write_privileges: true
-          restapi:
-            roles_enabled: ["all_access", "security_rest_api_access"]
-          system_indices:
-            enabled: true
-            indices:
-              [
-                ".opendistro-alerting-config",
-                ".opendistro-alerting-alert*",
-                ".opendistro-anomaly-results*",
-                ".opendistro-anomaly-detector*",
-                ".opendistro-anomaly-checkpoints",
-                ".opendistro-anomaly-detection-state",
-                ".opendistro-reports-*",
-                ".opendistro-notifications-*",
-                ".opendistro-notebooks",
-                ".opendistro-asynchronous-search-response*",
-              ]
 
 # Configuration for the Karpenter chart
 karpenter:
   # add Karpenter node management for AWS EKS clusters. See: https://karpenter.sh/
   enabled: false
-  serviceAccount:
-    name: "karpenter"
-    annotations:
-      eks.amazonaws.com/role-arn: ""
-  settings:
-    aws:
-      # -- Cluster name.
-      clusterName: ""
-      # -- Cluster endpoint. If not set, will be discovered during startup (EKS only)
-      # From version 0.25.0, Karpenter helm chart allows the discovery of the cluster endpoint. More details in
-      # https://github.com/aws/karpenter/blob/main/website/content/en/docs/upgrade-guide.md#upgrading-to-v0250
-      # clusterEndpoint: ""
-      # -- The default instance profile name to use when launching nodes
-      defaultInstanceProfile: ""
-      # -- interruptionQueueName is disabled if not specified. Enabling interruption handling may
-      # require additional permissions on the controller service account.
-      interruptionQueueName: ""
-  # ---------------------------------------------------------------------------
-  # Provide sensible defaults for resource provisioning and lifecycle
-  # ---------------------------------------------------------------------------
-  # Requirements for the provisioner API.
-  # More details in https://karpenter.sh/docs/concepts/provisioners/
-  provisioner:
-    name: "default"
-    spec:
-      requirements:
-        - key: karpenter.sh/capacity-type
-          operator: In
-          values: ["spot"]
-        # - key: node.kubernetes.io/instance-type
-        #   operator: In
-        #   values: ["t3.large", "t3.xlarge", "t3.2xlarge", "t2.xlarge", "t2.2xlarge"]
-        # - key: kubernetes.io/arch
-        #   operator: In
-        #   values: ["amd64"]
-      # The limits section controls the maximum amount of resources that the provisioner will manage.
-      # More details in https://karpenter.sh/docs/concepts/provisioners/#speclimitsresources
-      limits:
-        resources:
-          cpu: "200"       # 50 nodes * 4 cpu
-          memory: "800Gi"  # 50 nodes * 16Gi
-      # TTL in seconds. If nil, the feature is disabled, nodes will never terminate
-      ttlSecondsUntilExpired: 2592000
-      # TTL in seconds. If nil, the feature is disabled, nodes will never scale down
-      # due to low utilization.
-      ttlSecondsAfterEmpty: 30
-  # Node template reference. More details in https://karpenter.sh/docs/concepts/node-templates/
-  nodeTemplate:
-    name: "default"
 
 # Prometheus stack
 #   
@@ -242,69 +54,6 @@ karpenter:
 prometheusstack:
   enabled: false
 
-  kubeStateMetrics:
-    enabled: true
-
-  nodeExporter:
-    enabled: true
-
-  prometheus:
-    enabled: true
-
-    prometheusSpec:
-      resources:
-        requests:
-          cpu: "200m"
-          memory: "450Mi"
-
-  alertmanager:
-    enabled: true
-
-    alertmanagerSpec:
-      resources:
-        requests:
-          cpu: "100m"
-          memory: "50Mi"
-
-  # Admin password is not pre-generated, because it is not picked up by the
-  # grafana pod yet -- this is a bug on their end. For more information, visit:
-  # https://github.com/prometheus-community/helm-charts/issues/3679
-  grafana:
-    enabled: false
-
-    ingress:
-      enabled: false
-
-    dashboardProviders:
-      dashboardproviders.yaml:
-        apiVersion: 1
-        providers:
-          - name: 'default'
-            orgId: 1
-            folder: ''
-            type: file
-            disableDeletion: false
-            editable: true
-            options:
-              path: /var/lib/grafana/dashboards/default
-
-    dashboards:
-      default:
-        kubernetes-views-global:
-          # url: https://grafana.com/api/dashboards/15757/revisions/31/download
-          gnetId: 15757
-          revision: 31
-          datasource: Prometheus
-
-    grafana.ini:
-      dashboards:
-        default_home_dashboard_path: /var/lib/grafana/dashboards/default/kubernetes-views-global.json
-
-    resources:
-      requests:
-        cpu: 200m
-        memory: 256Mi
-
 # Configuration for the K8s Dashboard chart
 k8sdashboard:
   enabled: false
@@ -314,176 +63,13 @@ k8sdashboard:
 velero:
   enabled: false
 
-  # For the list of supported providers, and their configuration,
-  # please visit https://velero.io/docs/main/supported-providers/
-  configuration:
-    backupStorageLocation:
-      - name: "velero-backup-harmony"
-        provider: aws
-        bucket: ""  # unique name of the bucket
-        default: true
-        config:
-          s3Url: "" # the endpoint can be any S3 compatible storage
-          region: "" # the region of the bucket
-
-    volumeSnapshotLocation:
-      - name: "velero-volume-snapshot-harmony"
-        provider: "" # provider configuration
-        config:
-          region: "" # the region of the bucket
-
-  credentials:
-    secretContents:
-      cloud: |
-        [default]
-        aws_access_key_id=""     # AWS access key ID
-        aws_secret_access_key="" # AWS secret access key
-
-  initContainers:
-    - name: velero-plugin-for-aws
-      image: velero/velero-plugin-for-aws:v1.11.0
-      volumeMounts:
-        - mountPath: /target
-          name: plugins
-
-  schedules:
-    hourly-backup:
-      disabled: false
-      schedule: "30 */1 * * *"
-      template:
-        ttl: "24h"
-    daily-backup:
-      disabled: false
-      schedule: "0 6 * * *"
-      template:
-        ttl: "168h"
-    weekly-backup:
-      disabled: false
-      schedule: "59 23 * * 0"
-      template:
-        ttl: "720h"
-
 openfaas:
   enabled: false
 
 vector:
   enabled: false
-  role: "Agent"
-  podDisruptionBudget: # Optional, but recommended
-    enabled: true
-    minAvailable: 1
-  # Configures a PodMonitor CRD used by the Prometheus operator
-  podMonitor:
-    enabled: false
-  tolerations:
-  - operator: Exists
-  logLevel: "info"
-  customConfig:
-    data_dir: /vector-data-dir
-    api:
-      enabled: false
-      address: 0.0.0.0:8686
-      playground: false
 
-    sources:
-      kubernetes_tutor_logs:
-        type: kubernetes_logs
-        extra_namespace_label_selector: app.kubernetes.io/managed-by=tutor
-      kubernetes_global_logs:
-        type: kubernetes_logs
-        extra_namespace_label_selector: app.kubernetes.io/managed-by!=tutor
-
-    transforms:
-
-      # Filter out application and global logs whose message is empty to prevent Vector process crash when sending logs to Cloudwatch
-      # More details in https://github.com/vectordotdev/vector/issues/15539
-      openedx_logs:
-        type: remap
-        inputs:
-        - kubernetes_tutor_logs
-        source: |-
-          if !includes(["lms", "cms", "cms-worker", "lms-worker", "lms-job", "cms-job"], .kubernetes.pod_labels."app.kubernetes.io/name"){
-            abort
-          }
-          if contains(string!(.message), "[tracking]") {
-            abort
-          }
-          .type = "application"
-        drop_on_abort: true
-        drop_on_error: true
-
-      # Group multiline logs for better observabitlity
-      grouped_openedx_logs:
-        type: reduce
-        merge_strategies:
-          message: concat_newline
-        inputs:
-          - openedx_logs
-        starts_when:
-          type: "vrl"
-          source: |-
-            match(string!(.message), r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*')
-      operation_openedx_logs:
-        type: remap
-        inputs:
-        - kubernetes_tutor_logs
-        source: |-
-          if includes(["lms", "cms", "cms-worker", "lms-worker", "lms-job", "cms-job"], .kubernetes.pod_labels."app.kubernetes.io/name"){
-            abort
-          }
-          .type = "application"
-        drop_on_abort: true
-        drop_on_error: true
-      global_logs:
-        type: filter
-        inputs:
-          - kubernetes_global_logs
-        condition: 'includes(["ingress-nginx"], .kubernetes.pod_labels."app.kubernetes.io/name")'
-      typed_global_logs:
-        type: remap
-        inputs:
-        - global_logs
-        source: |-
-          .type = "global"
-        drop_on_error: true
-        drop_on_abort: true
-      # Appplication logs (OpenedX, ingress-nginx, cert-manager) can be send to cloudwatch
-      # or to s3. It will depend on user needs.
-      application_logs:
-        type: remap
-        inputs:
-        - grouped_openedx_logs
-        - operation_openedx_logs
-        - typed_global_logs
-        source: |-
-          if is_empty(string!(.message)) {
-            log("Events with empty message are discarded", level: "info")
-            abort
-          }
-      # Extract tracking logs from Open edX applications
-      tracking_logs:
-        type: remap
-        inputs:
-        - kubernetes_tutor_logs
-        source: |-
-          parsed, err_regex = parse_regex(.message, r'^.* \[tracking\] [^{}]* (?P<tracking_message>\{.*\})$')
-          if err_regex != null {
-            abort
-          }
-          message = parsed.tracking_message
-          parsed_json, err_json = parse_json(parsed.tracking_message)
-          if err_json != null {
-            log("Unable to parse JSON from tracking log message: " + err_json, level: "info")
-            abort
-          }
-          time, err_timestamp = parse_timestamp(parsed_json.time, "%+")
-          if err_timestamp != null {
-            log("Unable to parse timestamp from tracking log message: " + err_timestamp, level: "info")
-            abort
-          }
-          .time = time
-          .message = message
-          .type = "tracking"
-
-    # Make sure to check out values-example.yml to now how to sink logs to S3, CloudWatch and other services
-    sinks: {}
+cluster-autoscaler:
+  enabled: false
+  # The following values are the default values for the cluster-autoscaler chart.
+  # For more information on the values, please visit https://github.com/kubernetes/autoscaler/blob/master/charts/cluster-autoscaler/values.yaml
