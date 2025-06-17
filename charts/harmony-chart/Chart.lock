@@ -31,9 +31,9 @@ dependencies:
   version: 5.4.1
 - name: openfaas
   repository: https://openfaas.github.io/faas-netes
-  version: 14.2.87
+  version: 14.2.105
 - name: vector
   repository: https://helm.vector.dev
   version: 0.37.0
-digest: sha256:a85bf11b69911769b19202ae261c21f3e3b6e4e2d3714561da13775698be3fd9
-generated: "2025-03-28T18:50:31.908422+04:00"
+digest: sha256:3fae70a2e574e5b5ae7892de1b1114b7eaf593f647ca3fb94effe9378eae5d3e
+generated: "2025-06-17T14:50:21.417452095Z"
