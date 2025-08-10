@@ -13,7 +13,7 @@ dependencies:
   version: 9.9.0
 - name: elasticsearch
   repository: https://helm.elastic.co
-  version: 7.17.3
+  version: 8.5.1
 - name: opensearch
   repository: https://opensearch-project.github.io/helm-charts
   version: 2.13.3
@@ -35,5 +35,5 @@ dependencies:
 - name: vector
   repository: https://helm.vector.dev
   version: 0.37.0
-digest: sha256:a85bf11b69911769b19202ae261c21f3e3b6e4e2d3714561da13775698be3fd9
-generated: "2025-03-28T18:50:31.908422+04:00"
+digest: sha256:a38dcb63bb0c71ebe6dafe5d2a1c2af950213c34f0e71a292d43b1653dee713f
+generated: "2025-08-10T15:15:30.803783997Z"
