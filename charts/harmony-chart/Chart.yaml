@@ -39,7 +39,7 @@ dependencies:
     condition: vpa.enabled
 
   - name: elasticsearch
-    version: "7.17.3"
+    version: "8.5.1"
     condition: elasticsearch.enabled
     repository: https://helm.elastic.co
 
