@@ -1,0 +1,50 @@
+[project]
+name = "tutor-contrib-harmony"
+dynamic = ["version"]
+license = { text = "AGPLv3" }
+authors = [
+  {name = "Braden MacDonald"}
+]
+description = "multi instance k8s plugin for Tutor"
+readme = {file = "README.rst", content-type = "text/x-rst"}
+requires-python = ">= 3.8"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+  "tutor>=17.0.0,<21.0.0",
+]
+
+[project.entry-points."tutor.plugin.v1"]
+k8s_harmony = "tutor_k8s_harmony_plugin.plugin"
+
+[project.urls]
+Homepage = "https://github.com/openedx/openedx-k8s-harmony"
+Code = "https://github.com/openedx/openedx-k8s-harmony"
+Issues = "https://github.com/openedx/openedx-k8s-harmony/issues"
+
+[tool.hatch.version]
+path = "tutor_k8s_harmony_plugin/__about__.py"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.sdist]
+strict-naming = false
+include = [ 
+    "tutor_k8s_harmony_plugin",
+]
+exclude = ["tests*"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["tutor_k8s_harmony_plugin"]
