@@ -47,3 +47,4 @@ No modules.
 | <a name="output_bucket_arn"></a> [bucket\_arn](#output\_bucket\_arn) | The unique resource ID of the bucket. |
 | <a name="output_bucket_domain_name"></a> [bucket\_domain\_name](#output\_bucket\_domain\_name) | The domain name of the bucket, including the generated prefix. |
 | <a name="output_bucket_id"></a> [bucket\_id](#output\_bucket\_id) | The ID of the bucket that is generated during creation. |
+| <a name="output_bucket_name"></a> [bucket\_name](#output\_bucket\_name) | The name of the S3 bucket. |
