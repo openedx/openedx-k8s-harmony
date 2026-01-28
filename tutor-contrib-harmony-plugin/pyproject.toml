@@ -21,7 +21,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-  "tutor>=17.0.0,<21.0.0",
+  "tutor>=17.0.0,<22.0.0",
 ]
 
 [project.entry-points."tutor.plugin.v1"]
