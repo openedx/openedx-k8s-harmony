@@ -10,7 +10,7 @@ dependencies:
   version: 3.12.2
 - name: vertical-pod-autoscaler
   repository: https://cowboysysop.github.io/charts/
-  version: 9.9.0
+  version: 11.1.1
 - name: elasticsearch
   repository: https://helm.elastic.co
   version: 8.5.1
@@ -35,5 +35,5 @@ dependencies:
 - name: vector
   repository: https://helm.vector.dev
   version: 0.37.0
-digest: sha256:97e7f39d787f4fb01a923a1e00fc38fd4fcf0ca518b95c9b425ac4e0c340354b
-generated: "2026-01-28T13:29:56.8892677-04:00"
+digest: sha256:c69a8ec842d43a5e4bd6df4cea7f9e2c722f2b5b0e046ca02c854b814a1dfc6a
+generated: "2026-01-28T21:24:46.217525126-04:00"
