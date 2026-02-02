@@ -44,7 +44,7 @@ dependencies:
     repository: https://helm.elastic.co
 
   - name: opensearch
-    version: "2.13.3"
+    version: "2.36.0"
     condition: opensearch.enabled
     repository: https://opensearch-project.github.io/helm-charts
 
