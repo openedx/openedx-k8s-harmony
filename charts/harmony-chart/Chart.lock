@@ -1,7 +1,7 @@
 dependencies:
 - name: ingress-nginx
   repository: https://kubernetes.github.io/ingress-nginx
-  version: 4.13.1
+  version: 4.14.1
 - name: cert-manager
   repository: https://charts.jetstack.io
   version: v1.16.2
@@ -35,5 +35,5 @@ dependencies:
 - name: vector
   repository: https://helm.vector.dev
   version: 0.37.0
-digest: sha256:97e7f39d787f4fb01a923a1e00fc38fd4fcf0ca518b95c9b425ac4e0c340354b
-generated: "2026-01-28T13:29:56.8892677-04:00"
+digest: sha256:db09f1bc1feb280b6f7b783183ff4a9b4be6f0142275f0ab60ad5c0d618b8ca9
+generated: "2026-02-06T12:55:39.886014559-04:00"
