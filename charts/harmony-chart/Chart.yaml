@@ -17,7 +17,7 @@ dependencies:
   # This is just info for the "helm dependency update" command, which will update the ./charts/ directory when run, using
   # this information.
   - name: ingress-nginx
-    version: "4.13.1"
+    version: "4.14.1"
     repository: https://kubernetes.github.io/ingress-nginx
     condition: ingress-nginx.enabled
 
@@ -55,7 +55,7 @@ dependencies:
 
   - name: kube-prometheus-stack
     alias: prometheusstack
-    version: "65.8.1"
+    version: "81.0.1"
     condition: prometheusstack.enabled
     repository: https://prometheus-community.github.io/helm-charts
 
