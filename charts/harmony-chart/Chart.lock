@@ -4,10 +4,10 @@ dependencies:
   version: 4.14.1
 - name: cert-manager
   repository: https://charts.jetstack.io
-  version: v1.16.2
+  version: v1.19.3
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server/
-  version: 3.12.2
+  version: 3.13.0
 - name: vertical-pod-autoscaler
   repository: https://cowboysysop.github.io/charts/
   version: 11.1.1
@@ -34,6 +34,6 @@ dependencies:
   version: 14.2.87
 - name: vector
   repository: https://helm.vector.dev
-  version: 0.37.0
-digest: sha256:c69a8ec842d43a5e4bd6df4cea7f9e2c722f2b5b0e046ca02c854b814a1dfc6a
-generated: "2026-02-06T13:29:54.010234976-04:00"
+  version: 0.50.0
+digest: sha256:d9fdd44b8a9adf214b6941b00c6366c748ea54a1809279035d5a2483f68a09aa
+generated: "2026-02-10T18:15:28.592094808-04:00"
