@@ -3,6 +3,70 @@ entries:
   harmony-chart:
   - apiVersion: v2
     appVersion: 18.0.0
+    created: "2026-02-11T02:09:29.013905773Z"
+    dependencies:
+    - condition: ingress-nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.14.1
+    - condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: v1.19.3
+    - alias: metricsserver
+      condition: metricsserver.enabled
+      name: metrics-server
+      repository: https://kubernetes-sigs.github.io/metrics-server/
+      version: 3.13.0
+    - alias: vpa
+      condition: vpa.enabled
+      name: vertical-pod-autoscaler
+      repository: https://cowboysysop.github.io/charts/
+      version: 11.1.1
+    - condition: elasticsearch.enabled
+      name: elasticsearch
+      repository: https://helm.elastic.co
+      version: 8.5.1
+    - condition: opensearch.enabled
+      name: opensearch
+      repository: https://opensearch-project.github.io/helm-charts
+      version: 2.13.3
+    - condition: karpenter.enabled
+      name: karpenter
+      repository: oci://public.ecr.aws/karpenter
+      version: 1.0.8
+    - alias: prometheusstack
+      condition: prometheusstack.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 81.0.1
+    - alias: k8sdashboard
+      condition: k8sdashboard.enabled
+      name: kubernetes-dashboard
+      repository: https://kubernetes-retired.github.io/dashboard
+      version: 7.14.0
+    - condition: velero.enabled
+      name: velero
+      repository: https://vmware-tanzu.github.io/helm-charts
+      version: 5.4.1
+    - condition: openfaas.enabled
+      name: openfaas
+      repository: https://openfaas.github.io/faas-netes
+      version: 14.2.87
+    - condition: vector.enabled
+      name: vector
+      repository: https://helm.vector.dev
+      version: 0.50.0
+    description: A Helm chart for deploying multiple Open edX instances onto Kubernetes
+      using Tutor
+    digest: a628869fbe62b38346eaf1798c9ce1b1eab4d4b41e33c8e210d8bbab4eb6041b
+    name: harmony-chart
+    type: application
+    urls:
+    - https://github.com/openedx/openedx-k8s-harmony/releases/download/harmony-chart-0.10.0/harmony-chart-0.10.0.tgz
+    version: 0.10.0
+  - apiVersion: v2
+    appVersion: 18.0.0
     created: "2025-03-28T15:33:27.226410636Z"
     dependencies:
     - condition: ingress-nginx.enabled
@@ -1126,4 +1190,4 @@ entries:
     urls:
     - https://github.com/openedx/openedx-k8s-harmony/releases/download/harmony-chart-0.1.0/harmony-chart-0.1.0.tgz
     version: 0.1.0
-generated: "2025-03-28T15:33:27.22654014Z"
+generated: "2026-02-11T02:09:29.014026187Z"
