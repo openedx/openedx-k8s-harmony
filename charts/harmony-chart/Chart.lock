@@ -22,7 +22,7 @@ dependencies:
   version: 1.0.8
 - name: kube-prometheus-stack
   repository: https://prometheus-community.github.io/helm-charts
-  version: 81.0.1
+  version: 81.6.9
 - name: kubernetes-dashboard
   repository: https://kubernetes-retired.github.io/dashboard
   version: 7.14.0
@@ -35,5 +35,5 @@ dependencies:
 - name: vector
   repository: https://helm.vector.dev
   version: 0.50.0
-digest: sha256:d9fdd44b8a9adf214b6941b00c6366c748ea54a1809279035d5a2483f68a09aa
-generated: "2026-02-10T18:15:28.592094808-04:00"
+digest: sha256:761ff5bc0e07dc1b95837497f97425d4f89cc1f866c389e048cd552c6c0db110
+generated: "2026-02-14T02:04:40.139862824Z"
