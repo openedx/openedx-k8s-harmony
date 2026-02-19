@@ -28,14 +28,6 @@ Now you can connect to https://localhost:8443. The certificate is self-signed by
 the cluster.
 {{- end }}
 
-{{- if .Values.openfaas.enabled }}
-OpenFAAS is enabled. The default admin user password is automatically generated
-for you by default, and available a secret, called "basic-auth". You can
-retrieve the password by using
-
-    kubectl -n {{ .Release.Namespace }} get secret --template='{{"{{"}}index .data "basic-auth-password"{{"}}"}}' basic-auth
-{{- end }}
-
 {{- /*
 
 Examples of more stuff that can be in a NOTES file:
