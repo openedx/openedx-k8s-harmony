@@ -363,9 +363,6 @@ velero:
       template:
         ttl: "720h"
 
-openfaas:
-  enabled: false
-
 vector:
   enabled: false
   role: "Agent"

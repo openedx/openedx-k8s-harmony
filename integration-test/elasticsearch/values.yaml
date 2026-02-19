@@ -45,6 +45,3 @@ prometheusstack:
 
 k8sdashboard:
   enabled: false
-
-openfaas:
-  enabled: false

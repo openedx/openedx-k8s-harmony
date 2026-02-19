@@ -70,11 +70,6 @@ dependencies:
     repository: https://vmware-tanzu.github.io/helm-charts
     condition: velero.enabled
 
-  - name: openfaas
-    version: "14.2.87"
-    repository: https://openfaas.github.io/faas-netes
-    condition: openfaas.enabled
-
   - name: vector
     version: 0.50.0
     repository: https://helm.vector.dev

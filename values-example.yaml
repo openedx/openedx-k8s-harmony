@@ -87,9 +87,6 @@ velero:
         - mountPath: /target
           name: plugins
 
-openfaas:
-  enabled: false
-
 # ClickHouse Vector Sink
 
 vector:
