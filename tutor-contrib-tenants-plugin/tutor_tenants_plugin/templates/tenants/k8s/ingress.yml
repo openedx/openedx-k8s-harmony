@@ -1,0 +1,80 @@
+# this will deploy ingress resources for LMS, CMS, Preview, E-commerce, Discovery and MFE sites
+# this will also deploy letsencrypt certificates using cert-manager
+{%- if HARMONY_MULTITENANT_REDIRECTS or HARMONY_MULTITENANT_ADDITIONAL_DOMAINS %}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: ingress
+    namespace: {{ K8S_NAMESPACE }}
+    labels:
+      app.kubernetes.io/component: ingress
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: 100m
+      cert-manager.io/cluster-issuer: harmony-letsencrypt-global
+spec:
+  ingressClassName: nginx
+  rules:
+  {% for host in HARMONY_MULTITENANT_ADDITIONAL_DOMAINS %}
+  # Additional domain
+  - host: {{ host.domain }}
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: caddy
+              port:
+                number: {{ CADDY_HTTP_PORT }}
+
+  # Additional domain previews if they are proxied to LMS
+  {%- if 'proxy' in host and host.proxy == "lms:8000" %}
+  - host: preview.{{ host.domain }}
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: caddy
+              port:
+                number: {{ CADDY_HTTP_PORT }}
+  {%- endif %}
+  {%- endfor %}
+
+  # Redirects
+  {% for host in HARMONY_MULTITENANT_REDIRECTS %}
+  - host: {{ host.domain }}
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: caddy
+              port:
+                number: {{ CADDY_HTTP_PORT }}
+  {%- endfor %}
+
+  # TLS for all possible hosts
+  {%- set muti_domains = [] %}
+  {%- for host in HARMONY_MULTITENANT_ADDITIONAL_DOMAINS %}
+    {%- set tmp = muti_domains.append(host.domain) %}
+    {%- if 'proxy' in host and host.proxy == "lms:8000" %}
+      {%- set tmp = muti_domains.append("preview.%s" | format(host.domain)) %}
+    {%- endif %}
+  {%- endfor %}
+
+  {%- set hosts = muti_domains + HARMONY_MULTITENANT_REDIRECTS | map(attribute = "domain") | list %}
+  {%- set CERT_LIMIT = 100 %}
+  {%- set cert_count = (hosts | length / CERT_LIMIT) | round(0, "ceil") | int %}
+  tls:
+    {%- for cert_index in range(cert_count) %}
+  - hosts:
+    {%- for host in hosts[CERT_LIMIT * cert_index:CERT_LIMIT * (cert_index + 1)] %}
+      - {{ host }}
+    {%- endfor %}
+    secretName: {{ K8S_NAMESPACE }}-tls-secret{% if cert_index %}-{{ cert_index }}{% endif %}
+    {%- endfor %}
+{%- endif %}
