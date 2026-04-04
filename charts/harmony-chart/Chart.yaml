@@ -5,7 +5,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes to the chart and its
 # templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.10.0
+version: 0.11.0
 # This is the version number of the application being deployed. This version number should be incremented each time you
 # make changes to the application. Versions are not expected to follow Semantic Versioning. They should reflect the
 # version the application is using. It is recommended to use it with quotes.
@@ -59,11 +59,11 @@ dependencies:
     condition: prometheusstack.enabled
     repository: https://prometheus-community.github.io/helm-charts
 
-  - name: kubernetes-dashboard
-    version: "7.14.0"
-    repository: https://kubernetes-retired.github.io/dashboard
-    alias: k8sdashboard
-    condition: k8sdashboard.enabled
+  - name: headlamp
+    version: "0.40.0"
+    repository: https://kubernetes-sigs.github.io/headlamp/
+    alias: headlamp
+    condition: headlamp.enabled
 
   - name: velero
     version: "5.4.1"

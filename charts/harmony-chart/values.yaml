@@ -305,8 +305,8 @@ prometheusstack:
         cpu: 200m
         memory: 256Mi
 
-# Configuration for the K8s Dashboard chart
-k8sdashboard:
+# Configuration for headlamp
+headlamp:
   enabled: false
 
 # Before enablin Velero, make sure to execute "velero install --crds-only" to install

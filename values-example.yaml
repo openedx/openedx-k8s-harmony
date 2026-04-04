@@ -43,7 +43,7 @@ prometheusstack:
   # alertmanager:
   #   config: {}  # Set it using `--set-file prometheusstack.alertmanager.config=<path-to-file>`
 
-k8sdashboard:
+headlamp:
   enabled: false
 
 velero:
