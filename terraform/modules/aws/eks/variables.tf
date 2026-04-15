@@ -112,6 +112,12 @@ variable "worker_node_capacity_type" {
   default     = "ON_DEMAND"
 }
 
+variable "worker_node_architecture" {
+  description = "CPU architecture of the worker nodes. Valid values: `amd64`, `arm64`"
+  type        = string
+  default     = "amd64"
+}
+
 variable "registry_credentials" {
   type        = string
   description = "Image registry credentials to be added to the node"
@@ -126,7 +132,7 @@ variable "enable_cluster_autoscaler" {
 variable "ubuntu_version" {
   description = "Ubuntu version to use (e.g. focal-20.04) when no ami_id is provided"
   type        = string
-  default     = "jammy-22.04"
+  default     = "noble-24.04"
   validation { # Validates wheter the value is in format str-num.num
     condition     = can(regex("^([a-z]+)-([0-9]+\\.[0-9]+)$", var.ubuntu_version))
     error_message = "The value must be in format str-num.num (e.g. focal-20.04)."
@@ -155,4 +161,10 @@ variable "post_bootstrap_user_data" {
   type        = string
   default     = null
   description = "Allow to add post bootstrap user data"
+}
+
+variable "access_entries" {
+  description = "Map of access entries for the EKS cluster"
+  type        = any
+  default     = {}
 }

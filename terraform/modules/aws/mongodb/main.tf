@@ -20,47 +20,58 @@ data "aws_vpc" "main" {
   id = var.vpc_id
 }
 
-resource "mongodbatlas_cluster" "cluster" {
+resource "mongodbatlas_advanced_cluster" "cluster" {
   depends_on = [mongodbatlas_network_container.cluster_network_container]
 
   project_id             = var.mongodbatlas_project_id
   name                   = "${var.database_cluster_name}-${var.environment}"
   mongo_db_major_version = var.database_cluster_version
+  cluster_type           = var.database_cluster_type
+  backup_enabled         = true
 
-  cluster_type = var.database_cluster_type
-  replication_specs {
-    num_shards = var.database_shards
-
-    regions_config {
-      priority        = 7
-      region_name     = local.region
-      electable_nodes = var.database_electable_nodes
-      read_only_nodes = var.database_read_only_nodes
-      analytics_nodes = var.database_analytics_nodes
-    }
-  }
-
-  # Auto-Scaling Settings
-  auto_scaling_disk_gb_enabled                    = var.is_database_autoscaling_disk_gb_enabled
-  auto_scaling_compute_enabled                    = var.is_database_autoscaling_compute_enabled
-  auto_scaling_compute_scale_down_enabled         = var.is_database_autoscaling_compute_enabled
-  provider_auto_scaling_compute_min_instance_size = var.database_autoscaling_min_instances
-  provider_auto_scaling_compute_max_instance_size = var.database_autoscaling_max_instances
-
-  # Provider Settings
-  provider_name               = "AWS"
-  provider_region_name        = local.region
-  disk_size_gb                = var.database_storage_size
-  provider_disk_iops          = var.database_storage_ipos
-  provider_volume_type        = var.database_storage_type
-  cloud_backup                = true
-  provider_instance_size_name = var.database_cluster_instance_size
   encryption_at_rest_provider = var.is_database_storage_encrypted ? "AWS" : "NONE"
+
+  replication_specs = [
+    {
+      region_configs = [
+        {
+          provider_name = "AWS"
+          priority      = 7
+          region_name   = local.region
+
+          electable_specs = {
+            instance_size = var.database_cluster_instance_size
+            node_count    = var.database_electable_nodes
+            disk_size_gb  = var.database_storage_size
+            disk_iops     = var.database_storage_ipos
+          }
+
+          read_only_specs = var.database_read_only_nodes != null ? {
+            instance_size = var.database_cluster_instance_size
+            node_count    = var.database_read_only_nodes
+          } : null
+
+          analytics_specs = var.database_analytics_nodes != null ? {
+            instance_size = var.database_cluster_instance_size
+            node_count    = var.database_analytics_nodes
+          } : null
+
+          auto_scaling = {
+            disk_gb_enabled            = var.is_database_autoscaling_disk_gb_enabled
+            compute_enabled            = var.is_database_autoscaling_compute_enabled
+            compute_scale_down_enabled = var.is_database_autoscaling_compute_enabled
+            compute_min_instance_size  = var.is_database_autoscaling_compute_enabled ? var.database_autoscaling_min_instances : null
+            compute_max_instance_size  = var.is_database_autoscaling_compute_enabled ? var.database_autoscaling_max_instances : null
+          }
+        }
+      ]
+    }
+  ]
 }
 
 resource "mongodbatlas_cloud_backup_schedule" "backup_schedule" {
-  project_id   = mongodbatlas_cluster.cluster.project_id
-  cluster_name = mongodbatlas_cluster.cluster.name
+  project_id   = mongodbatlas_advanced_cluster.cluster.project_id
+  cluster_name = mongodbatlas_advanced_cluster.cluster.name
 
   restore_window_days = var.database_backup_retention_period
 
@@ -148,6 +159,6 @@ resource "mongodbatlas_database_user" "users" {
 
   scopes {
     type = "CLUSTER"
-    name = mongodbatlas_cluster.cluster.name
+    name = mongodbatlas_advanced_cluster.cluster.name
   }
 }

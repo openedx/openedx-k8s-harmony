@@ -8,7 +8,7 @@ terraform {
 
 locals {
   cluster_autoscaler_tags = var.enable_cluster_autoscaler ? {
-    "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
+    "k8s.io/cluster-autoscaler/${var.cluster_name}-${var.environment}" = "owned"
     "k8s.io/cluster-autoscaler/enabled"             = "true"
   } : {}
 
@@ -33,7 +33,7 @@ data "aws_ami" "latest_ubuntu_eks" {
 
   filter {
     name   = "name"
-    values = ["ubuntu-eks/k8s_${var.kubernetes_version}/images/hvm-ssd/ubuntu-${var.ubuntu_version}-amd64-server-*"]
+    values = ["ubuntu-eks/k8s_${var.kubernetes_version}/images/hvm-ssd-gp3/ubuntu-${var.ubuntu_version}-${var.worker_node_architecture}-server-*"]
   }
 }
 
@@ -55,7 +55,7 @@ data "aws_subnets" "main" {
 module "eks" {
   source                         = "terraform-aws-modules/eks/aws"
   version                        = "~> 20.31"
-  cluster_name                   = var.cluster_name
+  cluster_name                   = "${var.cluster_name}-${var.environment}"
   cluster_version                = var.kubernetes_version
   cluster_endpoint_public_access = true
   vpc_id                         = data.aws_vpc.main.id
@@ -147,13 +147,16 @@ module "eks" {
       tags = merge(var.worker_node_groups_tags, local.cluster_autoscaler_tags)
     }
   }
+
+  enable_cluster_creator_admin_permissions = true
+  access_entries                           = var.access_entries
 }
 
 module "ebs_csi_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.47"
 
-  role_name             = "ebs-csi-controller-${var.cluster_name}"
+  role_name             = "ebs-csi-controller-${var.cluster_name}-${var.environment}"
   attach_ebs_csi_policy = true
   tags                  = var.tags
 

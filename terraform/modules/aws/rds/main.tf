@@ -112,14 +112,14 @@ resource "aws_db_instance" "rds_instance" {
 resource "aws_cloudwatch_metric_alarm" "rds_storage_alarm" {
   count = var.is_database_storage_alarm_enabled ? 1 : 0
 
-  alarm_name          = "${var.database_cluster_name}-db-storage-alarm"
+  alarm_name          = "${var.database_cluster_name}-${var.environment}-db-storage-alarm"
   comparison_operator = "LessThanThreshold"
   metric_name         = "FreeStorageSpace"
   namespace           = "AWS/RDS"
   statistic           = "Average"
 
   dimensions = {
-    DBInstanceIdentifier = var.database_cluster_name
+    DBInstanceIdentifier = "${var.database_cluster_name}-${var.environment}"
   }
 
   threshold          = var.database_storage_alarm_threshold
