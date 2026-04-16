@@ -14,5 +14,9 @@ spec:
     solvers:
     - http01:
         ingress:
-          class:  {{ index .Values "ingress-nginx" "controller" "ingressClass" }}
+          {{- if index .Values "ingress-nginx" "enabled" -}}
+          class: {{ (index .Values "ingress-nginx" "controller" "ingressClass") }}
+          {{- else if .Values.traefik.enabled -}}
+          class: {{ .Values.traefik.ingressClass.name }}
+          {{- end -}}
 {{ end }}
