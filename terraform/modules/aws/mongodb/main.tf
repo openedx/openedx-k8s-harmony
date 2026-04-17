@@ -116,7 +116,7 @@ resource "aws_vpc_peering_connection_accepter" "accept_mongo_peer" {
 
 # Add peering connection to private routing table
 resource "aws_route" "peeraccess" {
-  route_table_id            = data.aws_vpc.main.main_route_table_id
+  route_table_id            = var.private_route_table_id
   destination_cidr_block    = var.mongodbatlas_cidr_block
   vpc_peering_connection_id = mongodbatlas_network_peering.cluster_network_peering.connection_id
   depends_on = [
