@@ -117,7 +117,7 @@ module "eks" {
       ami_id     = var.ami_id != "" ? var.ami_id : data.aws_ami.latest_ubuntu_eks.id
       key_name   = var.worker_node_ssh_key_name
       name       = var.worker_node_group_name
-      subnet_ids = data.aws_subnets.main.ids
+      subnet_ids = length(var.worker_node_subnet_ids) > 0 ? var.worker_node_subnet_ids : data.aws_subnets.main.ids
 
       # This will ensure the boostrap user data is used to join the node
       # By default, EKS managed node groups will not append bootstrap script;

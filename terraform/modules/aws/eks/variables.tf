@@ -106,6 +106,12 @@ variable "worker_node_group_name" {
   default     = "ubuntu_worker"
 }
 
+variable "worker_node_subnet_ids" {
+  description = "List of subnet IDs to launch worker nodes in. If empty, uses all private subnets in the VPC."
+  type        = list(string)
+  default     = []
+}
+
 variable "worker_node_capacity_type" {
   description = "Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT`"
   type        = string
