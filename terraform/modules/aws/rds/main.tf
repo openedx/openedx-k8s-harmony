@@ -87,6 +87,10 @@ resource "aws_db_instance" "rds_instance" {
   identifier             = "${var.database_cluster_name}-${var.environment}"
   allocated_storage      = var.database_min_storage
   max_allocated_storage  = var.database_max_storage
+  storage_type           = var.database_storage_type
+  iops                   = var.database_iops
+  storage_throughput     = var.database_storage_throughput
+  availability_zone      = var.database_availability_zone
   engine                 = var.database_engine
   engine_version         = var.database_engine_version
   ca_cert_identifier     = var.database_ca_cert_identifier
