@@ -12,6 +12,18 @@ ingress-nginx:
   # Use ingress-nginx as a default controller.
   enabled: true
 
+traefik:
+  # Enable the traefik ingress controller
+  enabled: false
+  ingressClass:
+    isDefaultClass: false
+    name: "traefik"
+  providers: 
+    kubernetesIngressNginx: 
+      enabled: true
+      ingressClassByName: true
+
+
 cert-manager:
   # Use cert-manager as a default certificate controller.
   enabled: true

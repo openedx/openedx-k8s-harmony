@@ -25,7 +25,7 @@ def is_plugin_loaded(plugin_name: str) -> bool:
 config = {
     "defaults": {
         "VERSION": __version__,
-        # This plugin assumes you are using ingress-nginx as an ingress controller to provide
+        # This plugin assumes you are using Traefik (or ingress-nginx) as an ingress controller to provide
         # you with a central load balancer. The standard Ingress object uses annotations to
         # trigger the generation of certificates using cert-manager.
         # See: https://cert-manager.io/docs/usage/ingress/#supported-annotations
