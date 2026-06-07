@@ -54,6 +54,10 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
   tags = merge(var.tags, {
     name = "${var.database_cluster_name}-${var.environment} rds subnet group"
   })
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group" "rds_security_group" {
@@ -75,6 +79,10 @@ resource "aws_security_group" "rds_security_group" {
   }
 
   tags = var.tags
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_db_instance" "rds_instance" {
