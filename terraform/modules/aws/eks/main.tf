@@ -128,7 +128,7 @@ module "eks" {
       instance_types = var.worker_node_instance_types
       max_size       = var.max_worker_node_count
       min_size       = var.min_worker_node_count
-      desired_size   = var.worker_node_count
+      desired_size   = max(var.worker_node_count, var.min_worker_node_count)
       capacity_type  = var.worker_node_capacity_type
 
       create_security_group = false
