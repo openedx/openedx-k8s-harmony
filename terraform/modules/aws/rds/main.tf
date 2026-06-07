@@ -44,20 +44,20 @@ resource "random_string" "rds_final_snapshot_suffix" {
 
 resource "aws_kms_key" "rds_encryption" {
   count       = var.is_database_storage_encrypted ? 1 : 0
-  description = "${title(var.database_cluster_name)} RDS Encryption"
+  description = "${title(var.database_cluster_name)}-${var.environment} RDS Encryption"
 }
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
-  name       = "${var.database_cluster_name} rds subnet group"
+  name       = "${var.database_cluster_name}-${var.environment} rds subnet group"
   subnet_ids = data.aws_subnets.main.ids
 
   tags = merge(var.tags, {
-    name = "${var.database_cluster_name} rds subnet group"
+    name = "${var.database_cluster_name}-${var.environment} rds subnet group"
   })
 }
 
 resource "aws_security_group" "rds_security_group" {
-  name   = "${var.database_cluster_name} rds security group"
+  name   = "${var.database_cluster_name}-${var.environment} rds security group"
   vpc_id = data.aws_vpc.main.id
 
   ingress {
