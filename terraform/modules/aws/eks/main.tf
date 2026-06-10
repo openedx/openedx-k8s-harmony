@@ -94,6 +94,14 @@ module "eks" {
       type        = "ingress"
       cidr_blocks = concat([data.aws_vpc.main.cidr_block], var.worker_node_extra_ssh_cidrs)
     }
+    ingress_self_all = {
+      description = "Node to node all ports/protocols"
+      protocol    = "-1"
+      from_port   = 0
+      to_port     = 0
+      type        = "ingress"
+      self        = true
+    }
   }
 
   # Disable secrets encryption
