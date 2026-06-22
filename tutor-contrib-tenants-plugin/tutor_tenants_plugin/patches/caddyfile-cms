@@ -1,0 +1,7 @@
+{%- for host in HARMONY_MULTITENANT_REDIRECTS %}
+{% if host.domain == CMS_HOST %}
+{%- for rule in host.rules %}
+redir {{ rule.path|default(' ') }} {{ rule.to }} {{ rule.code|default(301) }}
+{%- endfor %}
+{% endif %}
+{%- endfor%}

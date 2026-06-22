@@ -1,0 +1,7 @@
+USER root
+RUN [ -d /harmony_multitenant/scripts ] || mkdir -p /harmony_multitenant/scripts
+USER ${APP_USER_ID}
+
+RUN ls -lah /harmony_multitenant/ && ls -lah /harmony_multitenant/scripts
+
+COPY --chown=app:app ./tenants/scripts /harmony_multitenant/scripts

@@ -1,0 +1,17 @@
+{%- for host in HARMONY_MULTITENANT_ADDITIONAL_DOMAINS %}
+{%- if 'proxy' in host and host.proxy == "lms:8000" %}
+ALLOWED_HOSTS.append("{{host.domain}}")
+ALLOWED_HOSTS.append("preview.{{host.domain}}")
+CORS_ORIGIN_WHITELIST.append("http{% if ENABLE_HTTPS %}s{% endif %}://{{ host.domain }}")
+CORS_ORIGIN_WHITELIST.append("http{% if ENABLE_HTTPS %}s{% endif %}://{{ host.mfe_domain }}")
+CORS_ORIGIN_WHITELIST.append("http{% if ENABLE_HTTPS %}s{% endif %}://preview.{{ host.domain }}")
+CSRF_TRUSTED_ORIGINS.append("http{% if ENABLE_HTTPS %}s{% endif %}://{{host.mfe_domain}}")
+{%- endif %}
+{%- endfor %}
+
+{%- if HARMONY_MULTITENANT_USE_EOX_TENANT %}
+# https://github.com/open-craft/eox-tenant/blob/e1941d7d213918d8ed3ab61ba22f06c21088eee7/eox_tenant/validators.py#L24-L24
+ALLOWED_AUTH_APPLICATIONS = [
+    "cms-sso"
+]
+{%- endif %}

@@ -14,3 +14,5 @@ infra-*/secrets.auto.tfvars
 my-notes
 **/env/
 **/venv/
+*.pyc
+.mise.toml

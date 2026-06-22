@@ -1,0 +1,8 @@
+{%- if HARMONY_MULTITENANT_USE_EOX_TENANT %}
+USE_EOX_TENANT: true
+ENABLE_MFE_CONFIG_API: true
+EOX_TENANT_ASYNC_TASKS_HANDLER_DICT:
+  openedx.core.djangoapps.schedules.tasks.ScheduleRecurringNudge: "get_host_from_siteid"
+  openedx.core.djangoapps.schedules.tasks.ScheduleCourseUpdate: "get_host_from_siteid"
+  openedx.core.djangoapps.schedules.tasks.ScheduleUpgradeReminder: "get_host_from_siteid"
+{%- endif %}

@@ -1,0 +1,3 @@
+{%- if HARMONY_MULTITENANT_USE_EOX_TENANT %}
+USE_EOX_TENANT: true
+{%- endif %}

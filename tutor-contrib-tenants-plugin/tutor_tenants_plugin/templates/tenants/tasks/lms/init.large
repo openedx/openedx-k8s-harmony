@@ -1,0 +1,53 @@
+./manage.py lms create_or_update_site_configuration --configuration '{{ SITE_CONFIG | default({'version': 0}) | tojson }}' {{ LMS_HOST }} --enabled
+{%- if HARMONY_MULTITENANT_USE_EOX_TENANT %}
+# If eox-tenant is used, add some basic settings to base tenant configuration.
+./manage.py lms create_or_update_tenant_config \
+  --external-key {{ LMS_HOST }} \
+  --config '{{ SITE_CONFIG | default({'version': 0}) | get_base_tenant_configuration(LMS_HOST, MFE_HOST, ENABLE_HTTPS) | tojson }}' \
+  {{ LMS_HOST }}
+
+# Add same settings for base studio tenant
+./manage.py lms create_or_update_tenant_config \
+  --external-key {{ LMS_HOST }} \
+  --config '{{ SITE_CONFIG | default({'version': 0}) | get_base_tenant_configuration(LMS_HOST, MFE_HOST, ENABLE_HTTPS) | tojson }}' \
+  {{ CMS_HOST }}
+{%- endif %}
+
+# Build a list of allowed redirect_uris for all studio sites.
+{% set redirect_uris = [("https://" if ENABLE_HTTPS else "http://") ~ CMS_HOST ~ "/complete/edx-oauth2/"] %}
+
+{%- for host in HARMONY_MULTITENANT_ADDITIONAL_DOMAINS %}
+
+#harmony-multi-tenant-large-task-break
+
+{%- if 'proxy' in host and host.proxy in ["lms:8000", "cms:8000"] %}
+
+{%- if HARMONY_MULTITENANT_USE_EOX_TENANT %}
+# If eox-tenant is used, insert contents of site_configuration to tenant configuration as it proxies site_configuration as well as allows users to override django settings per site/tenant/domain.
+./manage.py lms create_or_update_tenant_config \
+  --external-key {{ host.external_key }} \
+  --config '{{ host | get_tenant_configuration(ENABLE_HTTPS, HARMONY_MULTITENANT_MFE_THEME_CDN_ORIGIN, HARMONY_MULTITENANT_PARAGON_THEME_URLS) | tojson }}' \
+  {{ host.domain }}{% if host.proxy == "lms:8000" %} preview.{{ host.domain }}{% endif %}
+{%- endif %}
+
+# Create site_configuration normally, if HARMONY_MULTITENANT_USE_EOX_TENANT is true, the configuration will not be saved.
+./manage.py lms create_or_update_site_configuration --configuration '{{ host | get_site_configuration | tojson }}' {{ host.domain }} --enabled
+{%- endif %}
+
+# For each additional_domains, append studio url to allowed redirect_uris.
+{% set tmp = redirect_uris.append(("https://" if ENABLE_HTTPS else "http://") ~ host.domain ~ "/complete/edx-oauth2/") if 'proxy' in host and host.proxy == "cms:8000" %}
+
+{%- endfor %}
+
+#harmony-multi-tenant-large-task-break
+
+{%- if HARMONY_MULTITENANT_ADDITIONAL_DOMAINS %}
+./manage.py lms create_dot_application \
+  --grant-type authorization-code \
+  --redirect-uris "{{ redirect_uris|join(' ') }}"\
+  --client-id {{ CMS_OAUTH2_KEY_SSO }} \
+  --client-secret {{ CMS_OAUTH2_SECRET }} \
+  --scopes user_id \
+  --skip-authorization \
+  --update cms-sso cms
+{%- endif %}

@@ -1,0 +1,46 @@
+{%- for host in HARMONY_MULTITENANT_REDIRECTS %}
+{% if host.domain != LMS_HOST and host.domain != CMS_HOST %}
+{{ host.domain }}{$default_site_port} {
+    {%- for rule in host.rules %}
+    redir {{ rule.path|default(' ') }} {{ rule.to }} {{ rule.code|default(301) }}
+    {%- endfor %}
+}
+{% endif %}
+{%- endfor%}
+
+{%- for host in HARMONY_MULTITENANT_ADDITIONAL_DOMAINS %}
+{% if 'proxy' in host %}
+{{ host.domain }}{$default_site_port}{%- if host.proxy == "lms:8000" %}, preview.{{ host.domain }}{$default_site_port}{%- endif %} {
+    @favicon_matcher {
+        path_regexp ^/favicon.ico$
+    }
+    rewrite @favicon_matcher /theming/asset/images/favicon.ico
+
+    request_body {
+        max_size 250MB
+    }
+
+    import proxy "{{host.proxy}}"
+
+    {%- if host.proxy == "lms:8000" %}
+    {{ patch("caddyfile-lms")|indent(4) }}
+    {%- elif host.proxy == "cms:8000" %}
+    {{ patch("caddyfile-cms")|indent(4) }}
+    {%- endif %}
+}
+{% endif %}
+{% if 'mfe_proxy' in host %}
+{{ host.domain }}{$default_site_port} {
+    respond / 204
+    request_body {
+        max_size 2MB
+    }
+    reverse_proxy /api/mfe_config/v1* lms:8000 {
+        # We need to specify the host header, otherwise it will be rejected with 400
+        # from the lms.
+        header_up Host {{ host.lms_domain|default(host.domain|replace("apps.", "", 1)) }}
+    }
+    import proxy "{{host.mfe_proxy}}"
+}
+{% endif %}
+{%- endfor%}
