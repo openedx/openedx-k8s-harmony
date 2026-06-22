@@ -76,6 +76,6 @@ dependencies:
     condition: velero.enabled
 
   - name: vector
-    version: 0.50.0
+    version: 0.56.0
     repository: https://helm.vector.dev
     condition: vector.enabled
