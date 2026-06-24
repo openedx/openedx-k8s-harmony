@@ -38,6 +38,30 @@ variable "database_max_storage" {
   default     = 30
 }
 
+variable "database_storage_type" {
+  type        = string
+  description = "The storage type for the database instance (for example: gp2, gp3, io1, io2)"
+  default     = null
+}
+
+variable "database_iops" {
+  type        = number
+  description = "The amount of provisioned IOPS. Only valid for storage types io1, io2, and gp3"
+  default     = null
+}
+
+variable "database_storage_throughput" {
+  type        = number
+  description = "The throughput in MiB/s for the database instance. Only valid for storage type gp3"
+  default     = null
+}
+
+variable "database_availability_zone" {
+  type        = string
+  description = "The AZ for the RDS instance"
+  default     = null
+}
+
 variable "database_backup_retention_period" {
   type        = number
   description = "The retention period for the database backups in days"

@@ -44,20 +44,26 @@ resource "random_string" "rds_final_snapshot_suffix" {
 
 resource "aws_kms_key" "rds_encryption" {
   count       = var.is_database_storage_encrypted ? 1 : 0
-  description = "${title(var.database_cluster_name)} RDS Encryption"
+  description = "${title(var.database_cluster_name)}-${var.environment} RDS Encryption"
 }
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
-  name       = "${var.database_cluster_name} rds subnet group"
+  name       = "${var.database_cluster_name}-${var.environment} rds subnet group"
   subnet_ids = data.aws_subnets.main.ids
 
   tags = merge(var.tags, {
-    name = "${var.database_cluster_name} rds subnet group"
+    name = "${var.database_cluster_name}-${var.environment} rds subnet group"
   })
+
+  lifecycle {
+    ignore_changes = [
+      name,
+    ]
+  }
 }
 
 resource "aws_security_group" "rds_security_group" {
-  name   = "${var.database_cluster_name} rds security group"
+  name   = "${var.database_cluster_name}-${var.environment} rds security group"
   vpc_id = data.aws_vpc.main.id
 
   ingress {
@@ -75,6 +81,10 @@ resource "aws_security_group" "rds_security_group" {
   }
 
   tags = var.tags
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_db_instance" "rds_instance" {
@@ -87,6 +97,10 @@ resource "aws_db_instance" "rds_instance" {
   identifier             = "${var.database_cluster_name}-${var.environment}"
   allocated_storage      = var.database_min_storage
   max_allocated_storage  = var.database_max_storage
+  storage_type           = var.database_storage_type
+  iops                   = var.database_iops
+  storage_throughput     = var.database_storage_throughput
+  availability_zone      = var.database_availability_zone
   engine                 = var.database_engine
   engine_version         = var.database_engine_version
   ca_cert_identifier     = var.database_ca_cert_identifier
@@ -112,14 +126,14 @@ resource "aws_db_instance" "rds_instance" {
 resource "aws_cloudwatch_metric_alarm" "rds_storage_alarm" {
   count = var.is_database_storage_alarm_enabled ? 1 : 0
 
-  alarm_name          = "${var.database_cluster_name}-db-storage-alarm"
+  alarm_name          = "${var.database_cluster_name}-${var.environment}-db-storage-alarm"
   comparison_operator = "LessThanThreshold"
   metric_name         = "FreeStorageSpace"
   namespace           = "AWS/RDS"
   statistic           = "Average"
 
   dimensions = {
-    DBInstanceIdentifier = var.database_cluster_name
+    DBInstanceIdentifier = "${var.database_cluster_name}-${var.environment}"
   }
 
   threshold          = var.database_storage_alarm_threshold

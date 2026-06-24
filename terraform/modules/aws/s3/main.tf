@@ -89,6 +89,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "s3_lifecycle" {
     id     = "tutor-env-rule-1"
     status = "Enabled"
 
+    filter {}
+
     expiration {
       expired_object_delete_marker = true
     }
