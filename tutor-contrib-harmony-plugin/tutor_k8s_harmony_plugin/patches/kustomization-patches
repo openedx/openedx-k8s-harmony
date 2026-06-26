@@ -14,8 +14,6 @@
 {%- if is_plugin_loaded("forum") %}
   {%- set VOLUMELESS = VOLUMELESS + ["forum", "forum-job"] %}
 {% endif %}
-
-patches:
 - path: plugins/k8s_harmony/k8s/deployment-revision-history.yaml
   target:
     kind: Deployment
