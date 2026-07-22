@@ -1,4 +1,4 @@
-{{ if index .Values "cert-manager" "enabled" }}
+{{ if and (index .Values "cert-manager" "enabled") .Values.clusterIssuer.enabled }}
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -14,9 +14,13 @@ spec:
     solvers:
     - http01:
         ingress:
-          {{- if index .Values "ingress-nginx" "enabled" -}}
-          class: {{ (index .Values "ingress-nginx" "controller" "ingressClass") }}
-          {{- else if .Values.traefik.enabled -}}
-          class: {{ .Values.traefik.ingressClass.name }}
-          {{- end -}}
+          {{- if .Values.clusterIssuer.ingressClass }}
+          class: {{ .Values.clusterIssuer.ingressClass }}
+          {{- else if index .Values "ingress-nginx" "enabled" }}
+          class: {{ index .Values "ingress-nginx" "controller" "ingressClass" | default "nginx" }}
+          {{- else if .Values.traefik.enabled }}
+          class: {{ .Values.traefik.ingressClass.name | default "traefik" }}
+          {{- else }}
+          class: nginx
+          {{- end }}
 {{ end }}
