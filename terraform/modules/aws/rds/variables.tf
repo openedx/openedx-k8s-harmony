@@ -127,6 +127,24 @@ variable "vpc_id" {
   description = "ID of the VPC to use for the RDS cluster"
 }
 
+variable "additional_vpc_security_group_ids" {
+  type        = list(string)
+  description = "Additional VPC security group IDs to associate with the public read replica, in addition to the module-managed security group."
+  default     = []
+}
+
+variable "is_public_read_replica_enabled" {
+  type        = bool
+  description = "Whether to create a publicly accessible read replica in the public subnets, intended for external analytics and reporting."
+  default     = false
+}
+
+variable "read_replica_instance_class" {
+  type        = string
+  description = "Instance class for the public read replica. If null, the primary instance class is inherited."
+  default     = null
+}
+
 variable "tags" {
   type        = map(string)
   description = "A map of tags to add to all resources"
