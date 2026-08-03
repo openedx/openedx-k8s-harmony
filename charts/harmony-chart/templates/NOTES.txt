@@ -19,12 +19,12 @@ Grafana shipped with the default admin user password as a bug prevents
 changing it. Since is enabled on the cluster and exposed to the internet.
 Please make sure you update the default admin user password!
 {{ end }}
-{{- if .Values.k8sdashboard.enabled }}
-You have enabled the Kubernetes dashboard. For security purposes, it is not
-exposed to the internet as is, however, by adjusting the settings, you could
-expose it.
+{{- if .Values.headlamp.enabled }}
+You have enabled the Headlamp dashboard. This is a modern UI for managing your
+Kubernetes cluster. For security purposes, it is recommended to restrict access
+via Ingress annotations or VPN.
 
-To connect to the dashboard, start port-forwarding with the following command:
+To connect to the dashboard:
 
 {{- if index .Values "traefik" "enabled" }}
     kubectl -n {{ .Release.Namespace }} port-forward svc/harmony-traefik 8443:443
@@ -32,6 +32,7 @@ To connect to the dashboard, start port-forwarding with the following command:
     kubectl -n {{ .Release.Namespace }} port-forward svc/harmony-ingress-nginx-controller 8443:443
 {{- end }}
 
-Now you can connect to https://localhost:8443. The certificate is self-signed by
-the cluster.
+    kubectl -n {{ .Release.Namespace }} get secret admin-user-token -o jsonpath={.data.token} | base64 -d
+
+Copy the output and paste it into the "Token" field on the login screen.
 {{- end }}

@@ -43,5 +43,5 @@ opensearch:
 prometheusstack:
   enabled: true
 
-k8sdashboard:
+headlamp:
   enabled: false

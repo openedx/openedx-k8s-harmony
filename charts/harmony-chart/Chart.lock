@@ -26,14 +26,14 @@ dependencies:
 - name: kube-prometheus-stack
   repository: https://prometheus-community.github.io/helm-charts
   version: 81.0.1
-- name: kubernetes-dashboard
-  repository: https://kubernetes-retired.github.io/dashboard
-  version: 7.14.0
+- name: headlamp
+  repository: https://kubernetes-sigs.github.io/headlamp/
+  version: 0.43.0
 - name: velero
   repository: https://vmware-tanzu.github.io/helm-charts
   version: 5.4.1
 - name: vector
   repository: https://helm.vector.dev
   version: 0.50.0
-digest: sha256:924fbea9d7fe0adb0eea843f690af91c83aeb6b2937c3ed93cd12536e8ad6253
-generated: "2026-05-12T14:21:48.81778687-04:00"
+digest: sha256:beb4ce4eaf308c34c1a09b249056ac239c0e91d511a7c2f3182bb1c208fac6c2
+generated: "2026-07-06T19:58:47.601688732-04:00"
