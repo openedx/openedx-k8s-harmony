@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-clusterDomain: "*"
+clusterDomain: null
 
 # Email address used for receiving Let's encrypt notifications if cert-manager
 # is enabled.
@@ -18,8 +18,8 @@ traefik:
   ingressClass:
     isDefaultClass: false
     name: "traefik"
-  providers: 
-    kubernetesIngressNginx: 
+  providers:
+    kubernetesIngressNGINX:
       enabled: true
       ingressClassByName: true
 
@@ -28,6 +28,12 @@ cert-manager:
   # Use cert-manager as a default certificate controller.
   enabled: true
   installCRDs: false
+
+clusterIssuer:
+  # Whether to create the harmony-letsencrypt-global ClusterIssuer.
+  enabled: true
+  # Custom ingress class used by the Let's Encrypt HTTP01 solver.
+  ingressClass: ""
 
 # Configuration for the metrics server chart
 metricsserver:
@@ -244,11 +250,11 @@ karpenter:
     name: "default"
 
 # Prometheus stack
-#   
+#
 # If no storage is defined, the Prometheus and Grafana data is stored on
 # empheral storage. You can find more information about storages in the
 # Prometheus operator user guides: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/storage.md
-# 
+#
 # - To make Grafana persistent, you may want to set Grafana storage as shown in https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml#L999-L1009
 # - To set Prometheus storage, you can see the example storage spec at https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml#L3557-L3570
 prometheusstack:

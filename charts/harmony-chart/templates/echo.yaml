@@ -49,8 +49,7 @@ metadata:
   name: cluster-echo-test
 spec:
   rules:
-  - host: {{ .Values.clusterDomain }}
-    http:
+  - http:
       paths:
       - path: /cluster-echo-test
         pathType: Prefix
@@ -59,4 +58,7 @@ spec:
             name: cluster-echo-service
             port:
               number: 8080
+    {{- if .Values.clusterDomain }}
+    host: {{ .Values.clusterDomain }}
+    {{- end  }}
 {{- end }}
