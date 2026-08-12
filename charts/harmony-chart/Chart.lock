@@ -7,10 +7,10 @@ dependencies:
   version: 40.0.1
 - name: cert-manager
   repository: https://charts.jetstack.io
-  version: v1.19.3
+  version: v1.21.1
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server/
-  version: 3.13.0
+  version: 3.13.1
 - name: vertical-pod-autoscaler
   repository: https://cowboysysop.github.io/charts/
   version: 11.1.1
@@ -28,12 +28,12 @@ dependencies:
   version: 81.0.1
 - name: headlamp
   repository: https://kubernetes-sigs.github.io/headlamp/
-  version: 0.43.0
+  version: 0.44.0
 - name: velero
   repository: https://vmware-tanzu.github.io/helm-charts
   version: 5.4.1
 - name: vector
   repository: https://helm.vector.dev
-  version: 0.50.0
-digest: sha256:211521a7d8060bfba054f74f55003a71260ba041d26b262960535b2eda2dd75a
-generated: "2026-08-05T15:25:46.00651168-04:00"
+  version: 0.57.0
+digest: sha256:90784f413d088b0993b171227e3dc10bf2b274c2f9d700b53ba5aa91b4685a39
+generated: "2026-08-12T16:42:33.415108157-04:00"
