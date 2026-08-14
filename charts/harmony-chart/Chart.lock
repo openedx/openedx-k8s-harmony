@@ -25,7 +25,7 @@ dependencies:
   version: 1.0.8
 - name: kube-prometheus-stack
   repository: https://prometheus-community.github.io/helm-charts
-  version: 81.0.1
+  version: 88.2.0
 - name: headlamp
   repository: https://kubernetes-sigs.github.io/headlamp/
   version: 0.43.0
@@ -35,5 +35,5 @@ dependencies:
 - name: vector
   repository: https://helm.vector.dev
   version: 0.50.0
-digest: sha256:211521a7d8060bfba054f74f55003a71260ba041d26b262960535b2eda2dd75a
-generated: "2026-08-05T15:25:46.00651168-04:00"
+digest: sha256:b6213dd9db86d21f33faaedb2ef8dcd068b4d786a954be265a1d800795126969
+generated: "2026-08-13T17:01:45.503167898-04:00"
