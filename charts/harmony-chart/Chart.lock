@@ -4,7 +4,7 @@ dependencies:
   version: 4.15.1
 - name: traefik
   repository: oci://ghcr.io/traefik/helm
-  version: 40.0.1
+  version: 41.2.0
 - name: cert-manager
   repository: https://charts.jetstack.io
   version: v1.21.1
@@ -35,5 +35,5 @@ dependencies:
 - name: vector
   repository: https://helm.vector.dev
   version: 0.57.0
-digest: sha256:90784f413d088b0993b171227e3dc10bf2b274c2f9d700b53ba5aa91b4685a39
-generated: "2026-08-12T16:42:33.415108157-04:00"
+digest: sha256:cb682cb1091ebc5259666db0d315544625b83e881304634b879854fcd4f8955f
+generated: "2026-08-18T12:09:34.929420195-04:00"
