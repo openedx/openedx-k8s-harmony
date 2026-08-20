@@ -8,15 +8,11 @@ clusterDomain: null
 # is enabled.
 notificationEmail: null
 
-ingress-nginx:
-  # Use ingress-nginx as a default controller.
-  enabled: true
-
 traefik:
   # Enable the traefik ingress controller
-  enabled: false
+  enabled: true
   ingressClass:
-    isDefaultClass: false
+    isDefaultClass: true
     name: "traefik"
   providers:
     kubernetesIngressNGINX:
@@ -453,7 +449,7 @@ vector:
         type: filter
         inputs:
           - kubernetes_global_logs
-        condition: 'includes(["ingress-nginx"], .kubernetes.pod_labels."app.kubernetes.io/name")'
+        condition: 'includes(["traefik"], .kubernetes.pod_labels."app.kubernetes.io/name")'
       typed_global_logs:
         type: remap
         inputs:
@@ -462,7 +458,7 @@ vector:
           .type = "global"
         drop_on_error: true
         drop_on_abort: true
-      # Appplication logs (OpenedX, ingress-nginx, cert-manager) can be send to cloudwatch
+      # Appplication logs (OpenedX, traefik, cert-manager) can be send to cloudwatch
       # or to s3. It will depend on user needs.
       application_logs:
         type: remap
