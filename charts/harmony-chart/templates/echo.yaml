@@ -2,7 +2,7 @@
 # of your cluster and the Ingress Controller
 # Service by accessing /cluster-echo-test via HTTP on any hostname associated
 # with your cluster.
-{{- if or (index .Values "ingress-nginx" "enabled") (index .Values "traefik" "enabled") }}
+{{- if .Values.traefik.enabled }}
 apiVersion: v1
 kind: Service
 metadata:

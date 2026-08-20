@@ -1,9 +1,6 @@
 clusterDomain: "example.com"
 
-ingress-nginx:
-  controller:
-    config:
-      proxy-body-size: 100m
+traefik:
 
 cert-manager:
   # Set your email address here so auto-generated HTTPS certs will work:
@@ -29,10 +26,11 @@ prometheusstack:
 
     ingress:
       enabled: true
-      ingressClassName: nginx
+      ingressClassName: traefik
       annotations:
         cert-manager.io/cluster-issuer: "harmony-letsencrypt-global"
-        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+        traefik.ingress.kubernetes.io/router.tls: "true"
+        traefik.ingress.kubernetes.io/router.entrypoint: "websecure"
       hosts:
         - grafana.example.com
       tls:
