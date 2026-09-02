@@ -1,6 +1,30 @@
 {
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "branchPrefix": "renovate/",
     "pinDigests": false,
-    "prHourlyLimit": 20,
-    "labels": ["global", "dependencies"]
+    "labels": ["global", "dependencies"],
+    "dependencyDashboard": true,
+    "separateMajorMinor": false,
+    "separateMinorPatch": false,
+    "separateMultipleMajor": false,
+    "prHourlyLimit": 0,
+    "prConcurrentLimit": 1,
+    "branchConcurrentLimit": 1,
+    "recreateWhen": "always",
+    "rebaseWhen": "behind-base-branch",
+    "packageRules": [
+        {
+            "matchPackageNames": ["*"],
+            "groupName": "all dependencies",
+            "groupSlug": "all"
+        }
+    ],
+    "vulnerabilityAlerts": {
+        "enabled": true,
+        "groupName": "all dependencies",
+        "groupSlug": "all"
+    },
+    "lockFileMaintenance": {
+        "enabled": false
+    }
 }
