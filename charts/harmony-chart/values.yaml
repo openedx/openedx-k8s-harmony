@@ -394,7 +394,6 @@ vector:
     api:
       enabled: false
       address: 0.0.0.0:8686
-      playground: false
 
     sources:
       kubernetes_tutor_logs:

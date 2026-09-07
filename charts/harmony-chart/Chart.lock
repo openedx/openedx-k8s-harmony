@@ -1,13 +1,13 @@
 dependencies:
 - name: traefik
   repository: oci://ghcr.io/traefik/helm
-  version: 40.0.1
+  version: 41.2.0
 - name: cert-manager
   repository: https://charts.jetstack.io
-  version: v1.19.3
+  version: v1.21.1
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server/
-  version: 3.13.0
+  version: 3.13.1
 - name: vertical-pod-autoscaler
   repository: https://cowboysysop.github.io/charts/
   version: 11.1.1
@@ -25,12 +25,13 @@ dependencies:
   version: 81.0.1
 - name: headlamp
   repository: https://kubernetes-sigs.github.io/headlamp/
-  version: 0.43.0
+  version: 0.44.0
 - name: velero
   repository: https://vmware-tanzu.github.io/helm-charts
   version: 5.4.1
 - name: vector
   repository: https://helm.vector.dev
-  version: 0.50.0
-digest: sha256:ebf4e5f80295c5d3b6857f6149e7229117a9d4c0c59acf7cd7e06247b3fea7ed
-generated: "2026-08-05T15:29:46.676126308-04:00"
+  version: 0.57.0
+digest: sha256:cb682cb1091ebc5259666db0d315544625b83e881304634b879854fcd4f8955f
+generated: "2026-08-18T12:09:34.929420195-04:00"
+
