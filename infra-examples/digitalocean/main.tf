@@ -3,25 +3,25 @@ data "digitalocean_kubernetes_versions" "available_versions" {}
 module "main_vpc" {
   source = "../../terraform/modules/digitalocean/vpc"
 
-  region = var.region
+  region      = var.region
   environment = var.environment
 }
 
 module "kubernetes_cluster" {
   source = "../../terraform/modules/digitalocean/doks"
 
-  region = var.region
+  region      = var.region
   environment = var.environment
-  vpc_id = module.main_vpc.vpc_id
+  vpc_id      = module.main_vpc.vpc_id
 
-  cluster_name = var.kubernetes_cluster_name
+  cluster_name       = var.kubernetes_cluster_name
   kubernetes_version = data.digitalocean_kubernetes_versions.available_versions.latest_version
 }
 
 module "spaces" {
   source = "../../terraform/modules/digitalocean/spaces"
 
-  region = var.region
+  region      = var.region
   environment = var.environment
 
   bucket_prefix = "my-institute"
@@ -30,18 +30,18 @@ module "spaces" {
 module "mysql_database" {
   source = "../../terraform/modules/digitalocean/database"
 
-  region = var.region
-  environment = var.environment
-  access_token = var.do_access_token
-  vpc_id = module.main_vpc.vpc_id
+  region                  = var.region
+  environment             = var.environment
+  access_token            = var.do_access_token
+  vpc_id                  = module.main_vpc.vpc_id
   kubernetes_cluster_name = var.kubernetes_cluster_name
 
-  database_engine = "mysql"
-  database_engine_version = 8
-  database_cluster_instances = 1
-  database_cluster_instance_size = "db-s-1vcpu-1gb"
-  database_maintenance_window_day = "sunday"
-  database_maintenance_window_time = "01:00:00"
+  database_engine                  = "mysql"
+  database_engine_version          = "8"
+  database_cluster_instances       = 1
+  database_cluster_instance_size   = "db-s-1vcpu-1gb"
+  database_maintenance_window_day  = "sunday"
+  database_maintenance_window_time = "01:00"
 
   # Database cluster firewalls cannot use VPC CIDR, therefore the access is
   # limited to the k8s cluster
@@ -56,18 +56,18 @@ module "mysql_database" {
 module "mongodb_database" {
   source = "../../terraform/modules/digitalocean/database"
 
-  region = var.region
-  environment = var.environment
-  access_token = var.do_access_token
-  vpc_id = module.main_vpc.vpc_id
+  region                  = var.region
+  environment             = var.environment
+  access_token            = var.do_access_token
+  vpc_id                  = module.main_vpc.vpc_id
   kubernetes_cluster_name = var.kubernetes_cluster_name
 
-  database_engine = "mongodb"
-  database_engine_version = 7
-  database_cluster_instances = 3
-  database_cluster_instance_size = "db-s-1vcpu-1gb"
-  database_maintenance_window_day = "sunday"
-  database_maintenance_window_time = "1:00"
+  database_engine                  = "mongodb"
+  database_engine_version          = "7"
+  database_cluster_instances       = 3
+  database_cluster_instance_size   = "db-s-1vcpu-1gb"
+  database_maintenance_window_day  = "sunday"
+  database_maintenance_window_time = "01:00"
 
   # Database cluster firewalls cannot use VPC CIDR, therefore the access is
   # limited to the k8s cluster

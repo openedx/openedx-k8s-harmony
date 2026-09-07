@@ -29,18 +29,18 @@ module "main_vpc" {
   ]
 
   public_subnet_tags = {
-    "Tier"                                        = "Public"
-    "kubernetes.io/role/elb"                      = "1"
+    "Tier"                   = "Public"
+    "kubernetes.io/role/elb" = "1"
   }
 
   private_subnet_tags = {
-    "Tier"                                        = "Private"
-    "kubernetes.io/role/internal-elb"             = "1"
+    "Tier"                            = "Private"
+    "kubernetes.io/role/internal-elb" = "1"
   }
 }
 
 module "kubernetes_cluster" {
-  source     = "../../terraform/modules/aws/eks"
+  source = "../../terraform/modules/aws/eks"
 
   environment = var.environment
   vpc_id      = module.main_vpc.vpc_id

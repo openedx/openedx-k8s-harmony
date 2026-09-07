@@ -1,11 +1,15 @@
 terraform {
+  required_version = ">= 1.5.7"
+
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
+      version = "~> 6.62"
     }
 
     random = {
-      source = "hashicorp/random"
+      source  = "hashicorp/random"
+      version = "~> 3.9"
     }
   }
 }
@@ -17,7 +21,7 @@ resource "random_id" "vpc_suffix" {
 
 module "vpc" {
   source          = "terraform-aws-modules/vpc/aws"
-  version         = "~> 5.17"
+  version         = "~> 6.7"
   name            = var.vpc_name == "" ? "open-edx-${var.environment}-vpc-${random_id.vpc_suffix[0].dec}" : var.vpc_name
   cidr            = var.cidr
   azs             = var.availability_zones
@@ -34,7 +38,7 @@ module "vpc" {
   single_nat_gateway     = var.single_nat_gateway
   one_nat_gateway_per_az = var.one_nat_gateway_per_az
 
-  tags = var.tags
-  public_subnet_tags = var.public_subnet_tags
+  tags                = var.tags
+  public_subnet_tags  = var.public_subnet_tags
   private_subnet_tags = var.private_subnet_tags
 }

@@ -22,9 +22,9 @@ output "database_user_credentials" {
   value = {
     for key, user in var.database_users :
     key => {
-      username       = user.username
-      password       = try(mongodbatlas_database_user.users[user.username].password, "")
-      database       = user.database
+      username = user.username
+      password = try(mongodbatlas_database_user.users[user.username].password, "")
+      database = user.database
     }
   }
   description = "List of database and user credentials mapping."
