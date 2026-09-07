@@ -57,7 +57,7 @@ with Ingress NGINX, specifically designed to ease the migration process.
   instead of Ingress. Although the Ingress API is froze, it still remains well
   supported, and performing a migration between controller implementations is
   much feasible task than migrating to a new API, specially considering the
-  current timeline. 
+  current timeline.
 
 
 ## References
@@ -65,6 +65,5 @@ with Ingress NGINX, specifically designed to ease the migration process.
 1. https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement
 1. https://doc.traefik.io/traefik/reference/routing-configuration/kubernetes/ingress-nginx/#annotations-support
 1. https://securitylabs.datadoghq.com/articles/kubernetes-ingress-nginx-retirement-warning/
-1. https://doc.traefik.io/traefik/reference/routing-configuration/kubernetes/ingress-nginx/#annotations-support
 1. https://doc.traefik.io/traefik/reference/routing-configuration/kubernetes/ingress-nginx/#annotations-support
 1. https://groups.google.com/a/kubernetes.io/g/dev/c/9RYJrB8e8ts

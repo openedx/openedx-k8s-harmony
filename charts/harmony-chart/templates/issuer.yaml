@@ -16,11 +16,9 @@ spec:
         ingress:
           {{- if .Values.clusterIssuer.ingressClass }}
           class: {{ .Values.clusterIssuer.ingressClass }}
-          {{- else if index .Values "ingress-nginx" "enabled" }}
-          class: {{ index .Values "ingress-nginx" "controller" "ingressClass" | default "nginx" }}
           {{- else if .Values.traefik.enabled }}
           class: {{ .Values.traefik.ingressClass.name | default "traefik" }}
           {{- else }}
-          class: nginx
+          class: traefik
           {{- end }}
 {{ end }}

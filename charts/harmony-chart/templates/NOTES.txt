@@ -1,15 +1,11 @@
 
 Your harmony cluster is now ready to use!
 
-An NGINX or Traefik load balancer routes all HTTP/HTTPS traffic into the cluster to each
+The Traefik load balancer routes all HTTP/HTTPS traffic into the cluster to each
 Open edX instance. Even before you deploy any Open edX instances, you can test
 that the load balancer is working. First, get its external IP using
 
-{{- if index .Values "traefik" "enabled" }}
     kubectl get svc -n {{ .Release.Namespace }} harmony-traefik
-{{- else }}
-    kubectl get svc -n {{ .Release.Namespace }} harmony-ingress-nginx-controller
-{{- end }}
 
 Next, go to http://{{ .Values.clusterDomain }}/cluster-echo-test and make sure you get
 a JSON response.
@@ -26,11 +22,7 @@ via Ingress annotations or VPN.
 
 To connect to the dashboard:
 
-{{- if index .Values "traefik" "enabled" }}
     kubectl -n {{ .Release.Namespace }} port-forward svc/harmony-traefik 8443:443
-{{- else }}
-    kubectl -n {{ .Release.Namespace }} port-forward svc/harmony-ingress-nginx-controller 8443:443
-{{- end }}
 
     kubectl -n {{ .Release.Namespace }} get secret admin-user-token -o jsonpath={.data.token} | base64 -d
 
