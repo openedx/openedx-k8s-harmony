@@ -1,17 +1,21 @@
 terraform {
+  required_version = ">= 1.5.7"
+
   required_providers {
     random = {
-      source = "hashicorp/random"
+      source  = "hashicorp/random"
+      version = "~> 3.9"
     }
 
     digitalocean = {
-      source = "digitalocean/digitalocean"
+      source  = "digitalocean/digitalocean"
+      version = "~> 2.100"
     }
   }
 }
 
 resource "random_id" "vpc_suffix" {
-  count = var.vpc_name == "" ? 1 : 0
+  count       = var.vpc_name == "" ? 1 : 0
   byte_length = 8
 }
 

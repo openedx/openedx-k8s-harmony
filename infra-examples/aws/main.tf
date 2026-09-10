@@ -1,5 +1,5 @@
 locals {
-  kubernetes_version = "1.30"
+  kubernetes_version = "1.36"
   cluster_name       = "${var.kubernetes_cluster_name}-${var.environment}"
 }
 
@@ -11,7 +11,7 @@ module "main_vpc" {
   source = "../../terraform/modules/aws/vpc"
 
   environment        = var.environment
-  availability_zones = data.aws_availability_zones.available.names
+  availability_zones = slice(data.aws_availability_zones.available.names, 0, 3)
 
   single_nat_gateway     = true
   one_nat_gateway_per_az = false
@@ -29,24 +29,26 @@ module "main_vpc" {
   ]
 
   public_subnet_tags = {
-    "Tier"                                        = "Public"
-    "kubernetes.io/role/elb"                      = "1"
+    "Tier"                   = "Public"
+    "kubernetes.io/role/elb" = "1"
   }
 
   private_subnet_tags = {
-    "Tier"                                        = "Private"
-    "kubernetes.io/role/internal-elb"             = "1"
+    "Tier"                            = "Private"
+    "kubernetes.io/role/internal-elb" = "1"
   }
 }
 
 module "kubernetes_cluster" {
-  source     = "../../terraform/modules/aws/eks"
+  source = "../../terraform/modules/aws/eks"
 
   environment = var.environment
   vpc_id      = module.main_vpc.vpc_id
+  subnet_ids  = module.main_vpc.private_subnets
 
   cluster_name         = var.kubernetes_cluster_name
   kubernetes_version   = local.kubernetes_version
+  ubuntu_version       = "resolute-26.04"
   registry_credentials = var.docker_registry_credentials
 
   worker_node_ssh_key_name   = var.worker_node_ssh_key_name
@@ -66,6 +68,7 @@ module "mysql_database" {
 
   environment = var.environment
   vpc_id      = module.main_vpc.vpc_id
+  subnet_ids  = module.main_vpc.private_subnets
 
   database_cluster_name = "${module.kubernetes_cluster.cluster_name}-mysql"
 }
@@ -81,6 +84,7 @@ module "mongodb_database" {
   aws_account_id          = data.aws_caller_identity.current.account_id
   mongodbatlas_project_id = var.mongodbatlas_project_id
   mongodbatlas_cidr_block = var.mongodbatlas_cidr_block
+  private_route_table_ids = module.main_vpc.private_route_table_ids
 
   database_cluster_name = "${module.kubernetes_cluster.cluster_name}-mongodb"
 }
