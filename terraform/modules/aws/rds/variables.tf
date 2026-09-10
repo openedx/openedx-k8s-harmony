@@ -103,6 +103,11 @@ variable "vpc_id" {
   description = "ID of the VPC to use for the RDS cluster"
 }
 
+variable "subnet_ids" {
+  type        = list(string)
+  description = "Private subnet IDs for the RDS subnet group"
+}
+
 variable "tags" {
   type        = map(string)
   description = "A map of tags to add to all resources"

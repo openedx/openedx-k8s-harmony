@@ -21,6 +21,8 @@ locals {
       registry_credentials = var.registry_credentials
     }
   )
+
+  control_plane_subnet_ids = var.control_plane_subnet_ids != null ? var.control_plane_subnet_ids : var.subnet_ids
 }
 
 data "aws_ami" "latest_ubuntu_eks" {
@@ -32,7 +34,7 @@ data "aws_ami" "latest_ubuntu_eks" {
 
   filter {
     name   = "name"
-    values = ["ubuntu-eks/k8s_${var.kubernetes_version}/images/hvm-ssd/ubuntu-${var.ubuntu_version}-amd64-server-*"]
+    values = ["ubuntu-eks/k8s_${var.kubernetes_version}/images/hvm-ssd*/ubuntu-${var.ubuntu_version}-amd64-server-*"]
   }
 }
 
@@ -40,29 +42,21 @@ data "aws_vpc" "main" {
   id = var.vpc_id
 }
 
-data "aws_subnets" "main" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.main.id]
-  }
-
-  tags = {
-    Tier = "Private"
-  }
-}
-
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 21.25"
 
-  name                   = var.cluster_name
-  kubernetes_version     = var.kubernetes_version
-  endpoint_public_access = true
-  vpc_id                 = data.aws_vpc.main.id
-  subnet_ids             = data.aws_subnets.main.ids
-  enable_irsa            = true
-  cluster_tags           = var.cluster_tags
-  tags                   = var.tags
+  name               = var.cluster_name
+  kubernetes_version = var.kubernetes_version
+  vpc_id             = data.aws_vpc.main.id
+  subnet_ids         = var.subnet_ids
+
+  control_plane_subnet_ids                 = local.control_plane_subnet_ids
+  endpoint_public_access                   = true
+  enable_irsa                              = true
+  enable_cluster_creator_admin_permissions = true
+  cluster_tags                             = var.cluster_tags
+  tags                                     = var.tags
 
   create_cloudwatch_log_group = false
   enabled_log_types           = []
@@ -72,10 +66,12 @@ module "eks" {
       name = "coredns"
     }
     kube-proxy = {
-      name = "kube-proxy"
+      name           = "kube-proxy"
+      before_compute = true
     }
     vpc-cni = {
-      name = "vpc-cni"
+      name           = "vpc-cni"
+      before_compute = true
     }
     aws-ebs-csi-driver = {
       name                     = "aws-ebs-csi-driver"
@@ -111,9 +107,9 @@ module "eks" {
     ubuntu_worker = {
       ami_id                         = var.ami_id != "" ? var.ami_id : data.aws_ami.latest_ubuntu_eks[0].id
       ami_type                       = "AL2_x86_64"
-      key_name                       = var.worker_node_ssh_key_name
+      key_name                       = var.worker_node_ssh_key_name == "" ? null : var.worker_node_ssh_key_name
       name                           = var.worker_node_group_name
-      subnet_ids                     = data.aws_subnets.main.ids
+      subnet_ids                     = var.subnet_ids
       use_latest_ami_release_version = false
 
       # This will ensure the bootstrap user data is used to join the node

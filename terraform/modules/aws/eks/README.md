@@ -24,7 +24,6 @@
 | Name | Type |
 | ---- | ---- |
 | [aws_ami.latest_ubuntu_eks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
-| [aws_subnets.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_vpc.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
 ## Inputs
@@ -37,6 +36,7 @@
 | <a name="input_cluster_security_group_name"></a> [cluster\_security\_group\_name](#input\_cluster\_security\_group\_name) | Cluster security group name | `string` | `null` | no |
 | <a name="input_cluster_security_group_use_name_prefix"></a> [cluster\_security\_group\_use\_name\_prefix](#input\_cluster\_security\_group\_use\_name\_prefix) | Determinate if it is necessary to create an security group prefix for the cluster | `bool` | `true` | no |
 | <a name="input_cluster_tags"></a> [cluster\_tags](#input\_cluster\_tags) | A map of tags to add to the cluster | `map(string)` | `{}` | no |
+| <a name="input_control_plane_subnet_ids"></a> [control\_plane\_subnet\_ids](#input\_control\_plane\_subnet\_ids) | Subnet IDs for the EKS control plane. Defaults to subnet\_ids. Set this when an existing cluster cannot add availability zones. | `list(string)` | `null` | no |
 | <a name="input_enable_cluster_autoscaler"></a> [enable\_cluster\_autoscaler](#input\_enable\_cluster\_autoscaler) | Determines whether to prepare the cluster to use cluster autoscaler | `bool` | `false` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The AWS project environment. (for example: production, staging, development, etc.) | `string` | n/a | yes |
 | <a name="input_iam_role_name"></a> [iam\_role\_name](#input\_iam\_role\_name) | Cluster IAM role name | `string` | `null` | no |
@@ -45,10 +45,10 @@
 | <a name="input_max_worker_node_count"></a> [max\_worker\_node\_count](#input\_max\_worker\_node\_count) | Maximum node count in the autoscaling group | `number` | `3` | no |
 | <a name="input_min_worker_node_count"></a> [min\_worker\_node\_count](#input\_min\_worker\_node\_count) | Minimum node count in the autoscaling group | `number` | `1` | no |
 | <a name="input_post_bootstrap_user_data"></a> [post\_bootstrap\_user\_data](#input\_post\_bootstrap\_user\_data) | Allow to add post bootstrap user data | `string` | `null` | no |
-| <a name="input_private_subnets"></a> [private\_subnets](#input\_private\_subnets) | List of private subnets | `list(string)` | <pre>[<br/>  "10.10.0.0/21",<br/>  "10.10.8.0/21"<br/>]</pre> | no |
 | <a name="input_registry_credentials"></a> [registry\_credentials](#input\_registry\_credentials) | Image registry credentials to be added to the node | `string` | n/a | yes |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Private subnet IDs for the cluster and node groups. | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources | `map(string)` | `{}` | no |
-| <a name="input_ubuntu_version"></a> [ubuntu\_version](#input\_ubuntu\_version) | Ubuntu version to use (e.g. focal-20.04) when no ami\_id is provided | `string` | `"jammy-22.04"` | no |
+| <a name="input_ubuntu_version"></a> [ubuntu\_version](#input\_ubuntu\_version) | Ubuntu version to use when no ami\_id is provided (e.g. jammy-22.04 for EKS 1.29-1.32, noble-24.04 for 1.31-1.35, resolute-26.04 for 1.35+) | `string` | `"jammy-22.04"` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC to use for the Kubernetes cluster. | `string` | n/a | yes |
 | <a name="input_worker_node_capacity_type"></a> [worker\_node\_capacity\_type](#input\_worker\_node\_capacity\_type) | Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT` | `string` | `"ON_DEMAND"` | no |
 | <a name="input_worker_node_count"></a> [worker\_node\_count](#input\_worker\_node\_count) | Desired autoscaling node count | `number` | `2` | no |
@@ -57,7 +57,7 @@
 | <a name="input_worker_node_group_name"></a> [worker\_node\_group\_name](#input\_worker\_node\_group\_name) | Name of the node group | `string` | `"ubuntu_worker"` | no |
 | <a name="input_worker_node_groups_tags"></a> [worker\_node\_groups\_tags](#input\_worker\_node\_groups\_tags) | A map of tags to add to all node group resources | `map(string)` | `{}` | no |
 | <a name="input_worker_node_instance_types"></a> [worker\_node\_instance\_types](#input\_worker\_node\_instance\_types) | EC2 Instance type for the nodes | `list(string)` | n/a | yes |
-| <a name="input_worker_node_ssh_key_name"></a> [worker\_node\_ssh\_key\_name](#input\_worker\_node\_ssh\_key\_name) | Name of the SSH Key Pair used for the worker nodes | `string` | n/a | yes |
+| <a name="input_worker_node_ssh_key_name"></a> [worker\_node\_ssh\_key\_name](#input\_worker\_node\_ssh\_key\_name) | Name of an existing EC2 key pair used to SSH to the worker nodes | `string` | `null` | no |
 
 ## Outputs
 

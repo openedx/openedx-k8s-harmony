@@ -29,7 +29,6 @@ No modules.
 | [random_password.rds_root_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_string.rds_final_snapshot_suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 | [random_string.rds_root_username](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
-| [aws_subnets.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_vpc.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
 ## Inputs
@@ -53,6 +52,7 @@ No modules.
 | <a name="input_is_auto_minor_version_upgrade_enabled"></a> [is\_auto\_minor\_version\_upgrade\_enabled](#input\_is\_auto\_minor\_version\_upgrade\_enabled) | Whether automatic minor version upgrades are enabled | `bool` | `false` | no |
 | <a name="input_is_database_storage_alarm_enabled"></a> [is\_database\_storage\_alarm\_enabled](#input\_is\_database\_storage\_alarm\_enabled) | Whether database storage alarms are enabled | `bool` | `true` | no |
 | <a name="input_is_database_storage_encrypted"></a> [is\_database\_storage\_encrypted](#input\_is\_database\_storage\_encrypted) | Whether the database storage is encrypted in rest | `bool` | `true` | no |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Private subnet IDs for the RDS subnet group | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources | `map(string)` | `{}` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC to use for the RDS cluster | `string` | n/a | yes |
 

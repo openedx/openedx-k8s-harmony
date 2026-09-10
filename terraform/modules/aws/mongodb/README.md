@@ -25,8 +25,8 @@ No modules.
 | ---- | ---- |
 | [aws_route.peeraccess](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route) | resource |
 | [aws_vpc_peering_connection_accepter.accept_mongo_peer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_peering_connection_accepter) | resource |
+| [mongodbatlas_advanced_cluster.cluster](https://registry.terraform.io/providers/mongodb/mongodbatlas/latest/docs/resources/advanced_cluster) | resource |
 | [mongodbatlas_cloud_backup_schedule.backup_schedule](https://registry.terraform.io/providers/mongodb/mongodbatlas/latest/docs/resources/cloud_backup_schedule) | resource |
-| [mongodbatlas_cluster.cluster](https://registry.terraform.io/providers/mongodb/mongodbatlas/latest/docs/resources/cluster) | resource |
 | [mongodbatlas_database_user.users](https://registry.terraform.io/providers/mongodb/mongodbatlas/latest/docs/resources/database_user) | resource |
 | [mongodbatlas_network_container.cluster_network_container](https://registry.terraform.io/providers/mongodb/mongodbatlas/latest/docs/resources/network_container) | resource |
 | [mongodbatlas_network_peering.cluster_network_peering](https://registry.terraform.io/providers/mongodb/mongodbatlas/latest/docs/resources/network_peering) | resource |
@@ -57,9 +57,10 @@ No modules.
 | <a name="input_environment"></a> [environment](#input\_environment) | The AWS project environment. (for example: production, staging, development, etc.) | `string` | n/a | yes |
 | <a name="input_is_database_autoscaling_compute_enabled"></a> [is\_database\_autoscaling\_compute\_enabled](#input\_is\_database\_autoscaling\_compute\_enabled) | Whether to enable autoscaling of database instances | `bool` | `false` | no |
 | <a name="input_is_database_autoscaling_disk_gb_enabled"></a> [is\_database\_autoscaling\_disk\_gb\_enabled](#input\_is\_database\_autoscaling\_disk\_gb\_enabled) | Whether to enable autoscaling disk size for the database instance | `bool` | `true` | no |
-| <a name="input_is_database_storage_encrypted"></a> [is\_database\_storage\_encrypted](#input\_is\_database\_storage\_encrypted) | Whether the database storage is encrypted in rest | `bool` | `true` | no |
+| <a name="input_is_database_storage_encrypted"></a> [is\_database\_storage\_encrypted](#input\_is\_database\_storage\_encrypted) | Enable Atlas Encryption at Rest with customer-managed AWS KMS keys | `bool` | `false` | no |
 | <a name="input_mongodbatlas_cidr_block"></a> [mongodbatlas\_cidr\_block](#input\_mongodbatlas\_cidr\_block) | The CIDR block in MongoDB Atlas | `string` | n/a | yes |
 | <a name="input_mongodbatlas_project_id"></a> [mongodbatlas\_project\_id](#input\_mongodbatlas\_project\_id) | The ID of the MongoDB Atlas project | `string` | n/a | yes |
+| <a name="input_private_route_table_ids"></a> [private\_route\_table\_ids](#input\_private\_route\_table\_ids) | Private route table IDs that should route to the Atlas peering connection | `list(string)` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | The AWS Region in which to deploy the resources | `string` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC to use for the MongoDB cluster | `string` | n/a | yes |
 
