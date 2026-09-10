@@ -193,57 +193,147 @@ opensearch:
 
 # Configuration for the Karpenter chart
 karpenter:
-  # add Karpenter node management for AWS EKS clusters. See: https://karpenter.sh/
   enabled: false
+
+  # -- IMPORTANT: Karpenter ships its CRDs in a separate chart (`karpenter-crd`)
+  # since v1.0. This dependency does NOT install them, and Helm never upgrades
+  # CRDs on its own. Install and upgrade `karpenter-crd` on the cluster before
+  # enabling this block, or the NodePool/EC2NodeClass resources below will fail
+  # to apply.
+
   serviceAccount:
     name: "karpenter"
     annotations:
       eks.amazonaws.com/role-arn: ""
+  # NOTE: these keys are read by the Karpenter subchart itself, and they are flat
+  # since Karpenter v0.32. The old `settings.aws.*` block was removed upstream.
   settings:
-    aws:
-      # -- Cluster name.
-      clusterName: ""
-      # -- Cluster endpoint. If not set, will be discovered during startup (EKS only)
-      # From version 0.25.0, Karpenter helm chart allows the discovery of the cluster endpoint. More details in
-      # https://github.com/aws/karpenter/blob/main/website/content/en/docs/upgrade-guide.md#upgrading-to-v0250
-      # clusterEndpoint: ""
-      # -- The default instance profile name to use when launching nodes
-      defaultInstanceProfile: ""
-      # -- interruptionQueueName is disabled if not specified. Enabling interruption handling may
-      # require additional permissions on the controller service account.
-      interruptionQueueName: ""
+    # -- Cluster name.
+    clusterName: ""
+    # -- Cluster endpoint. If not set, will be discovered during startup (EKS only)
+    # clusterEndpoint: ""
+    # -- interruptionQueue is the name of the SQS queue used for processing
+    # interruption events from EC2. Interruption handling is disabled if not
+    # specified. Enabling it may require additional permissions on the
+    # controller service account.
+    interruptionQueue: ""
+
+  # -- Keep the controller itself off the nodes it manages: pin it to the
+  # managed node group and tolerate the taint that group carries.
+  nodeSelector: {}
+  # nodeSelector:
+  #   karpenter.sh/controller: "true"
+  tolerations: []
+  # tolerations:
+  #   - key: CriticalAddonsOnly
+  #     operator: Exists
   # ---------------------------------------------------------------------------
-  # Provide sensible defaults for resource provisioning and lifecycle
+  # Resources rendered by this chart
   # ---------------------------------------------------------------------------
-  # Requirements for the provisioner API.
-  # More details in https://karpenter.sh/docs/concepts/provisioners/
-  provisioner:
-    name: "default"
-    spec:
-      requirements:
-        - key: karpenter.sh/capacity-type
-          operator: In
-          values: ["spot"]
-        # - key: node.kubernetes.io/instance-type
-        #   operator: In
-        #   values: ["t3.large", "t3.xlarge", "t3.2xlarge", "t2.xlarge", "t2.2xlarge"]
-        # - key: kubernetes.io/arch
-        #   operator: In
-        #   values: ["amd64"]
-      # The limits section controls the maximum amount of resources that the provisioner will manage.
-      # More details in https://karpenter.sh/docs/concepts/provisioners/#speclimitsresources
-      limits:
-        resources:
-          cpu: "200"       # 50 nodes * 4 cpu
-          memory: "800Gi"  # 50 nodes * 16Gi
-      # TTL in seconds. If nil, the feature is disabled, nodes will never terminate
-      ttlSecondsUntilExpired: 2592000
-      # TTL in seconds. If nil, the feature is disabled, nodes will never scale down
-      # due to low utilization.
-      ttlSecondsAfterEmpty: 30
-  # Node template reference. More details in https://karpenter.sh/docs/concepts/node-templates/
-  nodeTemplate:
-    name: "default"
+
+  # -- Value of the `karpenter.sh/discovery` tag used to discover subnets and
+  # security groups, and applied to every instance Karpenter launches. Defaults
+  # to `settings.clusterName` when empty.
+  discovery: ""
+
+  # -- Availability zones the NodePools are restricted to. Rendered as a
+  # `topology.kubernetes.io/zone` requirement and appended to every NodePool
+  # that does not declare that key itself. Leave empty to let Karpenter pick
+  # from every zone the discovered subnets cover.
+  zones: []
+  # zones: ["us-east-1a", "us-east-1b", "us-east-1c"]
+
+  # -- Name of the EC2NodeClass used by NodePools that do not set their own
+  # `nodeClassRef`. Must match a key under `ec2NodeClasses`.
+  defaultEC2NodeClass: ""
+
+  # EC2NodeClass describes how nodes are launched: AMI, IAM identity, subnets,
+  # security groups, disks and userData. It replaces the removed AWSNodeTemplate
+  # (karpenter.k8s.aws/v1alpha1).
+  # More details in https://karpenter.sh/docs/concepts/nodeclasses/
+  #
+  # Keyed by resource name. `spec` is passed through to the CR verbatim, so any
+  # field the EC2NodeClass API accepts — now or in a future version — can be set
+  # here without changing the chart. `subnetSelectorTerms`,
+  # `securityGroupSelectorTerms` and `tags` default to the `discovery` tag when
+  # omitted. Set `enabled: false` on an entry to drop it.
+  ec2NodeClasses: {}
+  # ec2NodeClasses:
+  #   ubuntu-gp:
+  #     spec:
+  #       # -- Exactly one of `role` or `instanceProfile` is required by the API.
+  #       # Karpenter v1 removed the cluster-wide
+  #       # `settings.aws.defaultInstanceProfile`, so identity lives here.
+  #       role: "my-eks-node-group-role"
+  #       # instanceProfile: ""
+  #       # -- Mandatory since Karpenter v1: there is no implicit default AMI.
+  #       # An alias tracks the latest AMI AWS publishes for that family;
+  #       # alternatively select by `id`, `name`, `owner`, `ssmParameter` or `tags`.
+  #       amiFamily: AL2
+  #       amiSelectorTerms:
+  #         - id: "ami-0123456789abcdef0"
+  #       blockDeviceMappings:
+  #         - deviceName: "/dev/sda1"
+  #           rootVolume: true
+  #           ebs:
+  #             volumeType: gp3
+  #             volumeSize: 50Gi
+  #             encrypted: true
+  #       # -- Extra tags stamped on every instance this class launches.
+  #       # Unlike the selector terms above, `tags` is passed through
+  #       # untouched: add the discovery tag here yourself if you want the
+  #       # instances labelled with it too.
+  #       tags:
+  #         karpenter.sh/discovery: "my-cluster"
+  #       # -- Node bootstrap script. Never commit registry credentials or any
+  #       # other secret here: this file ships inside a public chart. Inject them
+  #       # from your own overlay or secret store instead.
+  #       # userData: ""
+
+  # NodePool describes the nodes to provision and when to disrupt them. It
+  # replaces the removed Provisioner (karpenter.sh/v1alpha5).
+  # More details in https://karpenter.sh/docs/concepts/nodepools/
+
+  nodePools: {}
+  # nodePools:
+  #   default:
+  #     spec:
+  #       template:
+  #         spec:
+  #           # -- Constrains what Karpenter may launch. Intersected with
+  #           # whatever the pending pod already requires, so keep it broad
+  #           # enough to leave the scheduler room.
+  #           requirements:
+  #             - key: kubernetes.io/arch
+  #               operator: In
+  #               values: ["amd64"]
+  #             - key: karpenter.sh/capacity-type
+  #               operator: In
+  #               values: ["on-demand"]
+  #           # -- Taint the nodes so only pods that tolerate it land here.
+  #           # taints:
+  #           #   - key: example.com/dedicated
+  #           #     value: "true"
+  #           #     effect: NoSchedule
+  #           # -- How long a node may live before it is replaced. Defaults to
+  #           # 720h; use "Never" to disable expiration.
+  #           # expireAfter: 720h
+  #       # -- Ceiling for the pool as a whole, not per node.
+  #       # More details in https://karpenter.sh/docs/concepts/nodepools/#speclimits
+  #       limits:
+  #         cpu: 200
+  #         memory: 800Gi
+  #       disruption:
+  #         # -- WhenEmptyOrUnderutilized also consolidates nodes that are still
+  #         # running workloads; WhenEmpty only reclaims empty ones.
+  #         consolidationPolicy: WhenEmptyOrUnderutilized
+  #         # -- How long a node must meet the policy before being disrupted.
+  #         consolidateAfter: 5m
+  #         # -- Cap how much of the pool may be disrupted at once.
+  #         budgets:
+  #           - nodes: "10%"
+  #       # -- Higher weight wins when more than one pool can satisfy a pod.
+  #       # weight: 100
 
 # Prometheus stack
 #

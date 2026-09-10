@@ -1,0 +1,40 @@
+{{- if .Values.karpenter.enabled -}}
+{{- $k := .Values.karpenter -}}
+{{- range $name, $nodePool := $k.nodePools }}
+{{- if ne (dig "enabled" true $nodePool) false }}
+{{- $spec := deepCopy (dig "spec" dict $nodePool) }}
+{{- $template := dig "template" dict $spec }}
+{{- $templateSpec := dig "spec" dict $template }}
+{{- /* Default the node class reference so a pool only names one when it differs. */ -}}
+{{- if not (dig "nodeClassRef" dict $templateSpec) }}
+{{- if not $k.defaultEC2NodeClass }}
+{{- fail (printf "karpenter.nodePools.%s does not set template.spec.nodeClassRef, so karpenter.defaultEC2NodeClass must be set" $name) }}
+{{- end }}
+{{- $_ := set $templateSpec "nodeClassRef" (dict "group" "karpenter.k8s.aws" "kind" "EC2NodeClass" "name" $k.defaultEC2NodeClass) }}
+{{- end }}
+{{- $nodeClassName := (dig "nodeClassRef" "name" "" $templateSpec) }}
+{{- if not (hasKey $k.ec2NodeClasses $nodeClassName) }}
+{{- fail (printf "karpenter.nodePools.%s references EC2NodeClass %q, which is not declared under karpenter.ec2NodeClasses" $name $nodeClassName) }}
+{{- end }}
+{{- /* Inject the cluster zones unless the pool constrains zones itself. */ -}}
+{{- $requirements := dig "requirements" list $templateSpec }}
+{{- $hasZone := false }}
+{{- range $requirements }}
+{{- if eq (dig "key" "" .) "topology.kubernetes.io/zone" }}{{- $hasZone = true }}{{- end }}
+{{- end }}
+{{- if and (not $hasZone) $k.zones }}
+{{- $requirements = append $requirements (dict "key" "topology.kubernetes.io/zone" "operator" "In" "values" $k.zones) }}
+{{- $_ := set $templateSpec "requirements" $requirements }}
+{{- end }}
+{{- $_ := set $template "spec" $templateSpec }}
+{{- $_ := set $spec "template" $template }}
+---
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: {{ $name }}
+spec:
+{{ toYaml $spec | indent 2 }}
+{{- end }}
+{{- end }}
+{{- end }}

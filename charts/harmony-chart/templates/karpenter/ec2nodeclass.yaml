@@ -1,0 +1,32 @@
+{{- if .Values.karpenter.enabled -}}
+{{- $k := .Values.karpenter -}}
+{{- $discovery := $k.discovery | default $k.settings.clusterName -}}
+{{- if not $discovery -}}
+{{- fail "karpenter.discovery or karpenter.settings.clusterName must be set when karpenter is enabled" -}}
+{{- end -}}
+{{- $discoveryTags := dict "karpenter.sh/discovery" $discovery -}}
+{{- range $name, $nodeClass := $k.ec2NodeClasses }}
+{{- if ne (dig "enabled" true $nodeClass) false }}
+{{- $spec := deepCopy (dig "spec" dict $nodeClass) }}
+{{- if not (or (dig "role" "" $spec) (dig "instanceProfile" "" $spec)) }}
+{{- fail (printf "karpenter.ec2NodeClasses.%s.spec: either role or instanceProfile must be set" $name) }}
+{{- end }}
+{{- if not (dig "amiSelectorTerms" list $spec) }}
+{{- fail (printf "karpenter.ec2NodeClasses.%s.spec.amiSelectorTerms is required: Karpenter v1 has no implicit default AMI" $name) }}
+{{- end }}
+{{- /* Discovery-tag defaults: only applied when the operator did not select explicitly. */ -}}
+{{- range $field := list "subnetSelectorTerms" "securityGroupSelectorTerms" }}
+{{- if not (dig $field list $spec) }}
+{{- $_ := set $spec $field (list (dict "tags" $discoveryTags)) }}
+{{- end }}
+{{- end }}
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: {{ $name }}
+spec:
+{{ toYaml $spec | indent 2 }}
+{{- end }}
+{{- end }}
+{{- end }}
