@@ -5,7 +5,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes to the chart and its
 # templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.13.0
+version: 0.14.0
 # This is the version number of the application being deployed. This version number should be incremented each time you
 # make changes to the application. Versions are not expected to follow Semantic Versioning. They should reflect the
 # version the application is using. It is recommended to use it with quotes.
@@ -17,18 +17,18 @@ dependencies:
   # This is just info for the "helm dependency update" command, which will update the ./charts/ directory when run, using
   # this information.
   - name: traefik
-    version: "40.0.1"
+    version: "41.2.0"
     repository: oci://ghcr.io/traefik/helm
     condition: traefik.enabled
 
   - name: cert-manager
-    version: "v1.19.3"
+    version: "v1.21.1"
     repository: https://charts.jetstack.io
     condition: cert-manager.enabled
 
   - name: metrics-server
     alias: metricsserver
-    version: "3.13.0"
+    version: "3.13.1"
     repository: https://kubernetes-sigs.github.io/metrics-server/
     condition: metricsserver.enabled
 
@@ -60,7 +60,7 @@ dependencies:
     repository: https://prometheus-community.github.io/helm-charts
 
   - name: headlamp
-    version: "0.43.0"
+    version: "0.44.0"
     repository: https://kubernetes-sigs.github.io/headlamp/
     alias: headlamp
     condition: headlamp.enabled
@@ -71,6 +71,6 @@ dependencies:
     condition: velero.enabled
 
   - name: vector
-    version: 0.50.0
+    version: 0.57.0
     repository: https://helm.vector.dev
     condition: vector.enabled
