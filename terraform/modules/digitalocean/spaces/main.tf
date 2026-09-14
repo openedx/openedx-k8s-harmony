@@ -1,11 +1,15 @@
 terraform {
+  required_version = ">= 1.5.7"
+
   required_providers {
     random = {
-      source = "hashicorp/random"
+      source  = "hashicorp/random"
+      version = "~> 3.9"
     }
 
     digitalocean = {
-      source = "digitalocean/digitalocean"
+      source  = "digitalocean/digitalocean"
+      version = "~> 2.100"
     }
   }
 }
@@ -51,7 +55,7 @@ resource "digitalocean_spaces_bucket_cors_configuration" "spaces_bucket_policy" 
 }
 
 resource "digitalocean_spaces_bucket_policy" "public_root_object_policy" {
-  count  = var.is_public ? 1 : 0
+  count = var.is_public ? 1 : 0
 
   bucket = digitalocean_spaces_bucket.spaces_bucket.name
   region = var.region

@@ -24,31 +24,31 @@ variable "environment" {
 }
 
 variable "bucket_prefix" {
-  type = string
+  type        = string
   description = "The prefix for the DigitalOcean spaces bucket for easier identification."
 }
 
 variable "allowed_cors_origins" {
-  type    = list(string)
-  default = ["*"]
+  type        = list(string)
+  default     = ["*"]
   description = "Lists the CORS origins to allow CORS requests from."
 }
 
 variable "is_public" {
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
   description = "Determines whether the DigitalOcean spaces bucket's root object is publicly available or not."
 }
 
 variable "is_force_destroy_enabled" {
-  type    = bool
-  default = true
+  type        = bool
+  default     = true
   description = "Determines if the DigitalOcean spaces bucket is force-destroyed or not upon deletion."
 }
 
 variable "is_versioning_enabled" {
-  type    = bool
-  default = true
+  type        = bool
+  default     = true
   description = "Determines if versioning is allowed on the DigitalOcean spaces bucket or not."
 }
 

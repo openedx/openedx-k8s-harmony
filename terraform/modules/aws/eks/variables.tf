@@ -48,10 +48,15 @@ variable "vpc_id" {
   description = "ID of the VPC to use for the Kubernetes cluster."
 }
 
-variable "private_subnets" {
+variable "subnet_ids" {
   type        = list(string)
-  default     = ["10.10.0.0/21", "10.10.8.0/21"]
-  description = "List of private subnets"
+  description = "Private subnet IDs for the cluster and node groups."
+}
+
+variable "control_plane_subnet_ids" {
+  type        = list(string)
+  default     = null
+  description = "Subnet IDs for the EKS control plane. Defaults to subnet_ids. Set this when an existing cluster cannot add availability zones."
 }
 
 variable "worker_node_instance_types" {
@@ -85,7 +90,8 @@ variable "min_worker_node_count" {
 
 variable "worker_node_ssh_key_name" {
   type        = string
-  description = "Name of the SSH Key Pair used for the worker nodes"
+  description = "Name of an existing EC2 key pair used to SSH to the worker nodes"
+  default     = null
 }
 
 variable "worker_node_extra_ssh_cidrs" {
@@ -124,7 +130,7 @@ variable "enable_cluster_autoscaler" {
 }
 
 variable "ubuntu_version" {
-  description = "Ubuntu version to use (e.g. focal-20.04) when no ami_id is provided"
+  description = "Ubuntu version to use when no ami_id is provided (e.g. jammy-22.04 for EKS 1.29-1.32, noble-24.04 for 1.31-1.35, resolute-26.04 for 1.35+)"
   type        = string
   default     = "jammy-22.04"
   validation { # Validates wheter the value is in format str-num.num
