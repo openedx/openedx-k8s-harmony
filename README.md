@@ -63,9 +63,7 @@ operators:
    following are included but can be disabled/replaced if you prefer an
    alternative:
    * Ingress controller:
-     [ingress-nginx](https://kubernetes.github.io/ingress-nginx/) and
-     [Traefik](https://traefik.io/traefik/) (Traefik is replacing ingress-nginx
-     in the upcoming release)
+     [Traefik](https://traefik.io/traefik/)
    * Automatic HTTPS cert provisioning: [cert-manager](https://cert-manager.io/)
    * Autoscaling: `metrics-server` and `vertical-pod-autoscaler`
    * Search index: ElasticSearch or OpenSearch
@@ -98,8 +96,7 @@ reach out to us or get involved with this project if you have this requirement.
 
 ### What are the gotchas related to cert-manager?
 
-This helm chart uses [Traefik](https://traefik.io/traefik/) or
-[ingress-nginx](https://kubernetes.github.io/ingress-nginx/) as a load balancer
+This helm chart uses [Traefik](https://traefik.io/traefik/) as a load balancer
 alongside [cert-manager](https://cert-manager.io/) to provide automatic SSL
 certificates. Because of how Helm works, the cert-manager sub-chart will be
 installed into the same namespace as the parent harmony chart. But if you
@@ -334,8 +331,7 @@ HTTPS and is more complicated due to the need to use tunnelling.*
 4. Run `minikube tunnel` (you may need to enter a password), and then you should
    be able to access the cluster (see "External IP" below). If this approach is
    not working, an alternative is to run\
-   `minikube service harmony-traefik -n harmony` (or
-   `harmony-ingress-nginx-controller` if using ingress-nginx)\
+   `minikube service harmony-traefik -n harmony`\
    and then go to the URL it says, e.g. `http://127.0.0.1:52806` plus
    `/cluster-echo-test` (e.g. `http://127.0.0.1:52806/cluster-echo-test`)
 5. In this case, skip step 2 ("Get the external IP") and use `127.0.0.1` as the
@@ -344,14 +340,13 @@ HTTPS and is more complicated due to the need to use tunnelling.*
 
 ### Step 2: Get the external IP
 
-The [Traefik Ingress controller](https://traefik.io/traefik/) (and
-[ingress NGINX Controller](https://kubernetes.github.io/ingress-nginx/)) is used
-to automatically set up an HTTPS reverse proxy for each Open edX instance as it
+The [Traefik Ingress controller](https://traefik.io/traefik/) is used to
+automatically set up an HTTPS reverse proxy for each Open edX instance as it
 gets deployed onto the cluster. There is just one load balancer with a single
 external IP for all the instances on the cluster. To get its IP, use:
 
 ```shell
-kubectl get svc -n harmony harmony-traefik # or harmony-ingress-nginx-controller
+kubectl get svc -n harmony harmony-traefik
 ```
 
 To test that your load balancer is working, go to

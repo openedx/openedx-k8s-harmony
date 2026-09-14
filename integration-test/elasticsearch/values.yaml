@@ -2,19 +2,16 @@
 cert-manager:
    enabled: false
 
-ingress-nginx:
-  # Use ingress-nginx as a default controller.
-  enabled: true
-  controller:
-    # All these needed for local development
-    service:
+traefik:
+  # All these needed for local development
+  service:
+    spec:
       type: NodePort
-    hostPort:
-      enabled: true
-    publishService:
-      enabled: false
-    extraArgs:
-      publish-status-address: localhost
+  ports:
+    web:
+      hostPort: 80
+    websecure:
+      hostPort: 443
 
 clusterDomain: harmony.test
 

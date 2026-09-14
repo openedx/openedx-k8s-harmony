@@ -21,7 +21,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-  "tutor>=17.0.0,<22.0.0",
+  "tutor>=17.0.0,<23.0.0",
 ]
 
 [project.entry-points."tutor.plugin.v1"]
@@ -41,7 +41,7 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
 strict-naming = false
-include = [ 
+include = [
     "tutor_k8s_harmony_plugin",
 ]
 exclude = ["tests*"]

@@ -19,7 +19,6 @@ metadata:
   labels:
     app.kubernetes.io/component: ingress
   annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: 100m
     cert-manager.io/cluster-issuer: harmony-letsencrypt-global
 spec:
   ingressClassName: {{ K8S_HARMONY_INGRESS_CLASS_NAME }}
