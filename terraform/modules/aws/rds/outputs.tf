@@ -34,3 +34,8 @@ output "cluster_connection_endpoint" {
   value       = aws_db_instance.rds_instance.endpoint
   description = "The endpoint URL on which the database cluster is accessible"
 }
+
+output "read_replica_host" {
+  value       = one(aws_db_instance.rds_read_replica[*].address)
+  description = "The hostname of the public read replica, or null when the replica is not enabled."
+}

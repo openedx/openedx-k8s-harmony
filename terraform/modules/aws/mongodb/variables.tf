@@ -129,6 +129,11 @@ variable "vpc_id" {
   description = "ID of the VPC to use for the MongoDB cluster"
 }
 
+variable "private_route_table_id" {
+  type        = string
+  description = "ID of the private route table to which the MongoDB Atlas peering route will be added"
+}
+
 variable "database_users" {
   type = map(object({
     username       = string

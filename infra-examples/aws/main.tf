@@ -74,9 +74,10 @@ module "mongodb_database" {
   source     = "../../terraform/modules/aws/mongodb"
   depends_on = [module.main_vpc]
 
-  region      = var.region
-  environment = var.environment
-  vpc_id      = module.main_vpc.vpc_id
+  region                 = var.region
+  environment            = var.environment
+  vpc_id                 = module.main_vpc.vpc_id
+  private_route_table_id = module.main_vpc.private_route_table_ids[0]
 
   aws_account_id          = data.aws_caller_identity.current.account_id
   mongodbatlas_project_id = var.mongodbatlas_project_id
