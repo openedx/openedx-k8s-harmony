@@ -48,7 +48,7 @@
 | <a name="input_registry_credentials"></a> [registry\_credentials](#input\_registry\_credentials) | Image registry credentials to be added to the node | `string` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Private subnet IDs for the cluster and node groups. | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources | `map(string)` | `{}` | no |
-| <a name="input_ubuntu_version"></a> [ubuntu\_version](#input\_ubuntu\_version) | Ubuntu version to use when no ami\_id is provided (e.g. jammy-22.04 for EKS 1.29-1.32, noble-24.04 for 1.31-1.35, resolute-26.04 for 1.35+) | `string` | `"jammy-22.04"` | no |
+| <a name="input_ubuntu_version"></a> [ubuntu\_version](#input\_ubuntu\_version) | Ubuntu version to use when no ami\_id is provided (e.g. jammy-22.04 for EKS 1.29-1.32, noble-24.04 for 1.31-1.35, resolute-26.04 for 1.35+) | `string` | `"resolute-26.04"` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC to use for the Kubernetes cluster. | `string` | n/a | yes |
 | <a name="input_worker_node_capacity_type"></a> [worker\_node\_capacity\_type](#input\_worker\_node\_capacity\_type) | Type of capacity associated with the EKS Node Group. Valid values: `ON_DEMAND`, `SPOT` | `string` | `"ON_DEMAND"` | no |
 | <a name="input_worker_node_count"></a> [worker\_node\_count](#input\_worker\_node\_count) | Desired autoscaling node count | `number` | `2` | no |

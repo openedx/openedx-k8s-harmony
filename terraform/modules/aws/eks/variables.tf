@@ -132,7 +132,7 @@ variable "enable_cluster_autoscaler" {
 variable "ubuntu_version" {
   description = "Ubuntu version to use when no ami_id is provided (e.g. jammy-22.04 for EKS 1.29-1.32, noble-24.04 for 1.31-1.35, resolute-26.04 for 1.35+)"
   type        = string
-  default     = "jammy-22.04"
+  default     = "resolute-26.04"
   validation { # Validates wheter the value is in format str-num.num
     condition     = can(regex("^([a-z]+)-([0-9]+\\.[0-9]+)$", var.ubuntu_version))
     error_message = "The value must be in format str-num.num (e.g. focal-20.04)."
