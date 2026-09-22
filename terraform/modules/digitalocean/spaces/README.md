@@ -1,13 +1,17 @@
 ## Requirements
 
-No requirements.
+| Name | Version |
+| ---- | ------- |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
+| <a name="requirement_digitalocean"></a> [digitalocean](#requirement\_digitalocean) | ~> 2.100 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.9 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_digitalocean"></a> [digitalocean](#provider\_digitalocean) | n/a |
-| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| ---- | ------- |
+| <a name="provider_digitalocean"></a> [digitalocean](#provider\_digitalocean) | ~> 2.100 |
+| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.9 |
 
 ## Modules
 
@@ -16,7 +20,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [digitalocean_spaces_bucket.spaces_bucket](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/spaces_bucket) | resource |
 | [digitalocean_spaces_bucket_cors_configuration.spaces_bucket_policy](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/spaces_bucket_cors_configuration) | resource |
 | [digitalocean_spaces_bucket_policy.public_root_object_policy](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/spaces_bucket_policy) | resource |
@@ -25,7 +29,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_allowed_cors_origins"></a> [allowed\_cors\_origins](#input\_allowed\_cors\_origins) | Lists the CORS origins to allow CORS requests from. | `list(string)` | <pre>[<br/>  "*"<br/>]</pre> | no |
 | <a name="input_bucket_prefix"></a> [bucket\_prefix](#input\_bucket\_prefix) | The prefix for the DigitalOcean spaces bucket for easier identification. | `string` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | The DigitalOcean project environment. (for example: production, staging, development, etc.) | `string` | n/a | yes |
@@ -37,7 +41,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_bucket_id"></a> [bucket\_id](#output\_bucket\_id) | The ID of the bucket that is generated during creation. |
 | <a name="output_bucket_name"></a> [bucket\_name](#output\_bucket\_name) | The name of the bucket, including the generated suffix. |
 | <a name="output_bucket_urn"></a> [bucket\_urn](#output\_bucket\_urn) | The unique resource ID of the bucket. |

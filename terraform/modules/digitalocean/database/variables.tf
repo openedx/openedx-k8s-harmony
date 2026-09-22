@@ -1,5 +1,5 @@
 variable "access_token" {
-  type = string
+  type        = string
   description = "DigitalOcean access token in order to patch the database settings."
 }
 
@@ -52,10 +52,10 @@ variable "database_cluster_instance_size" {
 }
 
 variable "database_maintenance_window_day" {
-  type = string
-  default = "sunday"
+  type        = string
+  default     = "sunday"
   description = "The day when maintenance can be executed on the database cluster."
-  
+
   validation {
     condition = contains([
       "monday",
@@ -71,7 +71,7 @@ variable "database_maintenance_window_day" {
 }
 
 variable "database_maintenance_window_time" {
-  type = string
+  type        = string
   description = "The hour in UTC at which maintenance updates will be applied in 24 hour format."
 }
 
@@ -85,12 +85,12 @@ variable "database_users" {
 }
 
 variable "kubernetes_cluster_name" {
-  type = string
+  type        = string
   description = "The name of the Kubernetes cluster."
 }
 
 variable "vpc_id" {
-  type = string
+  type        = string
   description = "ID of the VPC to use for the Kubernetes cluster."
 }
 

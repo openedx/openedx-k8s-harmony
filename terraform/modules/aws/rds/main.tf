@@ -1,27 +1,20 @@
 terraform {
+  required_version = ">= 1.5.7"
+
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
+      version = "~> 6.62"
     }
     random = {
-      source = "hashicorp/random"
+      source  = "hashicorp/random"
+      version = "~> 3.9"
     }
   }
 }
 
 data "aws_vpc" "main" {
   id = var.vpc_id
-}
-
-data "aws_subnets" "main" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.main.id]
-  }
-
-  tags = {
-    Tier = "Private"
-  }
 }
 
 resource "random_string" "rds_root_username" {
@@ -49,7 +42,7 @@ resource "aws_kms_key" "rds_encryption" {
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
   name       = "${var.database_cluster_name} rds subnet group"
-  subnet_ids = data.aws_subnets.main.ids
+  subnet_ids = var.subnet_ids
 
   tags = merge(var.tags, {
     name = "${var.database_cluster_name} rds subnet group"

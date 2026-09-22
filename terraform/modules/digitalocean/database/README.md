@@ -1,13 +1,17 @@
 ## Requirements
 
-No requirements.
+| Name | Version |
+| ---- | ------- |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
+| <a name="requirement_digitalocean"></a> [digitalocean](#requirement\_digitalocean) | ~> 2.100 |
+| <a name="requirement_null"></a> [null](#requirement\_null) | ~> 3.3 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_digitalocean"></a> [digitalocean](#provider\_digitalocean) | n/a |
-| <a name="provider_null"></a> [null](#provider\_null) | n/a |
+| ---- | ------- |
+| <a name="provider_digitalocean"></a> [digitalocean](#provider\_digitalocean) | ~> 2.100 |
+| <a name="provider_null"></a> [null](#provider\_null) | ~> 3.3 |
 
 ## Modules
 
@@ -16,18 +20,17 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [digitalocean_database_cluster.database_cluster](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/database_cluster) | resource |
 | [digitalocean_database_db.databases](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/database_db) | resource |
 | [digitalocean_database_firewall.database_cluster_firewall](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/database_firewall) | resource |
 | [digitalocean_database_user.users](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/database_user) | resource |
 | [null_resource.no_primary_key_patch_database_cluster](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [digitalocean_vpc.vpc](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/data-sources/vpc) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_token"></a> [access\_token](#input\_access\_token) | DigitalOcean access token in order to patch the database settings. | `string` | n/a | yes |
 | <a name="input_database_cluster_instance_size"></a> [database\_cluster\_instance\_size](#input\_database\_cluster\_instance\_size) | Database instance size. | `string` | `"s-1vcpu-1gb"` | no |
 | <a name="input_database_cluster_instances"></a> [database\_cluster\_instances](#input\_database\_cluster\_instances) | Number of nodes in the database cluster. | `number` | `1` | no |
@@ -45,7 +48,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cluster_connection_string"></a> [cluster\_connection\_string](#output\_cluster\_connection\_string) | The URI to use as a connection string for the database cluster. |
 | <a name="output_cluster_host"></a> [cluster\_host](#output\_cluster\_host) | The hostname of the database cluster. |
 | <a name="output_cluster_id"></a> [cluster\_id](#output\_cluster\_id) | The unique resource ID of the database cluster. |

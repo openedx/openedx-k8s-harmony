@@ -24,12 +24,12 @@ variable "environment" {
 }
 
 variable "cluster_name" {
-  type = string
+  type        = string
   description = "The name of the Kubernetes cluster."
 }
 
 variable "kubernetes_version" {
-  type = string
+  type        = string
   description = "The supported Kubernetes version to install for the cluster."
 }
 
@@ -64,24 +64,24 @@ variable "max_worker_node_count" {
 }
 
 variable "vpc_id" {
-  type = string
+  type        = string
   description = "ID of the VPC to use for the Kubernetes cluster."
 }
 
 variable "is_auto_upgrade_enabled" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "Whether auto upgrade is enabled for the cluster or not."
 }
 
 variable "is_surge_upgrade_enabled" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "Whether surge upgrade is enabled for the cluster or not."
 }
 
 variable "is_auto_scaling_enabled" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "Whether auto scaling is enabled for the cluster or not."
 }

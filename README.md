@@ -490,13 +490,22 @@ If you use DigitalOcean, you can use OpenTofu to quickly spin up a cluster, try
 this out, then shut it down again.
 
 Here's how. First, put the following into
-`infra-examples/digitalocean/secrets.auto.tfvars` including a valid DigitalOcean
-access token:
+`infra-examples/digitalocean/secrets.auto.tfvars` (not in VCS) including a valid
+DigitalOcean access token and Spaces keys. Do not commit these values. If a
+Spaces key pair was previously committed, revoke and rotate it in the
+DigitalOcean control panel before creating a replacement.
 
 ```conf
-cluster_name = "harmony-test"
-do_token = "digital-ocean-token"
+kubernetes_cluster_name = "harmony-test"
+do_access_token         = "digital-ocean-token"
+spaces_access_id        = "spaces-access-id"
+spaces_secret_key       = "spaces-secret-key"
+environment             = "development"
+region                  = "nyc3"
 ```
+
+You can also supply the same values with `TF_VAR_do_access_token`,
+`TF_VAR_spaces_access_id`, and `TF_VAR_spaces_secret_key`.
 
 Then run:
 

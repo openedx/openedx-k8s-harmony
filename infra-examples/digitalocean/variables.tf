@@ -1,12 +1,24 @@
 variable "do_access_token" {
-  type = string
-  description = "DitialOcean access token."
-  sensitive = true
+  type        = string
+  description = "DigitalOcean access token."
+  sensitive   = true
+}
+
+variable "spaces_access_id" {
+  type        = string
+  description = "DigitalOcean Spaces access key ID. Provide via TF_VAR_spaces_access_id or a gitignored secrets.auto.tfvars file."
+  sensitive   = true
+}
+
+variable "spaces_secret_key" {
+  type        = string
+  description = "DigitalOcean Spaces secret key. Provide via TF_VAR_spaces_secret_key or a gitignored secrets.auto.tfvars file."
+  sensitive   = true
 }
 
 variable "kubernetes_cluster_name" {
-    type = string
-    description = "Name of the DigitalOcean Kubernetes cluster to create."
+  type        = string
+  description = "Name of the DigitalOcean Kubernetes cluster to create."
 }
 
 variable "region" {

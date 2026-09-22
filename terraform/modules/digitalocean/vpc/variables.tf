@@ -24,8 +24,8 @@ variable "environment" {
 }
 
 variable "vpc_name" {
-  type = string
-  default = ""
+  type        = string
+  default     = ""
   description = "Optional custom name for the VPC. If not provided, a name will be generated."
 }
 
