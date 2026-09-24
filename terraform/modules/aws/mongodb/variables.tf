@@ -131,8 +131,8 @@ variable "vpc_id" {
 
 variable "database_users" {
   type = map(object({
-    username       = string
-    database       = string
+    username = string
+    database = string
   }))
   default     = {}
   description = "Map of additional user and database names."
