@@ -53,7 +53,14 @@ variable "upcloud_token" {
   type        = string
   default     = null
   sensitive   = true
-  description = "UpCloud API Token. Null uses the UPCLOUD_TOKEN environment variable."
+  description = "UpCloud API Token. Null uses the UPCLOUD_TOKEN environment variable. Cluster Autoscaler stores this value unless upcloud_autoscaler_token is set."
+}
+
+variable "upcloud_autoscaler_token" {
+  type        = string
+  default     = null
+  sensitive   = true
+  description = "UpCloud API token used only by Cluster Autoscaler. Null uses upcloud_token. Prefer a token that can manage only this cluster."
 }
 
 variable "mongodbatlas_project_id" {

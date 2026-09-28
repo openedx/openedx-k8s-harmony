@@ -24,6 +24,11 @@ resource "upcloud_kubernetes_node_group" "workers" {
   plan       = var.worker_node_plan
   node_count = var.worker_node_count
   labels     = var.labels
+
+  # Cluster Autoscaler owns the live size. Terraform only sets the initial count.
+  lifecycle {
+    ignore_changes = [node_count]
+  }
 }
 
 resource "upcloud_kubernetes_node_group" "additional" {
@@ -34,6 +39,21 @@ resource "upcloud_kubernetes_node_group" "additional" {
   plan       = each.value.plan
   node_count = each.value.node_count
   labels     = merge(var.labels, each.value.labels)
+
+  # Cluster Autoscaler owns the live size. Terraform only sets the initial count.
+  lifecycle {
+    ignore_changes = [node_count]
+
+    precondition {
+      condition = (
+        each.value.min_node_count >= 1 &&
+        each.value.max_node_count >= each.value.min_node_count &&
+        each.value.node_count >= each.value.min_node_count &&
+        each.value.node_count <= each.value.max_node_count
+      )
+      error_message = "Node group ${each.key} must keep at least 1 node, and its initial count must sit between min_node_count and max_node_count."
+    }
+  }
 }
 
 data "upcloud_kubernetes_cluster" "cluster" {

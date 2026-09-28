@@ -8,7 +8,9 @@ Object storage buckets created here do not get CORS, versioning, or a public obj
 
 ## Credentials
 
-Set `UPCLOUD_TOKEN`, or set the sensitive variable `upcloud_token` in `secrets.auto.tfvars` (that filename is gitignored).
+Set `UPCLOUD_TOKEN`, or set the sensitive variable `upcloud_token` in `secrets.auto.tfvars` (that filename is gitignored). Cluster Autoscaler copies that token into a `kube-system` Secret, so the token has to be a Terraform value (`upcloud_token`, `TF_VAR_upcloud_token`, or `upcloud_autoscaler_token`). The provider's `UPCLOUD_TOKEN` environment variable is not copied into the cluster. Prefer `upcloud_autoscaler_token` from an account that can manage only this cluster.
+
+The workers group starts at 3 nodes and Cluster Autoscaler may resize it from 1 to 5. Set `worker_node_min_count` and `worker_node_max_count` to change that range. Do not set a minimum of 0. The autoscaler image is UpCloud's fork, `ghcr.io/upcloudltd/autoscaler:v1.29.5`.
 
 Set `MONGODB_ATLAS_PUBLIC_KEY` and `MONGODB_ATLAS_PRIVATE_KEY`, or set `mongodbatlas_public_key` and `mongodbatlas_private_key` in the same file.
 
@@ -27,10 +29,10 @@ kubernetes_version      = "1.32" # replace with a version from: upctl kubernetes
 bucket_prefix           = "my-institute"
 mongodbatlas_project_id = "atlas-project-id"
 atlas_region_name       = "EU_CENTRAL_1"
+upcloud_token           = "your-token"
 ```
 
 ```sh
-export UPCLOUD_TOKEN="your-token"
 export MONGODB_ATLAS_PUBLIC_KEY="your-public-key"
 export MONGODB_ATLAS_PRIVATE_KEY="your-private-key"
 

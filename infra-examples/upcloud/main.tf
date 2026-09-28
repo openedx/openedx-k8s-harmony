@@ -55,6 +55,14 @@ module "mongodb_database" {
   ip_access_cidrs         = ["${module.network.gateway_public_ip}/32"]
 }
 
+module "cluster_autoscaler" {
+  source = "../../terraform/modules/upcloud/uks/autoscaler"
+
+  cluster_id    = module.kubernetes_cluster.cluster_id
+  upcloud_token = coalesce(var.upcloud_autoscaler_token, var.upcloud_token)
+  node_groups   = module.kubernetes_cluster.node_groups
+}
+
 resource "local_file" "kubeconfig" {
   content         = module.kubernetes_cluster.kubeconfig
   filename        = "${path.module}/kubeconfig"
