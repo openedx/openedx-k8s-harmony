@@ -4,14 +4,16 @@ This is an example implementation to create a production grade infrastructure fo
 
 ## Important notes
 
-MongoDB Atlas authentication uses a programmatic API key (`mongodbatlas_public_key` /
-`mongodbatlas_private_key` in `secrets.auto.tfvars`, or `MONGODB_ATLAS_PUBLIC_API_KEY` /
+MongoDB Atlas authentication uses a programmatic API key (`atlas_public_key` /
+`atlas_private_key` in `secrets.auto.tfvars`, or `MONGODB_ATLAS_PUBLIC_API_KEY` /
 `MONGODB_ATLAS_PRIVATE_API_KEY`). Do not pass Service Account `client_id` / `client_secret`
 values into those variables; Atlas then attempts OAuth2 and fails with `invalid_client`.
 
 Be aware that the current implementation does not support the creation of MongoDB users and S3 buckets through Tutor plugins.
 
 MongoDB Atlas does not provide an equivalent to `rds_root_username`, making it impractical to automate user creation for each instance. Consequently, while Tutor can handle MySQL database and user creation, Terraform is required (as of now) for setting up MongoDB databases and users. This approach is not ideal as it necessitates running Terraform code when adding or removing instances, which contradicts the goal of separating cluster provisioning from instance provisioning. Until a more streamlined solution, such as a plugin or automation tool, is developed, users must manually manage these resources. For now, please ensure you manually configure MongoDB users and S3 buckets to maintain a fully functional environment (either using Terraform or other methods).
+
+MongoDB is a MongoDB Atlas cluster in the same region as the VPC, peered through `terraform/modules/aws/atlas-network`. The cluster itself comes from `terraform/modules/mongodb`, the same module the UpCloud example uses. Set `MONGODB_ATLAS_PUBLIC_API_KEY` and `MONGODB_ATLAS_PRIVATE_API_KEY`, or set `atlas_public_key` and `atlas_private_key`.
 
 ## Requirements
 
@@ -26,16 +28,19 @@ MongoDB Atlas does not provide an equivalent to `rds_root_username`, making it i
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.63.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.62 |
+| <a name="provider_mongodbatlas"></a> [mongodbatlas](#provider\_mongodbatlas) | ~> 2.17 |
+| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.9 |
 
 ## Modules
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
+| <a name="module_atlas_network"></a> [atlas\_network](#module\_atlas\_network) | ../../terraform/modules/aws/atlas-network | n/a |
 | <a name="module_bucket"></a> [bucket](#module\_bucket) | ../../terraform/modules/aws/s3 | n/a |
 | <a name="module_kubernetes_cluster"></a> [kubernetes\_cluster](#module\_kubernetes\_cluster) | ../../terraform/modules/aws/eks | n/a |
 | <a name="module_main_vpc"></a> [main\_vpc](#module\_main\_vpc) | ../../terraform/modules/aws/vpc | n/a |
-| <a name="module_mongodb_database"></a> [mongodb\_database](#module\_mongodb\_database) | ../../terraform/modules/aws/mongodb | n/a |
+| <a name="module_mongodb_database"></a> [mongodb\_database](#module\_mongodb\_database) | ../../terraform/modules/mongodb | n/a |
 | <a name="module_mysql_database"></a> [mysql\_database](#module\_mysql\_database) | ../../terraform/modules/aws/rds | n/a |
 
 ## Resources
@@ -49,13 +54,13 @@ MongoDB Atlas does not provide an equivalent to `rds_root_username`, making it i
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_atlas_cidr_block"></a> [atlas\_cidr\_block](#input\_atlas\_cidr\_block) | CIDR block Atlas uses for the peered network container. | `string` | n/a | yes |
+| <a name="input_atlas_private_key"></a> [atlas\_private\_key](#input\_atlas\_private\_key) | MongoDB Atlas private API key. Null uses the MONGODB\_ATLAS\_PRIVATE\_API\_KEY environment variable. | `string` | `null` | no |
+| <a name="input_atlas_project_id"></a> [atlas\_project\_id](#input\_atlas\_project\_id) | The ID of the MongoDB Atlas project. | `string` | n/a | yes |
+| <a name="input_atlas_public_key"></a> [atlas\_public\_key](#input\_atlas\_public\_key) | MongoDB Atlas public API key. Null uses the MONGODB\_ATLAS\_PUBLIC\_API\_KEY environment variable. | `string` | `null` | no |
 | <a name="input_docker_registry_credentials"></a> [docker\_registry\_credentials](#input\_docker\_registry\_credentials) | Image registry credentials to be added to the K8s worker nodes | `string` | `""` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The AWS project environment. (for example: production, staging, development, etc.) | `string` | n/a | yes |
 | <a name="input_kubernetes_cluster_name"></a> [kubernetes\_cluster\_name](#input\_kubernetes\_cluster\_name) | Name of the Kubernetes cluster to create. | `string` | n/a | yes |
-| <a name="input_mongodbatlas_cidr_block"></a> [mongodbatlas\_cidr\_block](#input\_mongodbatlas\_cidr\_block) | The CIDR block in MongoDB Atlas | `string` | n/a | yes |
-| <a name="input_mongodbatlas_private_key"></a> [mongodbatlas\_private\_key](#input\_mongodbatlas\_private\_key) | MongoDB Atlas programmatic API private key | `string` | n/a | yes |
-| <a name="input_mongodbatlas_project_id"></a> [mongodbatlas\_project\_id](#input\_mongodbatlas\_project\_id) | The ID of the MongoDB Atlas project | `string` | n/a | yes |
-| <a name="input_mongodbatlas_public_key"></a> [mongodbatlas\_public\_key](#input\_mongodbatlas\_public\_key) | MongoDB Atlas programmatic API public key | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | The AWS Region in which to deploy the resources | `string` | n/a | yes |
 | <a name="input_worker_node_ssh_key_name"></a> [worker\_node\_ssh\_key\_name](#input\_worker\_node\_ssh\_key\_name) | Name of the SSH Key Pair used for the worker nodes | `string` | `null` | no |
 

@@ -15,7 +15,7 @@ terraform {
 }
 
 resource "mongodbatlas_advanced_cluster" "cluster" {
-  project_id                  = var.mongodbatlas_project_id
+  project_id                  = var.atlas_project_id
   name                        = "${var.database_cluster_name}-${var.environment}"
   cluster_type                = var.database_cluster_type
   mongo_db_major_version      = var.database_cluster_version
@@ -86,7 +86,7 @@ resource "mongodbatlas_cloud_backup_schedule" "backup_schedule" {
 resource "mongodbatlas_project_ip_access_list" "access" {
   for_each = { for idx, cidr in var.ip_access_cidrs : tostring(idx) => cidr }
 
-  project_id = var.mongodbatlas_project_id
+  project_id = var.atlas_project_id
   cidr_block = each.value
 }
 
@@ -107,7 +107,7 @@ resource "mongodbatlas_database_user" "users" {
     user.username => user
   }
 
-  project_id         = var.mongodbatlas_project_id
+  project_id         = var.atlas_project_id
   auth_database_name = "admin"
 
   username = each.key

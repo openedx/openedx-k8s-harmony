@@ -8,9 +8,14 @@ output "database_cluster_cluster_id" {
   description = "The cluster ID of the database cluster."
 }
 
-output "cluster_address" {
+output "atlas_cluster_name" {
+  value       = mongodbatlas_advanced_cluster.cluster.name
+  description = "Atlas cluster name, including the environment suffix."
+}
+
+output "atlas_srv_address" {
   value       = mongodbatlas_advanced_cluster.cluster.connection_strings.standard_srv
-  description = "The address of the database cluster."
+  description = "MongoDB Atlas SRV address."
 }
 
 output "cluster_connection_strings" {

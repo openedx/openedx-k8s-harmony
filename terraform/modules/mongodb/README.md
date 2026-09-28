@@ -31,6 +31,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_atlas_project_id"></a> [atlas\_project\_id](#input\_atlas\_project\_id) | The ID of the MongoDB Atlas project. | `string` | n/a | yes |
 | <a name="input_atlas_provider_name"></a> [atlas\_provider\_name](#input\_atlas\_provider\_name) | Cloud that hosts the Atlas cluster: AWS, GCP, or AZURE. This is not the cloud that runs Kubernetes. | `string` | `"AWS"` | no |
 | <a name="input_atlas_region_name"></a> [atlas\_region\_name](#input\_atlas\_region\_name) | Atlas region name, for example EU\_CENTRAL\_1. AWS callers pass the AWS region with hyphens replaced by underscores and uppercased. | `string` | n/a | yes |
 | <a name="input_database_analytics_nodes"></a> [database\_analytics\_nodes](#input\_database\_analytics\_nodes) | The number of analytics nodes in the MongoDB cluster. | `number` | `null` | no |
@@ -38,7 +39,7 @@ No modules.
 | <a name="input_database_autoscaling_min_instances"></a> [database\_autoscaling\_min\_instances](#input\_database\_autoscaling\_min\_instances) | The minimum number of instances to have in the database instance autoscaling group. | `number` | `1` | no |
 | <a name="input_database_backup_retention_period"></a> [database\_backup\_retention\_period](#input\_database\_backup\_retention\_period) | The retention period for the database backups in days. | `number` | `35` | no |
 | <a name="input_database_cluster_instance_size"></a> [database\_cluster\_instance\_size](#input\_database\_cluster\_instance\_size) | Database instance size. | `string` | `"M10"` | no |
-| <a name="input_database_cluster_name"></a> [database\_cluster\_name](#input\_database\_cluster\_name) | The name of the MongoDB cluster. | `string` | n/a | yes |
+| <a name="input_database_cluster_name"></a> [database\_cluster\_name](#input\_database\_cluster\_name) | Prefix of the Atlas cluster name. The module appends the environment, so the Atlas name is {database\_cluster\_name}-{environment}. | `string` | n/a | yes |
 | <a name="input_database_cluster_type"></a> [database\_cluster\_type](#input\_database\_cluster\_type) | Type of the MongoDB cluster. | `string` | `"REPLICASET"` | no |
 | <a name="input_database_cluster_version"></a> [database\_cluster\_version](#input\_database\_cluster\_version) | The version of the MongoDB cluster. | `string` | `"7.0"` | no |
 | <a name="input_database_electable_nodes"></a> [database\_electable\_nodes](#input\_database\_electable\_nodes) | The number of electable nodes in the MongoDB cluster. | `number` | `3` | no |
@@ -53,13 +54,13 @@ No modules.
 | <a name="input_is_database_autoscaling_compute_enabled"></a> [is\_database\_autoscaling\_compute\_enabled](#input\_is\_database\_autoscaling\_compute\_enabled) | Whether to enable autoscaling of database instances. | `bool` | `false` | no |
 | <a name="input_is_database_autoscaling_disk_gb_enabled"></a> [is\_database\_autoscaling\_disk\_gb\_enabled](#input\_is\_database\_autoscaling\_disk\_gb\_enabled) | Whether to enable autoscaling disk size for the database instance. | `bool` | `true` | no |
 | <a name="input_is_database_storage_encrypted"></a> [is\_database\_storage\_encrypted](#input\_is\_database\_storage\_encrypted) | Use a customer-managed key from atlas\_provider\_name for encryption at rest. The Atlas project must already have that key configured. Atlas still encrypts disks with its own keys when this is false. | `bool` | `false` | no |
-| <a name="input_mongodbatlas_project_id"></a> [mongodbatlas\_project\_id](#input\_mongodbatlas\_project\_id) | The ID of the MongoDB Atlas project. | `string` | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 | ---- | ----------- |
-| <a name="output_cluster_address"></a> [cluster\_address](#output\_cluster\_address) | The address of the database cluster. |
+| <a name="output_atlas_cluster_name"></a> [atlas\_cluster\_name](#output\_atlas\_cluster\_name) | Atlas cluster name, including the environment suffix. |
+| <a name="output_atlas_srv_address"></a> [atlas\_srv\_address](#output\_atlas\_srv\_address) | MongoDB Atlas SRV address. |
 | <a name="output_cluster_connection_strings"></a> [cluster\_connection\_strings](#output\_cluster\_connection\_strings) | Connection strings for the database cluster. |
 | <a name="output_database_cluster_cluster_id"></a> [database\_cluster\_cluster\_id](#output\_database\_cluster\_cluster\_id) | The cluster ID of the database cluster. |
 | <a name="output_database_cluster_id"></a> [database\_cluster\_id](#output\_database\_cluster\_id) | The unique resource ID of the database cluster. |
