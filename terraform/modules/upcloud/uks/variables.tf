@@ -61,23 +61,47 @@ variable "worker_node_plan" {
 variable "worker_node_count" {
   type        = number
   default     = 3
-  description = "Number of nodes in the default worker group. UKS node groups use a fixed count, not min/max autoscaling."
+  description = "Initial number of nodes in the default worker group. Cluster Autoscaler may change this later between worker_node_min_count and worker_node_max_count."
 
   validation {
-    condition     = var.worker_node_count > 0
-    error_message = "Worker node count must be at least 1."
+    condition     = var.worker_node_count >= var.worker_node_min_count && var.worker_node_count <= var.worker_node_max_count
+    error_message = "Initial worker node count must sit between worker_node_min_count and worker_node_max_count."
+  }
+}
+
+variable "worker_node_min_count" {
+  type        = number
+  default     = 1
+  description = "Minimum size Cluster Autoscaler may apply to the workers group. Must be at least 1."
+
+  validation {
+    condition     = var.worker_node_min_count >= 1
+    error_message = "Worker node minimum must be at least 1. A zero-sized group stops the UpCloud autoscaler."
+  }
+}
+
+variable "worker_node_max_count" {
+  type        = number
+  default     = 5
+  description = "Maximum size Cluster Autoscaler may apply to the workers group."
+
+  validation {
+    condition     = var.worker_node_max_count >= var.worker_node_min_count
+    error_message = "Worker node maximum must be at least worker_node_min_count."
   }
 }
 
 variable "additional_node_pools" {
   type = list(object({
-    name       = string
-    plan       = string
-    node_count = number
-    labels     = optional(map(string), {})
+    name           = string
+    plan           = string
+    node_count     = number
+    min_node_count = optional(number, 1)
+    max_node_count = optional(number, 5)
+    labels         = optional(map(string), {})
   }))
   default     = []
-  description = "Extra node groups. Each name must be unique in the cluster and must not be \"workers\"."
+  description = "Extra node groups. Each name must be unique in the cluster and must not be \"workers\". min_node_count and max_node_count are the autoscaler range."
 }
 
 variable "labels" {

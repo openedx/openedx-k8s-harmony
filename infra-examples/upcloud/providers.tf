@@ -14,6 +14,11 @@ terraform {
       source  = "mongodb/mongodbatlas"
       version = ">= 1.21.0, < 2.0.0"
     }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.34"
+    }
   }
 }
 
@@ -24,4 +29,11 @@ provider "upcloud" {
 provider "mongodbatlas" {
   public_key  = var.mongodbatlas_public_key
   private_key = var.mongodbatlas_private_key
+}
+
+provider "kubernetes" {
+  host                   = module.kubernetes_cluster.cluster_endpoint
+  client_certificate     = module.kubernetes_cluster.client_certificate
+  client_key             = module.kubernetes_cluster.client_key
+  cluster_ca_certificate = module.kubernetes_cluster.cluster_ca_certificate
 }

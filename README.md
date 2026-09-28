@@ -525,7 +525,8 @@ up everything.
 If you use UpCloud, you can use OpenTofu to spin up a cluster from
 `infra-examples/upcloud`, try this out, then shut it down again. UpCloud has no
 managed MongoDB product. The example creates a MongoDB Atlas cluster on AWS and
-allows the NAT gateway's public address to connect.
+allows the NAT gateway's public address to connect. It also installs UpCloud's
+Cluster Autoscaler. The workers group starts at 3 nodes and may scale from 1 to 5.
 
 Create `infra-examples/upcloud/secrets.auto.tfvars`. Set `kubernetes_version`
 to a minor listed by `upctl kubernetes versions`. `de-fra1` belongs to object
@@ -540,14 +541,12 @@ kubernetes_version      = "1.32" # replace with a version from: upctl kubernetes
 bucket_prefix           = "my-institute"
 mongodbatlas_project_id = "atlas-project-id"
 atlas_region_name       = "EU_CENTRAL_1"
+upcloud_token           = "your-token"
 ```
 
-Export your API credentials (or set `upcloud_username`, `upcloud_password`,
-`mongodbatlas_public_key`, and `mongodbatlas_private_key` in the same file):
+`upcloud_token` is stored for Cluster Autoscaler. Exporting `UPCLOUD_TOKEN` configures the UpCloud provider, and it does not fill that Secret. Set `upcloud_autoscaler_token` instead when the autoscaler should use a separate token.
 
 ```sh
-export UPCLOUD_USERNAME="your-username"
-export UPCLOUD_PASSWORD="your-password"
 export MONGODB_ATLAS_PUBLIC_KEY="your-public-key"
 export MONGODB_ATLAS_PRIVATE_KEY="your-private-key"
 cd infra-examples/upcloud
