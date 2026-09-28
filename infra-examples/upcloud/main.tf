@@ -3,6 +3,9 @@ locals {
     environment = var.environment
     project     = "harmony"
   }
+
+  atlas_region_name     = var.atlas_region_name
+  atlas_ip_access_cidrs = ["${module.network.gateway_public_ip}/32"]
 }
 
 module "network" {
@@ -48,11 +51,12 @@ module "mysql_database" {
 module "mongodb_database" {
   source = "../../terraform/modules/mongodb"
 
-  environment             = var.environment
-  mongodbatlas_project_id = var.mongodbatlas_project_id
-  database_cluster_name   = "${module.kubernetes_cluster.cluster_name}-mongodb"
-  atlas_region_name       = var.atlas_region_name
-  ip_access_cidrs         = ["${module.network.gateway_public_ip}/32"]
+  environment           = var.environment
+  database_cluster_name = "${var.kubernetes_cluster_name}-mongodb"
+  atlas_project_id      = var.atlas_project_id
+  atlas_region_name     = local.atlas_region_name
+  atlas_provider_name   = "AWS"
+  ip_access_cidrs       = local.atlas_ip_access_cidrs
 }
 
 module "cluster_autoscaler" {

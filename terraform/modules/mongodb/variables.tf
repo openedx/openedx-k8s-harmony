@@ -3,14 +3,14 @@ variable "environment" {
   description = "The project environment. (for example: production, staging, development, etc.)"
 }
 
-variable "mongodbatlas_project_id" {
+variable "atlas_project_id" {
   type        = string
   description = "The ID of the MongoDB Atlas project."
 }
 
 variable "database_cluster_name" {
   type        = string
-  description = "The name of the MongoDB cluster."
+  description = "Prefix of the Atlas cluster name. The module appends the environment, so the Atlas name is {database_cluster_name}-{environment}."
 }
 
 variable "atlas_provider_name" {

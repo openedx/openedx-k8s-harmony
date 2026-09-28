@@ -12,7 +12,7 @@ terraform {
 
     mongodbatlas = {
       source  = "mongodb/mongodbatlas"
-      version = ">= 1.21.0, < 2.0.0"
+      version = "~> 2.17"
     }
 
     kubernetes = {
@@ -27,8 +27,8 @@ provider "upcloud" {
 }
 
 provider "mongodbatlas" {
-  public_key  = var.mongodbatlas_public_key
-  private_key = var.mongodbatlas_private_key
+  public_key  = var.atlas_public_key
+  private_key = var.atlas_private_key
 }
 
 provider "kubernetes" {

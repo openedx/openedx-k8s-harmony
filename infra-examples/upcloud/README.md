@@ -12,7 +12,7 @@ Set `UPCLOUD_TOKEN`, or set the sensitive variable `upcloud_token` in `secrets.a
 
 The workers group starts at 3 nodes and Cluster Autoscaler may resize it from 1 to 5. Set `worker_node_min_count` and `worker_node_max_count` to change that range. Do not set a minimum of 0. The autoscaler image is UpCloud's fork, `ghcr.io/upcloudltd/autoscaler:v1.29.5`.
 
-Set `MONGODB_ATLAS_PUBLIC_KEY` and `MONGODB_ATLAS_PRIVATE_KEY`, or set `mongodbatlas_public_key` and `mongodbatlas_private_key` in the same file.
+Set `MONGODB_ATLAS_PUBLIC_API_KEY` and `MONGODB_ATLAS_PRIVATE_API_KEY`, or set `atlas_public_key` and `atlas_private_key` in the same file. Do not pass Service Account `client_id` / `client_secret` values into those variables; Atlas then attempts OAuth2 and fails with `invalid_client`.
 
 The private network zone must belong to `object_storage_region`. `de-fra1` belongs to `europe-1`.
 
@@ -27,14 +27,14 @@ environment             = "development"
 kubernetes_cluster_name = "harmony-test"
 kubernetes_version      = "1.32" # replace with a version from: upctl kubernetes versions
 bucket_prefix           = "my-institute"
-mongodbatlas_project_id = "atlas-project-id"
+atlas_project_id        = "atlas-project-id"
 atlas_region_name       = "EU_CENTRAL_1"
 upcloud_token           = "your-token"
 ```
 
 ```sh
-export MONGODB_ATLAS_PUBLIC_KEY="your-public-key"
-export MONGODB_ATLAS_PRIVATE_KEY="your-private-key"
+export MONGODB_ATLAS_PUBLIC_API_KEY="your-public-key"
+export MONGODB_ATLAS_PRIVATE_API_KEY="your-private-key"
 
 cd infra-examples/upcloud
 tofu init

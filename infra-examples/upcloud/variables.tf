@@ -63,7 +63,7 @@ variable "upcloud_autoscaler_token" {
   description = "UpCloud API token used only by Cluster Autoscaler. Null uses upcloud_token. Prefer a token that can manage only this cluster."
 }
 
-variable "mongodbatlas_project_id" {
+variable "atlas_project_id" {
   type        = string
   description = "The ID of the MongoDB Atlas project that hosts the cluster."
 }
@@ -73,16 +73,16 @@ variable "atlas_region_name" {
   description = "Atlas region for the cluster, for example EU_CENTRAL_1 when the UpCloud zone is de-fra1."
 }
 
-variable "mongodbatlas_public_key" {
+variable "atlas_public_key" {
   type        = string
   default     = null
   sensitive   = true
-  description = "MongoDB Atlas public API key. Null uses the MONGODB_ATLAS_PUBLIC_KEY environment variable."
+  description = "MongoDB Atlas public API key. Null uses the MONGODB_ATLAS_PUBLIC_API_KEY environment variable."
 }
 
-variable "mongodbatlas_private_key" {
+variable "atlas_private_key" {
   type        = string
   default     = null
   sensitive   = true
-  description = "MongoDB Atlas private API key. Null uses the MONGODB_ATLAS_PRIVATE_KEY environment variable."
+  description = "MongoDB Atlas private API key. Null uses the MONGODB_ATLAS_PRIVATE_API_KEY environment variable."
 }

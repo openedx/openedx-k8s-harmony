@@ -539,7 +539,7 @@ environment             = "development"
 kubernetes_cluster_name = "harmony-test"
 kubernetes_version      = "1.32" # replace with a version from: upctl kubernetes versions
 bucket_prefix           = "my-institute"
-mongodbatlas_project_id = "atlas-project-id"
+atlas_project_id        = "atlas-project-id"
 atlas_region_name       = "EU_CENTRAL_1"
 upcloud_token           = "your-token"
 ```
@@ -547,8 +547,8 @@ upcloud_token           = "your-token"
 `upcloud_token` is stored for Cluster Autoscaler. Exporting `UPCLOUD_TOKEN` configures the UpCloud provider, and it does not fill that Secret. Set `upcloud_autoscaler_token` instead when the autoscaler should use a separate token.
 
 ```sh
-export MONGODB_ATLAS_PUBLIC_KEY="your-public-key"
-export MONGODB_ATLAS_PRIVATE_KEY="your-private-key"
+export MONGODB_ATLAS_PUBLIC_API_KEY="your-public-key"
+export MONGODB_ATLAS_PRIVATE_API_KEY="your-private-key"
 cd infra-examples/upcloud
 tofu init
 tofu apply
