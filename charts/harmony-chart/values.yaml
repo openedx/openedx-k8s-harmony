@@ -323,8 +323,7 @@ prometheusstack:
 headlamp:
   enabled: false
 
-# Before enablin Velero, make sure to execute "velero install --crds-only" to install
-# the CRDs in the cluster.
+# The Velero subchart upgrades its CRDs (upgradeCRDs defaults to true).
 velero:
   enabled: false
 
@@ -339,6 +338,9 @@ velero:
         config:
           s3Url: "" # the endpoint can be any S3 compatible storage
           region: "" # the region of the bucket
+          # Non-AWS S3 (DigitalOcean Spaces, UpCloud, and other S3-compatible
+          # stores) must set checksumAlgorithm to "". The AWS plugin defaults
+          # to CRC32, which those stores reject. Leave it unset for Amazon S3.
 
     volumeSnapshotLocation:
       - name: "velero-volume-snapshot-harmony"
@@ -355,7 +357,7 @@ velero:
 
   initContainers:
     - name: velero-plugin-for-aws
-      image: velero/velero-plugin-for-aws:v1.11.0
+      image: velero/velero-plugin-for-aws:v1.14.4
       volumeMounts:
         - mountPath: /target
           name: plugins
