@@ -22,6 +22,7 @@ variable "kubernetes_cluster_name" {
 variable "worker_node_ssh_key_name" {
   type        = string
   description = "Name of the SSH Key Pair used for the worker nodes"
+  default     = null
 }
 
 variable "mongodbatlas_project_id" {
@@ -32,4 +33,16 @@ variable "mongodbatlas_project_id" {
 variable "mongodbatlas_cidr_block" {
   type        = string
   description = "The CIDR block in MongoDB Atlas"
+}
+
+variable "mongodbatlas_public_key" {
+  type        = string
+  description = "MongoDB Atlas programmatic API public key"
+  sensitive   = true
+}
+
+variable "mongodbatlas_private_key" {
+  type        = string
+  description = "MongoDB Atlas programmatic API private key"
+  sensitive   = true
 }

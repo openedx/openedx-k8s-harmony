@@ -4,6 +4,10 @@ This is an example implementation to create a production grade infrastructure fo
 
 ## Important notes
 
+Spaces credentials are required by the DigitalOcean provider. Pass them with
+`TF_VAR_spaces_access_id` / `TF_VAR_spaces_secret_key` or a gitignored
+`secrets.auto.tfvars` file. Do not commit access keys.
+
 Be aware that the current implementation does not support the creation of MongoDB users and Spaces buckets through Tutor plugins.
 
 While Tutor can handle MySQL database and user creation, Terraform is required (as of now) for setting up MongoDB databases and users. This approach is not ideal as it necessitates running Terraform code when adding or removing instances, which contradicts the goal of separating cluster provisioning from instance provisioning. Until a more streamlined solution, such as a plugin or automation tool, is developed, users must manually manage these resources. For now, please ensure you manually configure MongoDB users and Spaces buckets to maintain a fully functional environment (either using Terraform or other methods).
@@ -11,22 +15,22 @@ While Tutor can handle MySQL database and user creation, Terraform is required (
 ## Requirements
 
 | Name | Version |
-|------|---------|
-| <a name="requirement_digitalocean"></a> [digitalocean](#requirement\_digitalocean) | >=2.45 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | >=2.16 |
-| <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | >=1.17 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >=2.34 |
+| ---- | ------- |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
+| <a name="requirement_digitalocean"></a> [digitalocean](#requirement\_digitalocean) | ~> 2.100 |
+| <a name="requirement_null"></a> [null](#requirement\_null) | ~> 3.3 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.9 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_digitalocean"></a> [digitalocean](#provider\_digitalocean) | 2.45.0 |
+| ---- | ------- |
+| <a name="provider_digitalocean"></a> [digitalocean](#provider\_digitalocean) | 2.100.0 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_kubernetes_cluster"></a> [kubernetes\_cluster](#module\_kubernetes\_cluster) | ../../terraform/modules/digitalocean/doks | n/a |
 | <a name="module_main_vpc"></a> [main\_vpc](#module\_main\_vpc) | ../../terraform/modules/digitalocean/vpc | n/a |
 | <a name="module_mongodb_database"></a> [mongodb\_database](#module\_mongodb\_database) | ../../terraform/modules/digitalocean/database | n/a |
@@ -36,20 +40,20 @@ While Tutor can handle MySQL database and user creation, Terraform is required (
 ## Resources
 
 | Name | Type |
-|------|------|
-| [digitalocean_database_db.forum_database](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/database_db) | resource |
+| ---- | ---- |
 | [digitalocean_project.project](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/resources/project) | resource |
-| [digitalocean_kubernetes_cluster.cluster](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/data-sources/kubernetes_cluster) | data source |
 | [digitalocean_kubernetes_versions.available_versions](https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs/data-sources/kubernetes_versions) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_do_access_token"></a> [do\_access\_token](#input\_do\_access\_token) | DitialOcean access token. | `string` | n/a | yes |
+| ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_do_access_token"></a> [do\_access\_token](#input\_do\_access\_token) | DigitalOcean access token. | `string` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | The DigitalOcean project environment. (for example: production, staging, development, etc.) | `string` | n/a | yes |
 | <a name="input_kubernetes_cluster_name"></a> [kubernetes\_cluster\_name](#input\_kubernetes\_cluster\_name) | Name of the DigitalOcean Kubernetes cluster to create. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | DigitalOcean region to create the resources in. | `string` | n/a | yes |
+| <a name="input_spaces_access_id"></a> [spaces\_access\_id](#input\_spaces\_access\_id) | DigitalOcean Spaces access key ID. Provide via TF\_VAR\_spaces\_access\_id or a gitignored secrets.auto.tfvars file. | `string` | n/a | yes |
+| <a name="input_spaces_secret_key"></a> [spaces\_secret\_key](#input\_spaces\_secret\_key) | DigitalOcean Spaces secret key. Provide via TF\_VAR\_spaces\_secret\_key or a gitignored secrets.auto.tfvars file. | `string` | n/a | yes |
 
 ## Outputs
 

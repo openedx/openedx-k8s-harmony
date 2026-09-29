@@ -1,13 +1,17 @@
 terraform {
+  required_version = ">= 1.5.7"
+
   required_providers {
     digitalocean = {
-      source = "digitalocean/digitalocean"
+      source  = "digitalocean/digitalocean"
+      version = "~> 2.100"
+    }
+
+    null = {
+      source  = "hashicorp/null"
+      version = "~> 3.3"
     }
   }
-}
-
-data "digitalocean_vpc" "vpc" {
-  id = var.vpc_id
 }
 
 resource "digitalocean_database_cluster" "database_cluster" {
@@ -21,7 +25,7 @@ resource "digitalocean_database_cluster" "database_cluster" {
   tags                 = []
 
   maintenance_window {
-    day = var.database_maintenance_window_day
+    day  = var.database_maintenance_window_day
     hour = var.database_maintenance_window_time
   }
 }

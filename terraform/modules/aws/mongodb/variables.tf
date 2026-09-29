@@ -120,8 +120,8 @@ variable "database_backup_retention_period" {
 
 variable "is_database_storage_encrypted" {
   type        = bool
-  description = "Whether the database storage is encrypted in rest"
-  default     = true
+  description = "Enable Atlas Encryption at Rest with customer-managed AWS KMS keys"
+  default     = false
 }
 
 variable "vpc_id" {
@@ -129,10 +129,15 @@ variable "vpc_id" {
   description = "ID of the VPC to use for the MongoDB cluster"
 }
 
+variable "private_route_table_ids" {
+  type        = list(string)
+  description = "Private route table IDs that should route to the Atlas peering connection"
+}
+
 variable "database_users" {
   type = map(object({
-    username       = string
-    database       = string
+    username = string
+    database = string
   }))
   default     = {}
   description = "Map of additional user and database names."

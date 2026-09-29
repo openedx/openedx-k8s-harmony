@@ -1,7 +1,10 @@
 terraform {
+  required_version = ">= 1.5.7"
+
   required_providers {
     digitalocean = {
-      source = "digitalocean/digitalocean"
+      source  = "digitalocean/digitalocean"
+      version = "~> 2.100"
     }
   }
 }
@@ -15,11 +18,11 @@ resource "digitalocean_tag" "worker_firewall" {
 }
 
 resource "digitalocean_kubernetes_cluster" "cluster" {
-  name         = "${var.cluster_name}-${var.environment}"
-  region       = var.region
-  version      = var.kubernetes_version
-  vpc_uuid     = data.digitalocean_vpc.vpc.id
-  auto_upgrade = var.is_auto_upgrade_enabled
+  name          = "${var.cluster_name}-${var.environment}"
+  region        = var.region
+  version       = var.kubernetes_version
+  vpc_uuid      = data.digitalocean_vpc.vpc.id
+  auto_upgrade  = var.is_auto_upgrade_enabled
   surge_upgrade = var.is_surge_upgrade_enabled
 
   lifecycle {

@@ -28,6 +28,11 @@ output "private_subnets" {
   value       = module.vpc.private_subnets
 }
 
+output "private_route_table_ids" {
+  description = "List of IDs of private route tables"
+  value       = module.vpc.private_route_table_ids
+}
+
 output "private_subnet_arns" {
   description = "List of ARNs of private subnets"
   value       = module.vpc.private_subnet_arns
