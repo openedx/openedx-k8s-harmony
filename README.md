@@ -137,10 +137,15 @@ Kubernetes offers two main autoscaling methods:
   [**cluster-autoscaler (CA)**](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler)
   and [Karpenter](https://karpenter.sh/).
 
-For the scope of this project, the focus will be in the **pod-based scaling**
-mechanisms since Node-based scaling tools require configuration which is
-external to the cluster and this is out of the scope for this Helm chart for
-now.
+This chart covers both, but the split of responsibilities differs. Pod-based
+scaling is self-contained: the chart installs the dependencies and the workloads
+scale inside the cluster. Node-based scaling with Karpenter also needs resources
+that live **outside** the cluster and are the operator's responsibility to
+provision — the controller IAM role, the SQS interruption queue, and the
+`karpenter.sh/discovery` tags on the subnets and security groups. What the chart
+contributes is the Karpenter subchart plus the `NodePool` and `EC2NodeClass`
+resources rendered from your values; see
+[Node-autoscaling with Karpenter](#node-autoscaling-with-karpenter-in-eks-clusters).
 
 The approach will be to use pod autoscaling on each environment separately
 (assuming there are installations on different namespaces) following the steps
@@ -159,9 +164,11 @@ below:
 
 #### Node-autoscaling with Karpenter in EKS Clusters
 
-This section provides a guide on how to install and configure
-[Karpenter](https://karpenter.sh/) in a EKS cluster. We'll use infrastructure
-examples included in this repo for such purposes.
+This chart installs the [Karpenter](https://karpenter.sh/) controller and its CRDs.
+It does **not** define `NodePool` or `EC2NodeClass` resources: those decide which
+instances Karpenter may launch and when it may disrupt them, which is a capacity
+strategy no single default can get right for every operator. You declare them
+yourself, alongside the release. A worked example is below.
 
 > Prerequisites:
 
@@ -194,50 +201,99 @@ and then execute the following commands on every folder:
 
    These variables will be required in the next steps.
 
-3. Karpenter is a dependency of the harmony chart that can be enabled or
-   disabled. To include Karpenter in the Harmony Chart,
-**it is crucial** to configure these variables in your `values.yaml` file:
-
-   * `karpenter.enabled`: true
-   * `karpenter.serviceAccount.annotations.eks\.amazonaws\.com/role-arn`:
-     "<`karpenter_irsa_role_arn` value from module>"
-   * `karpenter.settings.aws.defaultInstanceProfile`:
-     "<`karpenter_instance_profile_name` value from module>"
-   * `karpenter.settings.aws.clusterName`: "<`cluster_name` value from module>"
-
-   Find below an example of the Karpenter section in the `values.yaml` file:
+3. Enable Karpenter in your `values.yaml`. Every key under `karpenter` is passed
+   straight to the Karpenter subchart:
 
    ```yaml
    karpenter:
-      enabled: true
-      serviceAccount:
-         annotations:
-            eks.amazonaws.com/role-arn: "<karpenter_irsa_role_arn>"
-      settings:
-         aws:
-            # -- Cluster name.
-            clusterName: "<cluster_name"
-            # -- Cluster endpoint. If not set, will be discovered during startup (EKS only)
-            # From version 0.25.0, Karpenter helm chart allows the discovery of the cluster endpoint. More details in
-            # https://github.com/aws/karpenter/blob/main/website/content/en/docs/upgrade-guide.md#upgrading-to-v0250
-            # clusterEndpoint: "https://XYZ.eks.amazonaws.com"
-            # -- The default instance profile name to use when launching nodes
-            defaultInstanceProfile: "<karpenter_instance_profile_name>"
+     enabled: true
+     serviceAccount:
+       annotations:
+         eks.amazonaws.com/role-arn: "<karpenter_irsa_role_arn>"
+     settings:
+       clusterName: "<cluster_name>"
+       # -- SQS queue used for EC2 interruption events. Interruption handling is
+       # disabled if not specified, which matters most on spot capacity.
+       interruptionQueue: "<karpenter_interruption_queue_name>"
+     # -- Karpenter cannot reschedule itself if it consolidates the node it runs
+     # on, so keep the controller on a node group it does not manage.
+     nodeSelector:
+       karpenter.sh/controller: "true"
+     tolerations:
+       - key: CriticalAddonsOnly
+         operator: Exists
    ```
 
-4. Now, install the Harmony Chart in the new EKS cluster using
-   [these instructions](#usage-instructions). This will provide a
-   very basic Karpenter configuration with one
-   [provisioner](https://karpenter.sh/docs/concepts/provisioners/) and one
-   [node template](https://karpenter.sh/docs/concepts/node-templates/). Please
-   refer to the official documentation to get further details.
+4. Install the chart following [these instructions](#usage-instructions).
 
-> [!NOTE]
-> This Karpenter installation does not support multiple provisioners
-> or node templates for now.
+5. Declare the nodes Karpenter may launch. The example below is a minimal
+   on-demand setup: one `EC2NodeClass` describing *how* a node is launched, and
+   one `NodePool` describing *what* may be launched and when it may be reclaimed.
+   Apply it with `kubectl apply -f`, or keep it in whatever manifest repository
+   you already use.
 
-5. To test Karpenter, you can proceed with the instructions included in the
+   ```yaml
+   apiVersion: karpenter.k8s.aws/v1
+   kind: EC2NodeClass
+   metadata:
+     name: default
+   spec:
+     # -- Exactly one of `role` or `instanceProfile` is required. Karpenter v1
+     # removed the cluster-wide `settings.aws.defaultInstanceProfile`.
+     role: "<node IAM role name>"
+     # -- Mandatory since v1: there is no implicit default AMI. An alias tracks
+     # the latest AMI AWS publishes for that family; you can also select by `id`,
+     # `name`, `owner`, `ssmParameter` or `tags`.
+     amiSelectorTerms:
+       - alias: al2023@latest
+     # -- Subnets and security groups are discovered by tag, so make sure yours
+     # carry `karpenter.sh/discovery: <cluster_name>`.
+     subnetSelectorTerms:
+       - tags:
+           karpenter.sh/discovery: "<cluster_name>"
+     securityGroupSelectorTerms:
+       - tags:
+           karpenter.sh/discovery: "<cluster_name>"
+   ---
+   apiVersion: karpenter.sh/v1
+   kind: NodePool
+   metadata:
+     name: default
+   spec:
+     template:
+       spec:
+         nodeClassRef:
+           group: karpenter.k8s.aws
+           kind: EC2NodeClass
+           name: default
+         # -- Intersected with whatever the pending pod already requires, so keep
+         # this broad enough to leave the scheduler room.
+         requirements:
+           - key: kubernetes.io/arch
+             operator: In
+             values: ["amd64"]
+           - key: karpenter.sh/capacity-type
+             operator: In
+             values: ["on-demand"]
+     # -- Ceiling for the pool as a whole, not per node.
+     limits:
+       cpu: 100
+       memory: 400Gi
+     disruption:
+       # -- WhenEmptyOrUnderutilized also consolidates nodes that are still
+       # running workloads; WhenEmpty only reclaims empty ones.
+       consolidationPolicy: WhenEmptyOrUnderutilized
+       consolidateAfter: 5m
+   ```
+
+   From here, refer to the [NodePool](https://karpenter.sh/docs/concepts/nodepools/)
+   and [EC2NodeClass](https://karpenter.sh/docs/concepts/nodeclasses/) documentation
+   to add taints, labels, disruption budgets, instance-type constraints, block
+   device mappings or several pools with different weights.
+
+6. To test Karpenter, you can proceed with the instructions included in the
 [official documentation](https://karpenter.sh/docs/getting-started/getting-started-with-karpenter/#first-use).
+
 
 ### Ingress NGINX deprecation
 
