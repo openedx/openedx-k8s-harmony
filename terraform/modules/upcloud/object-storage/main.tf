@@ -65,3 +65,11 @@ resource "upcloud_managed_object_storage_user_access_key" "this" {
   service_uuid = upcloud_managed_object_storage.this.id
   status       = "Active"
 }
+
+# Users have no S3 permissions until a policy is attached. Instance workflows
+# create buckets with this key, so it needs full bucket access.
+resource "upcloud_managed_object_storage_user_policy" "this" {
+  username     = upcloud_managed_object_storage_user.this.username
+  service_uuid = upcloud_managed_object_storage.this.id
+  name         = "ECSS3FullAccess"
+}
