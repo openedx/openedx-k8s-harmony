@@ -55,9 +55,9 @@ operators:
 
 1. At the base is a Kubernetes cluster, which you must provide (e.g. using
    OpenTofu to provision Amazon EKS).
-   * Any cloud provider such as AWS or Digital Ocean should work. There are
-     OpenTofu examples in the `infra-examples` folder but it is just a starting
-     point and not recommended for production use.
+   * Any cloud provider such as AWS, Digital Ocean, or UpCloud should work.
+     There are OpenTofu examples in the `infra-examples` folder but it is just
+     a starting point and not recommended for production use.
 2. On top of that, this project's helm chart will install the shared resources
    you need - an ingress controller, monitoring, database clusters, etc. The
    following are included but can be disabled/replaced if you prefer an
@@ -519,6 +519,44 @@ export KUBECONFIG=`pwd`/infra-examples/digitalocean/kubeconfig
 
 Then follow steps 1-4 above. When you're done, run `tofu destroy` to clean
 up everything.
+
+### How to create a cluster for testing on UpCloud
+
+If you use UpCloud, you can use OpenTofu to spin up a cluster from
+`infra-examples/upcloud`, try this out, then shut it down again. UpCloud has no
+managed MongoDB product. The example creates a MongoDB Atlas cluster on AWS and
+allows the NAT gateway's public address to connect. It also installs UpCloud's
+Cluster Autoscaler. The workers group starts at 3 nodes and may scale from 1 to 5.
+
+Create `infra-examples/upcloud/secrets.auto.tfvars`. Set `kubernetes_version`
+to a minor listed by `upctl kubernetes versions`. `de-fra1` belongs to object
+storage region `europe-1` and pairs with Atlas region `EU_CENTRAL_1`.
+
+```hcl
+zone                    = "de-fra1"
+object_storage_region   = "europe-1"
+environment             = "development"
+kubernetes_cluster_name = "harmony-test"
+kubernetes_version      = "1.32" # replace with a version from: upctl kubernetes versions
+bucket_prefix           = "my-institute"
+atlas_project_id        = "atlas-project-id"
+atlas_region_name       = "EU_CENTRAL_1"
+upcloud_token           = "your-token"
+```
+
+`upcloud_token` is stored for Cluster Autoscaler. Exporting `UPCLOUD_TOKEN` configures the UpCloud provider, and it does not fill that Secret. Set `upcloud_autoscaler_token` instead when the autoscaler should use a separate token.
+
+```sh
+export MONGODB_ATLAS_PUBLIC_API_KEY="your-public-key"
+export MONGODB_ATLAS_PRIVATE_API_KEY="your-private-key"
+cd infra-examples/upcloud
+tofu init
+tofu apply
+export KUBECONFIG="$(pwd)/kubeconfig"
+```
+
+Then follow steps 1-4 above. When you're done, run `tofu destroy` in
+`infra-examples/upcloud` to clean up everything.
 
 ## Appendix C: how to create a cluster for testing on AWS
 

@@ -1,6 +1,8 @@
 locals {
-  kubernetes_version = "1.36"
-  cluster_name       = "${var.kubernetes_cluster_name}-${var.environment}"
+  kubernetes_version    = "1.36"
+  cluster_name          = "${var.kubernetes_cluster_name}-${var.environment}"
+  atlas_region_name     = upper(replace(var.region, "-", "_"))
+  atlas_ip_access_cidrs = [module.main_vpc.vpc_cidr_block]
 }
 
 data "aws_caller_identity" "current" {}
@@ -73,18 +75,27 @@ module "mysql_database" {
   database_cluster_name = "${module.kubernetes_cluster.cluster_name}-mysql"
 }
 
-module "mongodb_database" {
-  source     = "../../terraform/modules/aws/mongodb"
-  depends_on = [module.main_vpc]
+module "atlas_network" {
+  source = "../../terraform/modules/aws/atlas-network"
 
-  region      = var.region
-  environment = var.environment
-  vpc_id      = module.main_vpc.vpc_id
-
+  region                  = var.region
   aws_account_id          = data.aws_caller_identity.current.account_id
-  mongodbatlas_project_id = var.mongodbatlas_project_id
-  mongodbatlas_cidr_block = var.mongodbatlas_cidr_block
+  atlas_project_id        = var.atlas_project_id
+  atlas_region_name       = local.atlas_region_name
+  atlas_cidr_block        = var.atlas_cidr_block
+  vpc_id                  = module.main_vpc.vpc_id
   private_route_table_ids = module.main_vpc.private_route_table_ids
+}
 
-  database_cluster_name = "${module.kubernetes_cluster.cluster_name}-mongodb"
+module "mongodb_database" {
+  source = "../../terraform/modules/mongodb"
+
+  depends_on = [module.atlas_network]
+
+  environment           = var.environment
+  atlas_project_id      = var.atlas_project_id
+  database_cluster_name = "${var.kubernetes_cluster_name}-mongodb"
+  atlas_region_name     = local.atlas_region_name
+  atlas_provider_name   = "AWS"
+  ip_access_cidrs       = local.atlas_ip_access_cidrs
 }

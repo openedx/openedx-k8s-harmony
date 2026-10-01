@@ -2,14 +2,11 @@ terraform {
   required_version = ">= 1.5.7"
 
   required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 6.62"
-    }
     random = {
       source  = "hashicorp/random"
       version = "~> 3.9"
     }
+
     mongodbatlas = {
       source  = "mongodb/mongodbatlas"
       version = "~> 2.17"
@@ -17,31 +14,21 @@ terraform {
   }
 }
 
-locals {
-  region = upper(replace(var.region, "-", "_"))
-}
-
-data "aws_vpc" "main" {
-  id = var.vpc_id
-}
-
 resource "mongodbatlas_advanced_cluster" "cluster" {
-  depends_on = [mongodbatlas_network_container.cluster_network_container]
-
-  project_id                  = var.mongodbatlas_project_id
+  project_id                  = var.atlas_project_id
   name                        = "${var.database_cluster_name}-${var.environment}"
-  mongo_db_major_version      = var.database_cluster_version
   cluster_type                = var.database_cluster_type
+  mongo_db_major_version      = var.database_cluster_version
   backup_enabled              = true
   use_effective_fields        = var.is_database_autoscaling_compute_enabled ? true : null
-  encryption_at_rest_provider = var.is_database_storage_encrypted ? "AWS" : "NONE"
+  encryption_at_rest_provider = var.is_database_storage_encrypted ? var.atlas_provider_name : "NONE"
 
   replication_specs = [
     for _ in range(var.database_shards) : {
       region_configs = [{
         priority      = 7
-        provider_name = "AWS"
-        region_name   = local.region
+        provider_name = var.atlas_provider_name
+        region_name   = var.atlas_region_name
 
         electable_specs = {
           instance_size   = var.database_cluster_instance_size
@@ -96,48 +83,11 @@ resource "mongodbatlas_cloud_backup_schedule" "backup_schedule" {
   }
 }
 
+resource "mongodbatlas_project_ip_access_list" "access" {
+  for_each = { for idx, cidr in var.ip_access_cidrs : tostring(idx) => cidr }
 
-# Add the vpc CIDR block to the access list
-resource "mongodbatlas_project_ip_access_list" "cluster_access_list" {
-  project_id = var.mongodbatlas_project_id
-  cidr_block = data.aws_vpc.main.cidr_block
-}
-
-# Network container to define the MongoDB Atlas CIDR block
-resource "mongodbatlas_network_container" "cluster_network_container" {
-  project_id       = var.mongodbatlas_project_id
-  atlas_cidr_block = var.mongodbatlas_cidr_block
-  provider_name    = "AWS"
-  region_name      = local.region
-}
-
-# Peering between MongoDB Atlas and VPC
-resource "mongodbatlas_network_peering" "cluster_network_peering" {
-  project_id             = var.mongodbatlas_project_id
-  container_id           = mongodbatlas_network_container.cluster_network_container.id
-  accepter_region_name   = var.region
-  provider_name          = "AWS"
-  route_table_cidr_block = data.aws_vpc.main.cidr_block
-  vpc_id                 = var.vpc_id
-  aws_account_id         = var.aws_account_id
-}
-
-# Auto accept peering connection request
-resource "aws_vpc_peering_connection_accepter" "accept_mongo_peer" {
-  vpc_peering_connection_id = mongodbatlas_network_peering.cluster_network_peering.connection_id
-  auto_accept               = true
-}
-
-# Add peering connection to private routing tables so EKS nodes can reach Atlas
-resource "aws_route" "peeraccess" {
-  count = length(var.private_route_table_ids)
-
-  route_table_id            = var.private_route_table_ids[count.index]
-  destination_cidr_block    = var.mongodbatlas_cidr_block
-  vpc_peering_connection_id = mongodbatlas_network_peering.cluster_network_peering.connection_id
-  depends_on = [
-    aws_vpc_peering_connection_accepter.accept_mongo_peer
-  ]
+  project_id = var.atlas_project_id
+  cidr_block = each.value
 }
 
 resource "random_password" "user_passwords" {
@@ -157,7 +107,7 @@ resource "mongodbatlas_database_user" "users" {
     user.username => user
   }
 
-  project_id         = var.mongodbatlas_project_id
+  project_id         = var.atlas_project_id
   auth_database_name = "admin"
 
   username = each.key

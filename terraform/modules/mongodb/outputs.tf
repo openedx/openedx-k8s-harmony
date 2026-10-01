@@ -1,21 +1,26 @@
 output "database_cluster_id" {
   value       = mongodbatlas_advanced_cluster.cluster.cluster_id
-  description = "The unique resource ID of the database cluster"
+  description = "The unique resource ID of the database cluster."
 }
 
 output "database_cluster_cluster_id" {
   value       = mongodbatlas_advanced_cluster.cluster.cluster_id
-  description = "The cluster ID of the database cluster"
+  description = "The cluster ID of the database cluster."
 }
 
-output "cluster_address" {
+output "atlas_cluster_name" {
+  value       = mongodbatlas_advanced_cluster.cluster.name
+  description = "Atlas cluster name, including the environment suffix."
+}
+
+output "atlas_srv_address" {
   value       = mongodbatlas_advanced_cluster.cluster.connection_strings.standard_srv
-  description = "The address of the database cluster"
+  description = "MongoDB Atlas SRV address."
 }
 
 output "cluster_connection_strings" {
   value       = mongodbatlas_advanced_cluster.cluster.connection_strings
-  description = "Connection strings for the database cluster"
+  description = "Connection strings for the database cluster."
 }
 
 output "database_user_credentials" {
@@ -23,7 +28,7 @@ output "database_user_credentials" {
     for key, user in var.database_users :
     key => {
       username = user.username
-      password = try(mongodbatlas_database_user.users[user.username].password, "")
+      password = random_password.user_passwords[user.username].result
       database = user.database
     }
   }
