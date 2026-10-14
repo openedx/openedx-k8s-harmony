@@ -22,6 +22,6 @@ provider "aws" {
 }
 
 provider "mongodbatlas" {
-  public_key  = var.mongodbatlas_public_key
-  private_key = var.mongodbatlas_private_key
+  public_key  = var.atlas_public_key
+  private_key = var.atlas_private_key
 }

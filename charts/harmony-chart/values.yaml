@@ -323,7 +323,6 @@ prometheusstack:
 headlamp:
   enabled: false
 
-# The Velero subchart upgrades its CRDs (upgradeCRDs defaults to true).
 velero:
   enabled: false
 
@@ -342,11 +341,9 @@ velero:
           # stores) must set checksumAlgorithm to "". The AWS plugin defaults
           # to CRC32, which those stores reject. Leave it unset for Amazon S3.
 
-    volumeSnapshotLocation:
-      - name: "velero-volume-snapshot-harmony"
-        provider: "" # provider configuration
-        config:
-          region: "" # the region of the bucket
+    # Empty unless the cloud has a Velero volume snapshot plugin.
+    # An item with an empty provider is rejected by the API.
+    volumeSnapshotLocation: []
 
   credentials:
     secretContents:
