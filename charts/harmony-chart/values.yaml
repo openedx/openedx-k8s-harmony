@@ -193,57 +193,55 @@ opensearch:
 
 # Configuration for the Karpenter chart
 karpenter:
-  # add Karpenter node management for AWS EKS clusters. See: https://karpenter.sh/
+  # Karpenter provisions and consolidates nodes by talking to the cloud API
+  # directly, instead of resizing pre-defined node groups. AWS EKS only: the
+  # subchart pinned in Chart.yaml is the AWS provider.
+  # See: https://karpenter.sh/
+  #
+  # This chart installs the controller and its CRDs, and nothing else. The
+  # `NodePool` and `EC2NodeClass` resources that decide what Karpenter may
+  # launch are configuration rather than installation — there is no capacity
+  # strategy that suits every operator — so declare them yourself. The README
+  # has a worked example of a basic node setup.
+  #
+  # Every key below is forwarded to the Karpenter subchart untouched. See
+  # https://github.com/aws/karpenter-provider-aws/blob/main/charts/karpenter/values.yaml
+  # for all available options.
   enabled: false
+
   serviceAccount:
     name: "karpenter"
     annotations:
+      # -- ARN of the IRSA role the controller assumes, commonly named
+      # `KarpenterController-<cluster>`.
       eks.amazonaws.com/role-arn: ""
+
+  # NOTE: these keys are read by the Karpenter subchart itself, and they are
+  # flat since Karpenter v0.32. The old `settings.aws.*` block was removed
+  # upstream, along with `defaultInstanceProfile`, whose replacement now lives
+  # on the EC2NodeClass.
   settings:
-    aws:
-      # -- Cluster name.
-      clusterName: ""
-      # -- Cluster endpoint. If not set, will be discovered during startup (EKS only)
-      # From version 0.25.0, Karpenter helm chart allows the discovery of the cluster endpoint. More details in
-      # https://github.com/aws/karpenter/blob/main/website/content/en/docs/upgrade-guide.md#upgrading-to-v0250
-      # clusterEndpoint: ""
-      # -- The default instance profile name to use when launching nodes
-      defaultInstanceProfile: ""
-      # -- interruptionQueueName is disabled if not specified. Enabling interruption handling may
-      # require additional permissions on the controller service account.
-      interruptionQueueName: ""
-  # ---------------------------------------------------------------------------
-  # Provide sensible defaults for resource provisioning and lifecycle
-  # ---------------------------------------------------------------------------
-  # Requirements for the provisioner API.
-  # More details in https://karpenter.sh/docs/concepts/provisioners/
-  provisioner:
-    name: "default"
-    spec:
-      requirements:
-        - key: karpenter.sh/capacity-type
-          operator: In
-          values: ["spot"]
-        # - key: node.kubernetes.io/instance-type
-        #   operator: In
-        #   values: ["t3.large", "t3.xlarge", "t3.2xlarge", "t2.xlarge", "t2.2xlarge"]
-        # - key: kubernetes.io/arch
-        #   operator: In
-        #   values: ["amd64"]
-      # The limits section controls the maximum amount of resources that the provisioner will manage.
-      # More details in https://karpenter.sh/docs/concepts/provisioners/#speclimitsresources
-      limits:
-        resources:
-          cpu: "200"       # 50 nodes * 4 cpu
-          memory: "800Gi"  # 50 nodes * 16Gi
-      # TTL in seconds. If nil, the feature is disabled, nodes will never terminate
-      ttlSecondsUntilExpired: 2592000
-      # TTL in seconds. If nil, the feature is disabled, nodes will never scale down
-      # due to low utilization.
-      ttlSecondsAfterEmpty: 30
-  # Node template reference. More details in https://karpenter.sh/docs/concepts/node-templates/
-  nodeTemplate:
-    name: "default"
+    # -- Cluster name.
+    clusterName: ""
+    # -- Cluster endpoint. If not set, will be discovered during startup (EKS only)
+    # clusterEndpoint: ""
+    # -- interruptionQueue is the name of the SQS queue used for processing
+    # interruption events from EC2. Interruption handling is disabled if not
+    # specified. Enabling it may require additional permissions on the
+    # controller service account.
+    interruptionQueue: ""
+
+  # -- Keep the controller off the nodes it manages. Karpenter cannot reschedule
+  # itself if it consolidates the node it is running on, so pin it to a node
+  # group it does not control and tolerate whatever taint that group carries.
+  nodeSelector: {}
+  # nodeSelector:
+  #   karpenter.sh/controller: "true"
+  tolerations: []
+  # tolerations:
+  #   - key: CriticalAddonsOnly
+  #     operator: Exists
+
 
 # Prometheus stack
 #
