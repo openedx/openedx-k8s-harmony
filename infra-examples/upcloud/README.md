@@ -1,8 +1,8 @@
 # UpCloud infrastructure example
 
-This example creates a private network, a UKS cluster, Managed Object Storage, Managed MySQL, and a MongoDB Atlas cluster. It is a starting point, not a production layout.
+This example creates a private network, a managed Kubernetes cluster ("UKS", UpCloud Kubernetes Service), Managed Object Storage, Managed MySQL, and a MongoDB Atlas cluster. It is a starting point, not a production layout.
 
-UpCloud does not sell managed MongoDB. The Atlas cluster is hosted on AWS in `atlas_region_name` and allows only the NAT gateway public address. There is no VPC peering. Use `EU_CENTRAL_1` when the UpCloud zone is `de-fra1`.
+UpCloud does not offer managed MongoDB. The Atlas cluster is hosted on AWS in `atlas_region_name` and allows only the NAT gateway public address. There is no VPC peering. Use `EU_CENTRAL_1` when the UpCloud zone is `de-fra1`.
 
 Object storage buckets created here do not get CORS, versioning, or a public object policy. The UpCloud bucket resource does not support those settings.
 

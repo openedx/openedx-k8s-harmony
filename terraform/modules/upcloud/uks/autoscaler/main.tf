@@ -35,6 +35,7 @@ resource "kubernetes_service_account_v1" "cluster_autoscaler" {
   }
 }
 
+# related documentation: https://github.com/UpCloudLtd/autoscaler/tree/feat/cluster-autoscaler-cloudprovider-upcloud/cluster-autoscaler/cloudprovider/upcloud/examples/terraform
 resource "kubernetes_cluster_role_v1" "cluster_autoscaler" {
   metadata {
     name   = "cluster-autoscaler"

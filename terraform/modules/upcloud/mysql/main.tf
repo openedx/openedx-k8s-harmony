@@ -41,9 +41,8 @@ resource "upcloud_managed_database_mysql" "this" {
     uuid   = var.network_id
   }
 
-  # Open edX still needs a non-default sql_mode. DigitalOcean applies the same
-  # mode out of band because of openedx/edx-platform#30709. Primary keys are
-  # not required, because Open edX migrations create tables without them.
+  # Open edX needs a non-default sql_mode.
+  # Primary keys are not required, because Open edX migrations create tables without them.
   properties {
     public_access           = false
     ip_filter               = [var.network_cidr]

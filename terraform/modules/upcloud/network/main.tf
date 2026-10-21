@@ -54,7 +54,7 @@ resource "upcloud_network" "this" {
   router = upcloud_router.this.id
   labels = var.labels
 
-  # Private UKS node groups need the gateway to exist before nodes boot.
+  # Private UKS node groups using this network need the gateway to exist before nodes boot.
   depends_on = [upcloud_gateway.this]
 
   ip_network {
