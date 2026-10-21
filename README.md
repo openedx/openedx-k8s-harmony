@@ -533,18 +533,19 @@ to a minor listed by `upctl kubernetes versions`. `de-fra1` belongs to object
 storage region `europe-1` and pairs with Atlas region `EU_CENTRAL_1`.
 
 ```hcl
-zone                    = "de-fra1"
-object_storage_region   = "europe-1"
-environment             = "development"
-kubernetes_cluster_name = "harmony-test"
-kubernetes_version      = "1.32" # replace with a version from: upctl kubernetes versions
-bucket_prefix           = "my-institute"
-atlas_project_id        = "atlas-project-id"
-atlas_region_name       = "EU_CENTRAL_1"
-upcloud_token           = "your-token"
+zone                     = "de-fra1"
+object_storage_region    = "europe-1"
+environment              = "development"
+kubernetes_cluster_name  = "harmony-test"
+kubernetes_version       = "1.32" # replace with a version from: upctl kubernetes versions
+bucket_prefix            = "my-institute"
+atlas_project_id         = "atlas-project-id"
+atlas_region_name        = "EU_CENTRAL_1"
+upcloud_token            = "your-token"
+upcloud_autoscaler_token = "your-token-for-autoscaling"
 ```
 
-`upcloud_token` is stored for Cluster Autoscaler. Exporting `UPCLOUD_TOKEN` configures the UpCloud provider, and it does not fill that Secret. Set `upcloud_autoscaler_token` instead when the autoscaler should use a separate token.
+Set `upcloud_autoscaler_token` instead when the autoscaler should use a separate token.
 
 ```sh
 export MONGODB_ATLAS_PUBLIC_API_KEY="your-public-key"

@@ -47,4 +47,4 @@ tofu apply
 export KUBECONFIG="$(pwd)/kubeconfig"
 ```
 
-Run `tofu destroy` in `infra-examples/upcloud` when you are finished. The default sizes (`dev-md`, gateway plan `development`, MySQL `1x1xCPU-2GB-25GB`, Atlas `M10`) are still billable.
+Run `tofu destroy` in `infra-examples/upcloud` when you are finished.

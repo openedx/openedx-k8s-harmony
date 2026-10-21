@@ -20,7 +20,7 @@ variable "zone" {
       "us-nyc1",
       "us-sjo1",
     ], var.zone)
-    error_message = "The UpCloud zone must be in the acceptable zone list."
+    error_message = "The UpCloud zone must be in the valid zone list."
   }
 }
 
@@ -53,14 +53,13 @@ variable "upcloud_token" {
   type        = string
   default     = null
   sensitive   = true
-  description = "UpCloud API Token. Null uses the UPCLOUD_TOKEN environment variable. Cluster Autoscaler stores this value unless upcloud_autoscaler_token is set."
+  description = "UpCloud API Token. Null uses the UPCLOUD_TOKEN environment variable."
 }
 
 variable "upcloud_autoscaler_token" {
   type        = string
-  default     = null
   sensitive   = true
-  description = "UpCloud API token used only by Cluster Autoscaler. Null uses upcloud_token. Prefer a token that can manage only this cluster."
+  description = "UpCloud API token used only by Cluster Autoscaler."
 }
 
 variable "atlas_project_id" {

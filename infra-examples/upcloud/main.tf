@@ -63,7 +63,7 @@ module "cluster_autoscaler" {
   source = "../../terraform/modules/upcloud/uks/autoscaler"
 
   cluster_id    = module.kubernetes_cluster.cluster_id
-  upcloud_token = coalesce(var.upcloud_autoscaler_token, var.upcloud_token)
+  upcloud_token = var.upcloud_autoscaler_token
   node_groups   = module.kubernetes_cluster.node_groups
 }
 
