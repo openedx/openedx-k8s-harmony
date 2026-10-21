@@ -8,7 +8,7 @@ Object storage buckets created here do not get CORS, versioning, or a public obj
 
 ## Credentials
 
-Set `UPCLOUD_TOKEN`, or set the sensitive variable `upcloud_token` in `secrets.auto.tfvars` (that filename is gitignored). Cluster Autoscaler copies that token into a `kube-system` Secret, so the token has to be a Terraform value (`upcloud_token`, `TF_VAR_upcloud_token`, or `upcloud_autoscaler_token`). The provider's `UPCLOUD_TOKEN` environment variable is not copied into the cluster. Prefer `upcloud_autoscaler_token` from an account that can manage only this cluster.
+Set `UPCLOUD_TOKEN`, or set the sensitive variable `upcloud_token` in `secrets.auto.tfvars` (that filename is gitignored). Cluster Autoscaler copies that token into a `kube-system` Secret, so the token has to be a Terraform value (`upcloud_autoscaler_token`).
 
 The workers group starts at 3 nodes and Cluster Autoscaler may resize it from 1 to 5. Set `worker_node_min_count` and `worker_node_max_count` to change that range. Do not set a minimum of 0. The autoscaler image is UpCloud's fork, `ghcr.io/upcloudltd/autoscaler:v1.29.5`.
 
