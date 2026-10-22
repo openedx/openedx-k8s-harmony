@@ -25,24 +25,26 @@ variable "worker_node_ssh_key_name" {
   default     = null
 }
 
-variable "mongodbatlas_project_id" {
+variable "atlas_project_id" {
   type        = string
-  description = "The ID of the MongoDB Atlas project"
+  description = "The ID of the MongoDB Atlas project."
 }
 
-variable "mongodbatlas_cidr_block" {
+variable "atlas_cidr_block" {
   type        = string
-  description = "The CIDR block in MongoDB Atlas"
+  description = "CIDR block Atlas uses for the peered network container."
 }
 
-variable "mongodbatlas_public_key" {
+variable "atlas_public_key" {
   type        = string
-  description = "MongoDB Atlas programmatic API public key"
+  default     = null
   sensitive   = true
+  description = "MongoDB Atlas public API key. Null uses the MONGODB_ATLAS_PUBLIC_API_KEY environment variable."
 }
 
-variable "mongodbatlas_private_key" {
+variable "atlas_private_key" {
   type        = string
-  description = "MongoDB Atlas programmatic API private key"
+  default     = null
   sensitive   = true
+  description = "MongoDB Atlas private API key. Null uses the MONGODB_ATLAS_PRIVATE_API_KEY environment variable."
 }
