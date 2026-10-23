@@ -90,6 +90,24 @@ module "eks" {
       type        = "ingress"
       cidr_blocks = concat([data.aws_vpc.main.cidr_block], var.worker_node_extra_ssh_cidrs)
     }
+
+    node_to_node_http = {
+      description = "Node to node HTTP for pods listening on port 80"
+      protocol    = "tcp"
+      from_port   = 80
+      to_port     = 80
+      type        = "ingress"
+      self        = true
+    }
+
+    node_to_node_https = {
+      description = "Node to node HTTPS for pods listening on port 443"
+      protocol    = "tcp"
+      from_port   = 443
+      to_port     = 443
+      type        = "ingress"
+      self        = true
+    }
   }
 
   # Keep the previous "no custom KMS key" behavior; in v21 setting `{}` enables a module-managed key.
