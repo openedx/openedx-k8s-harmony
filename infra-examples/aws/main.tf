@@ -1,5 +1,5 @@
 locals {
-  kubernetes_version    = "1.36"
+  kubernetes_version    = "1.37"
   cluster_name          = "${var.kubernetes_cluster_name}-${var.environment}"
   atlas_region_name     = upper(replace(var.region, "-", "_"))
   atlas_ip_access_cidrs = [module.main_vpc.vpc_cidr_block]
