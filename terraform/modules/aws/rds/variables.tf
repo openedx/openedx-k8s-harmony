@@ -17,7 +17,7 @@ variable "database_engine" {
 variable "database_engine_version" {
   type        = string
   description = "Database engine version"
-  default     = "8.0"
+  default     = "8.4"
 }
 
 variable "database_cluster_instance_size" {
