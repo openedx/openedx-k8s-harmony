@@ -37,6 +37,32 @@ data "aws_subnets" "public" {
   }
 }
 
+locals {
+  rds_instance_identifier     = "${var.database_cluster_name}-${var.environment}"
+  rds_read_replica_identifier = "${var.database_cluster_name}-${var.environment}-replica"
+
+  # RDS creates the log groups on its own when exports are enabled, but without a
+  # retention policy. Managing them here lets us set the retention explicitly.
+  rds_log_groups = {
+    for pair in setproduct(
+      concat(
+        [local.rds_instance_identifier],
+        var.is_public_read_replica_enabled ? [local.rds_read_replica_identifier] : [],
+      ),
+      var.database_cloudwatch_logs_exports,
+    ) : "${pair[0]}/${pair[1]}" => "/aws/rds/instance/${pair[0]}/${pair[1]}"
+  }
+}
+
+resource "aws_cloudwatch_log_group" "rds" {
+  for_each = local.rds_log_groups
+
+  name              = each.value
+  retention_in_days = var.database_cloudwatch_logs_retention_in_days
+
+  tags = var.tags
+}
+
 resource "random_string" "rds_root_username" {
   length  = 16
   special = false
@@ -150,7 +176,14 @@ resource "aws_db_instance" "rds_instance" {
 
   final_snapshot_identifier = "${var.database_cluster_name}-db-final-snapshot-${random_string.rds_final_snapshot_suffix.result}"
 
+  option_group_name               = var.database_option_group_name
+  enabled_cloudwatch_logs_exports = var.database_cloudwatch_logs_exports
+
   tags = var.tags
+
+  # Create the log groups before RDS starts exporting, so it does not create
+  # them itself without a retention policy.
+  depends_on = [aws_cloudwatch_log_group.rds]
 }
 
 # Optional public read replica intended for external analytics and reporting.
@@ -179,7 +212,14 @@ resource "aws_db_instance" "rds_read_replica" {
   storage_encrypted      = var.is_database_storage_encrypted
   kms_key_id             = var.is_database_storage_encrypted ? aws_kms_key.rds_encryption[0].arn : ""
 
+  # Log exports are per instance and not inherited from the source. The option
+  # group is set explicitly so the replica does not drift from the primary.
+  option_group_name               = var.database_option_group_name
+  enabled_cloudwatch_logs_exports = var.database_cloudwatch_logs_exports
+
   tags = var.tags
+
+  depends_on = [aws_cloudwatch_log_group.rds]
 }
 
 resource "aws_cloudwatch_metric_alarm" "rds_storage_alarm" {

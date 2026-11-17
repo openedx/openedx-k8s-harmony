@@ -145,6 +145,24 @@ variable "read_replica_instance_class" {
   default     = null
 }
 
+variable "database_option_group_name" {
+  type        = string
+  description = "Name of the DB option group to associate with the instance and its read replica. If null, the engine's default option group is used."
+  default     = null
+}
+
+variable "database_cloudwatch_logs_exports" {
+  type        = list(string)
+  description = "Log types to export to CloudWatch for the instance and its read replica (for MySQL: audit, error, general, slowquery)."
+  default     = []
+}
+
+variable "database_cloudwatch_logs_retention_in_days" {
+  type        = number
+  description = "Retention in days for the CloudWatch log groups of the exported database logs. 0 means the logs never expire."
+  default     = 0
+}
+
 variable "tags" {
   type        = map(string)
   description = "A map of tags to add to all resources"
