@@ -118,6 +118,12 @@ variable "worker_node_capacity_type" {
   default     = "ON_DEMAND"
 }
 
+variable "worker_node_architecture" {
+  description = "CPU architecture of the worker nodes. Valid values: `amd64`, `arm64`"
+  type        = string
+  default     = "amd64"
+}
+
 variable "registry_credentials" {
   type        = string
   description = "Image registry credentials to be added to the node"
