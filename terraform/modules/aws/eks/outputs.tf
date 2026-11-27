@@ -27,3 +27,8 @@ output "cluster_version" {
   description = "The Kubernetes version for the cluster"
   value       = module.eks.cluster_version
 }
+
+output "worker_node_iam_role_name" {
+  description = "The name of the IAM role used by the worker node group"
+  value       = module.eks.eks_managed_node_groups["ubuntu_worker"].iam_role_name
+}

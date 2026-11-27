@@ -34,7 +34,7 @@ data "aws_ami" "latest_ubuntu_eks" {
 
   filter {
     name   = "name"
-    values = ["ubuntu-eks/k8s_${var.kubernetes_version}/images/hvm-ssd*/ubuntu-${var.ubuntu_version}-amd64-server-*"]
+    values = ["ubuntu-eks/k8s_${var.kubernetes_version}/images/hvm-ssd-gp3/ubuntu-${var.ubuntu_version}-${var.worker_node_architecture}-server-*"]
   }
 }
 
@@ -55,6 +55,7 @@ module "eks" {
   endpoint_public_access                   = true
   enable_irsa                              = true
   enable_cluster_creator_admin_permissions = true
+  access_entries                           = var.access_entries
   cluster_tags                             = var.cluster_tags
   tags                                     = var.tags
 
@@ -91,20 +92,11 @@ module "eks" {
       cidr_blocks = concat([data.aws_vpc.main.cidr_block], var.worker_node_extra_ssh_cidrs)
     }
 
-    node_to_node_http = {
-      description = "Node to node HTTP for pods listening on port 80"
-      protocol    = "tcp"
-      from_port   = 80
-      to_port     = 80
-      type        = "ingress"
-      self        = true
-    }
-
-    node_to_node_https = {
-      description = "Node to node HTTPS for pods listening on port 443"
-      protocol    = "tcp"
-      from_port   = 443
-      to_port     = 443
+    ingress_self_all = {
+      description = "Node to node all ports/protocols"
+      protocol    = "-1"
+      from_port   = 0
+      to_port     = 0
       type        = "ingress"
       self        = true
     }

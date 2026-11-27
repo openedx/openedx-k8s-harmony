@@ -118,6 +118,12 @@ variable "worker_node_capacity_type" {
   default     = "ON_DEMAND"
 }
 
+variable "worker_node_architecture" {
+  description = "CPU architecture of the worker nodes. Valid values: `amd64`, `arm64`"
+  type        = string
+  default     = "amd64"
+}
+
 variable "registry_credentials" {
   type        = string
   description = "Image registry credentials to be added to the node"
@@ -161,4 +167,10 @@ variable "post_bootstrap_user_data" {
   type        = string
   default     = null
   description = "Allow to add post bootstrap user data"
+}
+
+variable "access_entries" {
+  description = "Map of access entries for the EKS cluster"
+  type        = any
+  default     = {}
 }

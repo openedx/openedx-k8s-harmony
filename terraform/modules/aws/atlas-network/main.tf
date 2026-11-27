@@ -35,6 +35,12 @@ resource "mongodbatlas_network_peering" "cluster_network_peering" {
   route_table_cidr_block = data.aws_vpc.main.cidr_block
   vpc_id                 = var.vpc_id
   aws_account_id         = var.aws_account_id
+
+  lifecycle {
+    ignore_changes = [
+      container_id,
+    ]
+  }
 }
 
 # Auto accept peering connection request
