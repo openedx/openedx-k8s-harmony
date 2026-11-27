@@ -55,6 +55,7 @@ module "eks" {
   endpoint_public_access                   = true
   enable_irsa                              = true
   enable_cluster_creator_admin_permissions = true
+  access_entries                           = var.access_entries
   cluster_tags                             = var.cluster_tags
   tags                                     = var.tags
 

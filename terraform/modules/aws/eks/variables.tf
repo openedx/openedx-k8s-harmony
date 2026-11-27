@@ -168,3 +168,9 @@ variable "post_bootstrap_user_data" {
   default     = null
   description = "Allow to add post bootstrap user data"
 }
+
+variable "access_entries" {
+  description = "Map of access entries for the EKS cluster"
+  type        = any
+  default     = {}
+}
